@@ -50,8 +50,8 @@ export function startBatchProcessor() {
     try {
       console.log("Running batch analysis...");
 
-      // Get waiting jobs from queue (not completed)
-      const jobs = await eventQueue.getJobs(["waiting"], 0, 100);
+      // Get completed jobs from queue (processed by worker)
+      const jobs = await eventQueue.getJobs(["completed"], 0, 100);
 
       if (jobs.length === 0) {
         console.log("No events to process");
