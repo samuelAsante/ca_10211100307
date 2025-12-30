@@ -58,6 +58,36 @@ export type Order = $Result.DefaultSelection<Prisma.$OrderPayload>
  * 
  */
 export type Insight = $Result.DefaultSelection<Prisma.$InsightPayload>
+/**
+ * Model Event
+ * 
+ */
+export type Event = $Result.DefaultSelection<Prisma.$EventPayload>
+/**
+ * Model Batch
+ * 
+ */
+export type Batch = $Result.DefaultSelection<Prisma.$BatchPayload>
+/**
+ * Model AnalysisJob
+ * 
+ */
+export type AnalysisJob = $Result.DefaultSelection<Prisma.$AnalysisJobPayload>
+/**
+ * Model DeadLetterJob
+ * 
+ */
+export type DeadLetterJob = $Result.DefaultSelection<Prisma.$DeadLetterJobPayload>
+/**
+ * Model KafkaOutbox
+ * 
+ */
+export type KafkaOutbox = $Result.DefaultSelection<Prisma.$KafkaOutboxPayload>
+/**
+ * Model ArchivedBatch
+ * 
+ */
+export type ArchivedBatch = $Result.DefaultSelection<Prisma.$ArchivedBatchPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -273,6 +303,66 @@ export class PrismaClient<
     * ```
     */
   get insight(): Prisma.InsightDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.event`: Exposes CRUD operations for the **Event** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Events
+    * const events = await prisma.event.findMany()
+    * ```
+    */
+  get event(): Prisma.EventDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.batch`: Exposes CRUD operations for the **Batch** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Batches
+    * const batches = await prisma.batch.findMany()
+    * ```
+    */
+  get batch(): Prisma.BatchDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.analysisJob`: Exposes CRUD operations for the **AnalysisJob** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AnalysisJobs
+    * const analysisJobs = await prisma.analysisJob.findMany()
+    * ```
+    */
+  get analysisJob(): Prisma.AnalysisJobDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.deadLetterJob`: Exposes CRUD operations for the **DeadLetterJob** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DeadLetterJobs
+    * const deadLetterJobs = await prisma.deadLetterJob.findMany()
+    * ```
+    */
+  get deadLetterJob(): Prisma.DeadLetterJobDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.kafkaOutbox`: Exposes CRUD operations for the **KafkaOutbox** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more KafkaOutboxes
+    * const kafkaOutboxes = await prisma.kafkaOutbox.findMany()
+    * ```
+    */
+  get kafkaOutbox(): Prisma.KafkaOutboxDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.archivedBatch`: Exposes CRUD operations for the **ArchivedBatch** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ArchivedBatches
+    * const archivedBatches = await prisma.archivedBatch.findMany()
+    * ```
+    */
+  get archivedBatch(): Prisma.ArchivedBatchDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -721,7 +811,13 @@ export namespace Prisma {
     Verification: 'Verification',
     BusinessSettings: 'BusinessSettings',
     Order: 'Order',
-    Insight: 'Insight'
+    Insight: 'Insight',
+    Event: 'Event',
+    Batch: 'Batch',
+    AnalysisJob: 'AnalysisJob',
+    DeadLetterJob: 'DeadLetterJob',
+    KafkaOutbox: 'KafkaOutbox',
+    ArchivedBatch: 'ArchivedBatch'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -740,7 +836,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "product" | "review" | "user" | "session" | "account" | "verification" | "businessSettings" | "order" | "insight"
+      modelProps: "product" | "review" | "user" | "session" | "account" | "verification" | "businessSettings" | "order" | "insight" | "event" | "batch" | "analysisJob" | "deadLetterJob" | "kafkaOutbox" | "archivedBatch"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1410,6 +1506,450 @@ export namespace Prisma {
           }
         }
       }
+      Event: {
+        payload: Prisma.$EventPayload<ExtArgs>
+        fields: Prisma.EventFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EventFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EventFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          findFirst: {
+            args: Prisma.EventFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EventFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          findMany: {
+            args: Prisma.EventFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>[]
+          }
+          create: {
+            args: Prisma.EventCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          createMany: {
+            args: Prisma.EventCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EventCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>[]
+          }
+          delete: {
+            args: Prisma.EventDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          update: {
+            args: Prisma.EventUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          deleteMany: {
+            args: Prisma.EventDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EventUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EventUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>[]
+          }
+          upsert: {
+            args: Prisma.EventUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+          }
+          aggregate: {
+            args: Prisma.EventAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEvent>
+          }
+          groupBy: {
+            args: Prisma.EventGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EventGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EventCountArgs<ExtArgs>
+            result: $Utils.Optional<EventCountAggregateOutputType> | number
+          }
+        }
+      }
+      Batch: {
+        payload: Prisma.$BatchPayload<ExtArgs>
+        fields: Prisma.BatchFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BatchFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BatchFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload>
+          }
+          findFirst: {
+            args: Prisma.BatchFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BatchFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload>
+          }
+          findMany: {
+            args: Prisma.BatchFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload>[]
+          }
+          create: {
+            args: Prisma.BatchCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload>
+          }
+          createMany: {
+            args: Prisma.BatchCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BatchCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload>[]
+          }
+          delete: {
+            args: Prisma.BatchDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload>
+          }
+          update: {
+            args: Prisma.BatchUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload>
+          }
+          deleteMany: {
+            args: Prisma.BatchDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BatchUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BatchUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload>[]
+          }
+          upsert: {
+            args: Prisma.BatchUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BatchPayload>
+          }
+          aggregate: {
+            args: Prisma.BatchAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBatch>
+          }
+          groupBy: {
+            args: Prisma.BatchGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BatchGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BatchCountArgs<ExtArgs>
+            result: $Utils.Optional<BatchCountAggregateOutputType> | number
+          }
+        }
+      }
+      AnalysisJob: {
+        payload: Prisma.$AnalysisJobPayload<ExtArgs>
+        fields: Prisma.AnalysisJobFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AnalysisJobFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AnalysisJobFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload>
+          }
+          findFirst: {
+            args: Prisma.AnalysisJobFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AnalysisJobFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload>
+          }
+          findMany: {
+            args: Prisma.AnalysisJobFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload>[]
+          }
+          create: {
+            args: Prisma.AnalysisJobCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload>
+          }
+          createMany: {
+            args: Prisma.AnalysisJobCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AnalysisJobCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload>[]
+          }
+          delete: {
+            args: Prisma.AnalysisJobDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload>
+          }
+          update: {
+            args: Prisma.AnalysisJobUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload>
+          }
+          deleteMany: {
+            args: Prisma.AnalysisJobDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AnalysisJobUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AnalysisJobUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload>[]
+          }
+          upsert: {
+            args: Prisma.AnalysisJobUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AnalysisJobPayload>
+          }
+          aggregate: {
+            args: Prisma.AnalysisJobAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAnalysisJob>
+          }
+          groupBy: {
+            args: Prisma.AnalysisJobGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AnalysisJobGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AnalysisJobCountArgs<ExtArgs>
+            result: $Utils.Optional<AnalysisJobCountAggregateOutputType> | number
+          }
+        }
+      }
+      DeadLetterJob: {
+        payload: Prisma.$DeadLetterJobPayload<ExtArgs>
+        fields: Prisma.DeadLetterJobFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DeadLetterJobFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DeadLetterJobFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload>
+          }
+          findFirst: {
+            args: Prisma.DeadLetterJobFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DeadLetterJobFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload>
+          }
+          findMany: {
+            args: Prisma.DeadLetterJobFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload>[]
+          }
+          create: {
+            args: Prisma.DeadLetterJobCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload>
+          }
+          createMany: {
+            args: Prisma.DeadLetterJobCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DeadLetterJobCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload>[]
+          }
+          delete: {
+            args: Prisma.DeadLetterJobDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload>
+          }
+          update: {
+            args: Prisma.DeadLetterJobUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload>
+          }
+          deleteMany: {
+            args: Prisma.DeadLetterJobDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DeadLetterJobUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DeadLetterJobUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload>[]
+          }
+          upsert: {
+            args: Prisma.DeadLetterJobUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DeadLetterJobPayload>
+          }
+          aggregate: {
+            args: Prisma.DeadLetterJobAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDeadLetterJob>
+          }
+          groupBy: {
+            args: Prisma.DeadLetterJobGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DeadLetterJobGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DeadLetterJobCountArgs<ExtArgs>
+            result: $Utils.Optional<DeadLetterJobCountAggregateOutputType> | number
+          }
+        }
+      }
+      KafkaOutbox: {
+        payload: Prisma.$KafkaOutboxPayload<ExtArgs>
+        fields: Prisma.KafkaOutboxFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.KafkaOutboxFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.KafkaOutboxFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload>
+          }
+          findFirst: {
+            args: Prisma.KafkaOutboxFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.KafkaOutboxFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload>
+          }
+          findMany: {
+            args: Prisma.KafkaOutboxFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload>[]
+          }
+          create: {
+            args: Prisma.KafkaOutboxCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload>
+          }
+          createMany: {
+            args: Prisma.KafkaOutboxCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.KafkaOutboxCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload>[]
+          }
+          delete: {
+            args: Prisma.KafkaOutboxDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload>
+          }
+          update: {
+            args: Prisma.KafkaOutboxUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload>
+          }
+          deleteMany: {
+            args: Prisma.KafkaOutboxDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.KafkaOutboxUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.KafkaOutboxUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload>[]
+          }
+          upsert: {
+            args: Prisma.KafkaOutboxUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KafkaOutboxPayload>
+          }
+          aggregate: {
+            args: Prisma.KafkaOutboxAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateKafkaOutbox>
+          }
+          groupBy: {
+            args: Prisma.KafkaOutboxGroupByArgs<ExtArgs>
+            result: $Utils.Optional<KafkaOutboxGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.KafkaOutboxCountArgs<ExtArgs>
+            result: $Utils.Optional<KafkaOutboxCountAggregateOutputType> | number
+          }
+        }
+      }
+      ArchivedBatch: {
+        payload: Prisma.$ArchivedBatchPayload<ExtArgs>
+        fields: Prisma.ArchivedBatchFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ArchivedBatchFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ArchivedBatchFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload>
+          }
+          findFirst: {
+            args: Prisma.ArchivedBatchFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ArchivedBatchFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload>
+          }
+          findMany: {
+            args: Prisma.ArchivedBatchFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload>[]
+          }
+          create: {
+            args: Prisma.ArchivedBatchCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload>
+          }
+          createMany: {
+            args: Prisma.ArchivedBatchCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ArchivedBatchCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload>[]
+          }
+          delete: {
+            args: Prisma.ArchivedBatchDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload>
+          }
+          update: {
+            args: Prisma.ArchivedBatchUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload>
+          }
+          deleteMany: {
+            args: Prisma.ArchivedBatchDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ArchivedBatchUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ArchivedBatchUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload>[]
+          }
+          upsert: {
+            args: Prisma.ArchivedBatchUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArchivedBatchPayload>
+          }
+          aggregate: {
+            args: Prisma.ArchivedBatchAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateArchivedBatch>
+          }
+          groupBy: {
+            args: Prisma.ArchivedBatchGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ArchivedBatchGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ArchivedBatchCountArgs<ExtArgs>
+            result: $Utils.Optional<ArchivedBatchCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1503,6 +2043,12 @@ export namespace Prisma {
     businessSettings?: BusinessSettingsOmit
     order?: OrderOmit
     insight?: InsightOmit
+    event?: EventOmit
+    batch?: BatchOmit
+    analysisJob?: AnalysisJobOmit
+    deadLetterJob?: DeadLetterJobOmit
+    kafkaOutbox?: KafkaOutboxOmit
+    archivedBatch?: ArchivedBatchOmit
   }
 
   /* Types for Logging */
@@ -1660,6 +2206,37 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SessionWhereInput
+  }
+
+
+  /**
+   * Count Type BatchCountOutputType
+   */
+
+  export type BatchCountOutputType = {
+    analysis_jobs: number
+  }
+
+  export type BatchCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    analysis_jobs?: boolean | BatchCountOutputTypeCountAnalysis_jobsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * BatchCountOutputType without action
+   */
+  export type BatchCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BatchCountOutputType
+     */
+    select?: BatchCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * BatchCountOutputType without action
+   */
+  export type BatchCountOutputTypeCountAnalysis_jobsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AnalysisJobWhereInput
   }
 
 
@@ -11642,6 +12219,6489 @@ export namespace Prisma {
 
 
   /**
+   * Model Event
+   */
+
+  export type AggregateEvent = {
+    _count: EventCountAggregateOutputType | null
+    _min: EventMinAggregateOutputType | null
+    _max: EventMaxAggregateOutputType | null
+  }
+
+  export type EventMinAggregateOutputType = {
+    id: string | null
+    batch_id: string | null
+    event_type: string | null
+    user_id: string | null
+    timestamp: Date | null
+    created_at: Date | null
+  }
+
+  export type EventMaxAggregateOutputType = {
+    id: string | null
+    batch_id: string | null
+    event_type: string | null
+    user_id: string | null
+    timestamp: Date | null
+    created_at: Date | null
+  }
+
+  export type EventCountAggregateOutputType = {
+    id: number
+    batch_id: number
+    event_type: number
+    user_id: number
+    data: number
+    timestamp: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type EventMinAggregateInputType = {
+    id?: true
+    batch_id?: true
+    event_type?: true
+    user_id?: true
+    timestamp?: true
+    created_at?: true
+  }
+
+  export type EventMaxAggregateInputType = {
+    id?: true
+    batch_id?: true
+    event_type?: true
+    user_id?: true
+    timestamp?: true
+    created_at?: true
+  }
+
+  export type EventCountAggregateInputType = {
+    id?: true
+    batch_id?: true
+    event_type?: true
+    user_id?: true
+    data?: true
+    timestamp?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type EventAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Event to aggregate.
+     */
+    where?: EventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Events to fetch.
+     */
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Events from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Events.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Events
+    **/
+    _count?: true | EventCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EventMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EventMaxAggregateInputType
+  }
+
+  export type GetEventAggregateType<T extends EventAggregateArgs> = {
+        [P in keyof T & keyof AggregateEvent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEvent[P]>
+      : GetScalarType<T[P], AggregateEvent[P]>
+  }
+
+
+
+
+  export type EventGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventWhereInput
+    orderBy?: EventOrderByWithAggregationInput | EventOrderByWithAggregationInput[]
+    by: EventScalarFieldEnum[] | EventScalarFieldEnum
+    having?: EventScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EventCountAggregateInputType | true
+    _min?: EventMinAggregateInputType
+    _max?: EventMaxAggregateInputType
+  }
+
+  export type EventGroupByOutputType = {
+    id: string
+    batch_id: string
+    event_type: string
+    user_id: string | null
+    data: JsonValue
+    timestamp: Date
+    created_at: Date
+    _count: EventCountAggregateOutputType | null
+    _min: EventMinAggregateOutputType | null
+    _max: EventMaxAggregateOutputType | null
+  }
+
+  type GetEventGroupByPayload<T extends EventGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EventGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EventGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EventGroupByOutputType[P]>
+            : GetScalarType<T[P], EventGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EventSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    batch_id?: boolean
+    event_type?: boolean
+    user_id?: boolean
+    data?: boolean
+    timestamp?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["event"]>
+
+  export type EventSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    batch_id?: boolean
+    event_type?: boolean
+    user_id?: boolean
+    data?: boolean
+    timestamp?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["event"]>
+
+  export type EventSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    batch_id?: boolean
+    event_type?: boolean
+    user_id?: boolean
+    data?: boolean
+    timestamp?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["event"]>
+
+  export type EventSelectScalar = {
+    id?: boolean
+    batch_id?: boolean
+    event_type?: boolean
+    user_id?: boolean
+    data?: boolean
+    timestamp?: boolean
+    created_at?: boolean
+  }
+
+  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "batch_id" | "event_type" | "user_id" | "data" | "timestamp" | "created_at", ExtArgs["result"]["event"]>
+
+  export type $EventPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Event"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      batch_id: string
+      event_type: string
+      user_id: string | null
+      data: Prisma.JsonValue
+      timestamp: Date
+      created_at: Date
+    }, ExtArgs["result"]["event"]>
+    composites: {}
+  }
+
+  type EventGetPayload<S extends boolean | null | undefined | EventDefaultArgs> = $Result.GetResult<Prisma.$EventPayload, S>
+
+  type EventCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EventFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EventCountAggregateInputType | true
+    }
+
+  export interface EventDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Event'], meta: { name: 'Event' } }
+    /**
+     * Find zero or one Event that matches the filter.
+     * @param {EventFindUniqueArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EventFindUniqueArgs>(args: SelectSubset<T, EventFindUniqueArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Event that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EventFindUniqueOrThrowArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EventFindUniqueOrThrowArgs>(args: SelectSubset<T, EventFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Event that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventFindFirstArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EventFindFirstArgs>(args?: SelectSubset<T, EventFindFirstArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Event that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventFindFirstOrThrowArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EventFindFirstOrThrowArgs>(args?: SelectSubset<T, EventFindFirstOrThrowArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Events that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Events
+     * const events = await prisma.event.findMany()
+     * 
+     * // Get first 10 Events
+     * const events = await prisma.event.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const eventWithIdOnly = await prisma.event.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EventFindManyArgs>(args?: SelectSubset<T, EventFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Event.
+     * @param {EventCreateArgs} args - Arguments to create a Event.
+     * @example
+     * // Create one Event
+     * const Event = await prisma.event.create({
+     *   data: {
+     *     // ... data to create a Event
+     *   }
+     * })
+     * 
+     */
+    create<T extends EventCreateArgs>(args: SelectSubset<T, EventCreateArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Events.
+     * @param {EventCreateManyArgs} args - Arguments to create many Events.
+     * @example
+     * // Create many Events
+     * const event = await prisma.event.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EventCreateManyArgs>(args?: SelectSubset<T, EventCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Events and returns the data saved in the database.
+     * @param {EventCreateManyAndReturnArgs} args - Arguments to create many Events.
+     * @example
+     * // Create many Events
+     * const event = await prisma.event.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Events and only return the `id`
+     * const eventWithIdOnly = await prisma.event.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EventCreateManyAndReturnArgs>(args?: SelectSubset<T, EventCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Event.
+     * @param {EventDeleteArgs} args - Arguments to delete one Event.
+     * @example
+     * // Delete one Event
+     * const Event = await prisma.event.delete({
+     *   where: {
+     *     // ... filter to delete one Event
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EventDeleteArgs>(args: SelectSubset<T, EventDeleteArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Event.
+     * @param {EventUpdateArgs} args - Arguments to update one Event.
+     * @example
+     * // Update one Event
+     * const event = await prisma.event.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EventUpdateArgs>(args: SelectSubset<T, EventUpdateArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Events.
+     * @param {EventDeleteManyArgs} args - Arguments to filter Events to delete.
+     * @example
+     * // Delete a few Events
+     * const { count } = await prisma.event.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EventDeleteManyArgs>(args?: SelectSubset<T, EventDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Events.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Events
+     * const event = await prisma.event.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EventUpdateManyArgs>(args: SelectSubset<T, EventUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Events and returns the data updated in the database.
+     * @param {EventUpdateManyAndReturnArgs} args - Arguments to update many Events.
+     * @example
+     * // Update many Events
+     * const event = await prisma.event.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Events and only return the `id`
+     * const eventWithIdOnly = await prisma.event.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EventUpdateManyAndReturnArgs>(args: SelectSubset<T, EventUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Event.
+     * @param {EventUpsertArgs} args - Arguments to update or create a Event.
+     * @example
+     * // Update or create a Event
+     * const event = await prisma.event.upsert({
+     *   create: {
+     *     // ... data to create a Event
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Event we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EventUpsertArgs>(args: SelectSubset<T, EventUpsertArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Events.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventCountArgs} args - Arguments to filter Events to count.
+     * @example
+     * // Count the number of Events
+     * const count = await prisma.event.count({
+     *   where: {
+     *     // ... the filter for the Events we want to count
+     *   }
+     * })
+    **/
+    count<T extends EventCountArgs>(
+      args?: Subset<T, EventCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EventCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Event.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EventAggregateArgs>(args: Subset<T, EventAggregateArgs>): Prisma.PrismaPromise<GetEventAggregateType<T>>
+
+    /**
+     * Group by Event.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EventGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EventGroupByArgs['orderBy'] }
+        : { orderBy?: EventGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EventGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEventGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Event model
+   */
+  readonly fields: EventFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Event.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EventClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Event model
+   */
+  interface EventFieldRefs {
+    readonly id: FieldRef<"Event", 'String'>
+    readonly batch_id: FieldRef<"Event", 'String'>
+    readonly event_type: FieldRef<"Event", 'String'>
+    readonly user_id: FieldRef<"Event", 'String'>
+    readonly data: FieldRef<"Event", 'Json'>
+    readonly timestamp: FieldRef<"Event", 'DateTime'>
+    readonly created_at: FieldRef<"Event", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Event findUnique
+   */
+  export type EventFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Filter, which Event to fetch.
+     */
+    where: EventWhereUniqueInput
+  }
+
+  /**
+   * Event findUniqueOrThrow
+   */
+  export type EventFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Filter, which Event to fetch.
+     */
+    where: EventWhereUniqueInput
+  }
+
+  /**
+   * Event findFirst
+   */
+  export type EventFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Filter, which Event to fetch.
+     */
+    where?: EventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Events to fetch.
+     */
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Events.
+     */
+    cursor?: EventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Events from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Events.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Events.
+     */
+    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
+  }
+
+  /**
+   * Event findFirstOrThrow
+   */
+  export type EventFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Filter, which Event to fetch.
+     */
+    where?: EventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Events to fetch.
+     */
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Events.
+     */
+    cursor?: EventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Events from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Events.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Events.
+     */
+    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
+  }
+
+  /**
+   * Event findMany
+   */
+  export type EventFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Filter, which Events to fetch.
+     */
+    where?: EventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Events to fetch.
+     */
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Events.
+     */
+    cursor?: EventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Events from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Events.
+     */
+    skip?: number
+    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
+  }
+
+  /**
+   * Event create
+   */
+  export type EventCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * The data needed to create a Event.
+     */
+    data: XOR<EventCreateInput, EventUncheckedCreateInput>
+  }
+
+  /**
+   * Event createMany
+   */
+  export type EventCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Events.
+     */
+    data: EventCreateManyInput | EventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Event createManyAndReturn
+   */
+  export type EventCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * The data used to create many Events.
+     */
+    data: EventCreateManyInput | EventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Event update
+   */
+  export type EventUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * The data needed to update a Event.
+     */
+    data: XOR<EventUpdateInput, EventUncheckedUpdateInput>
+    /**
+     * Choose, which Event to update.
+     */
+    where: EventWhereUniqueInput
+  }
+
+  /**
+   * Event updateMany
+   */
+  export type EventUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Events.
+     */
+    data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyInput>
+    /**
+     * Filter which Events to update
+     */
+    where?: EventWhereInput
+    /**
+     * Limit how many Events to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Event updateManyAndReturn
+   */
+  export type EventUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * The data used to update Events.
+     */
+    data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyInput>
+    /**
+     * Filter which Events to update
+     */
+    where?: EventWhereInput
+    /**
+     * Limit how many Events to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Event upsert
+   */
+  export type EventUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * The filter to search for the Event to update in case it exists.
+     */
+    where: EventWhereUniqueInput
+    /**
+     * In case the Event found by the `where` argument doesn't exist, create a new Event with this data.
+     */
+    create: XOR<EventCreateInput, EventUncheckedCreateInput>
+    /**
+     * In case the Event was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EventUpdateInput, EventUncheckedUpdateInput>
+  }
+
+  /**
+   * Event delete
+   */
+  export type EventDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Filter which Event to delete.
+     */
+    where: EventWhereUniqueInput
+  }
+
+  /**
+   * Event deleteMany
+   */
+  export type EventDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Events to delete
+     */
+    where?: EventWhereInput
+    /**
+     * Limit how many Events to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Event without action
+   */
+  export type EventDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Batch
+   */
+
+  export type AggregateBatch = {
+    _count: BatchCountAggregateOutputType | null
+    _avg: BatchAvgAggregateOutputType | null
+    _sum: BatchSumAggregateOutputType | null
+    _min: BatchMinAggregateOutputType | null
+    _max: BatchMaxAggregateOutputType | null
+  }
+
+  export type BatchAvgAggregateOutputType = {
+    event_count: number | null
+  }
+
+  export type BatchSumAggregateOutputType = {
+    event_count: number | null
+  }
+
+  export type BatchMinAggregateOutputType = {
+    id: string | null
+    batch_id: string | null
+    status: string | null
+    event_count: number | null
+    sealed_at: Date | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type BatchMaxAggregateOutputType = {
+    id: string | null
+    batch_id: string | null
+    status: string | null
+    event_count: number | null
+    sealed_at: Date | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type BatchCountAggregateOutputType = {
+    id: number
+    batch_id: number
+    status: number
+    event_count: number
+    sealed_at: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type BatchAvgAggregateInputType = {
+    event_count?: true
+  }
+
+  export type BatchSumAggregateInputType = {
+    event_count?: true
+  }
+
+  export type BatchMinAggregateInputType = {
+    id?: true
+    batch_id?: true
+    status?: true
+    event_count?: true
+    sealed_at?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type BatchMaxAggregateInputType = {
+    id?: true
+    batch_id?: true
+    status?: true
+    event_count?: true
+    sealed_at?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type BatchCountAggregateInputType = {
+    id?: true
+    batch_id?: true
+    status?: true
+    event_count?: true
+    sealed_at?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type BatchAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Batch to aggregate.
+     */
+    where?: BatchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Batches to fetch.
+     */
+    orderBy?: BatchOrderByWithRelationInput | BatchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BatchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Batches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Batches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Batches
+    **/
+    _count?: true | BatchCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BatchAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BatchSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BatchMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BatchMaxAggregateInputType
+  }
+
+  export type GetBatchAggregateType<T extends BatchAggregateArgs> = {
+        [P in keyof T & keyof AggregateBatch]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBatch[P]>
+      : GetScalarType<T[P], AggregateBatch[P]>
+  }
+
+
+
+
+  export type BatchGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BatchWhereInput
+    orderBy?: BatchOrderByWithAggregationInput | BatchOrderByWithAggregationInput[]
+    by: BatchScalarFieldEnum[] | BatchScalarFieldEnum
+    having?: BatchScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BatchCountAggregateInputType | true
+    _avg?: BatchAvgAggregateInputType
+    _sum?: BatchSumAggregateInputType
+    _min?: BatchMinAggregateInputType
+    _max?: BatchMaxAggregateInputType
+  }
+
+  export type BatchGroupByOutputType = {
+    id: string
+    batch_id: string
+    status: string
+    event_count: number
+    sealed_at: Date | null
+    created_at: Date
+    updated_at: Date
+    _count: BatchCountAggregateOutputType | null
+    _avg: BatchAvgAggregateOutputType | null
+    _sum: BatchSumAggregateOutputType | null
+    _min: BatchMinAggregateOutputType | null
+    _max: BatchMaxAggregateOutputType | null
+  }
+
+  type GetBatchGroupByPayload<T extends BatchGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BatchGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BatchGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BatchGroupByOutputType[P]>
+            : GetScalarType<T[P], BatchGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BatchSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    event_count?: boolean
+    sealed_at?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    analysis_jobs?: boolean | Batch$analysis_jobsArgs<ExtArgs>
+    _count?: boolean | BatchCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["batch"]>
+
+  export type BatchSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    event_count?: boolean
+    sealed_at?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["batch"]>
+
+  export type BatchSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    event_count?: boolean
+    sealed_at?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["batch"]>
+
+  export type BatchSelectScalar = {
+    id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    event_count?: boolean
+    sealed_at?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type BatchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "batch_id" | "status" | "event_count" | "sealed_at" | "created_at" | "updated_at", ExtArgs["result"]["batch"]>
+  export type BatchInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    analysis_jobs?: boolean | Batch$analysis_jobsArgs<ExtArgs>
+    _count?: boolean | BatchCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type BatchIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type BatchIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $BatchPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Batch"
+    objects: {
+      analysis_jobs: Prisma.$AnalysisJobPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      batch_id: string
+      status: string
+      event_count: number
+      sealed_at: Date | null
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["batch"]>
+    composites: {}
+  }
+
+  type BatchGetPayload<S extends boolean | null | undefined | BatchDefaultArgs> = $Result.GetResult<Prisma.$BatchPayload, S>
+
+  type BatchCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BatchFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BatchCountAggregateInputType | true
+    }
+
+  export interface BatchDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Batch'], meta: { name: 'Batch' } }
+    /**
+     * Find zero or one Batch that matches the filter.
+     * @param {BatchFindUniqueArgs} args - Arguments to find a Batch
+     * @example
+     * // Get one Batch
+     * const batch = await prisma.batch.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BatchFindUniqueArgs>(args: SelectSubset<T, BatchFindUniqueArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Batch that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BatchFindUniqueOrThrowArgs} args - Arguments to find a Batch
+     * @example
+     * // Get one Batch
+     * const batch = await prisma.batch.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BatchFindUniqueOrThrowArgs>(args: SelectSubset<T, BatchFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Batch that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BatchFindFirstArgs} args - Arguments to find a Batch
+     * @example
+     * // Get one Batch
+     * const batch = await prisma.batch.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BatchFindFirstArgs>(args?: SelectSubset<T, BatchFindFirstArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Batch that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BatchFindFirstOrThrowArgs} args - Arguments to find a Batch
+     * @example
+     * // Get one Batch
+     * const batch = await prisma.batch.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BatchFindFirstOrThrowArgs>(args?: SelectSubset<T, BatchFindFirstOrThrowArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Batches that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BatchFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Batches
+     * const batches = await prisma.batch.findMany()
+     * 
+     * // Get first 10 Batches
+     * const batches = await prisma.batch.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const batchWithIdOnly = await prisma.batch.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BatchFindManyArgs>(args?: SelectSubset<T, BatchFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Batch.
+     * @param {BatchCreateArgs} args - Arguments to create a Batch.
+     * @example
+     * // Create one Batch
+     * const Batch = await prisma.batch.create({
+     *   data: {
+     *     // ... data to create a Batch
+     *   }
+     * })
+     * 
+     */
+    create<T extends BatchCreateArgs>(args: SelectSubset<T, BatchCreateArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Batches.
+     * @param {BatchCreateManyArgs} args - Arguments to create many Batches.
+     * @example
+     * // Create many Batches
+     * const batch = await prisma.batch.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BatchCreateManyArgs>(args?: SelectSubset<T, BatchCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Batches and returns the data saved in the database.
+     * @param {BatchCreateManyAndReturnArgs} args - Arguments to create many Batches.
+     * @example
+     * // Create many Batches
+     * const batch = await prisma.batch.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Batches and only return the `id`
+     * const batchWithIdOnly = await prisma.batch.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BatchCreateManyAndReturnArgs>(args?: SelectSubset<T, BatchCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Batch.
+     * @param {BatchDeleteArgs} args - Arguments to delete one Batch.
+     * @example
+     * // Delete one Batch
+     * const Batch = await prisma.batch.delete({
+     *   where: {
+     *     // ... filter to delete one Batch
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BatchDeleteArgs>(args: SelectSubset<T, BatchDeleteArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Batch.
+     * @param {BatchUpdateArgs} args - Arguments to update one Batch.
+     * @example
+     * // Update one Batch
+     * const batch = await prisma.batch.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BatchUpdateArgs>(args: SelectSubset<T, BatchUpdateArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Batches.
+     * @param {BatchDeleteManyArgs} args - Arguments to filter Batches to delete.
+     * @example
+     * // Delete a few Batches
+     * const { count } = await prisma.batch.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BatchDeleteManyArgs>(args?: SelectSubset<T, BatchDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Batches.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BatchUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Batches
+     * const batch = await prisma.batch.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BatchUpdateManyArgs>(args: SelectSubset<T, BatchUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Batches and returns the data updated in the database.
+     * @param {BatchUpdateManyAndReturnArgs} args - Arguments to update many Batches.
+     * @example
+     * // Update many Batches
+     * const batch = await prisma.batch.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Batches and only return the `id`
+     * const batchWithIdOnly = await prisma.batch.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BatchUpdateManyAndReturnArgs>(args: SelectSubset<T, BatchUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Batch.
+     * @param {BatchUpsertArgs} args - Arguments to update or create a Batch.
+     * @example
+     * // Update or create a Batch
+     * const batch = await prisma.batch.upsert({
+     *   create: {
+     *     // ... data to create a Batch
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Batch we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BatchUpsertArgs>(args: SelectSubset<T, BatchUpsertArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Batches.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BatchCountArgs} args - Arguments to filter Batches to count.
+     * @example
+     * // Count the number of Batches
+     * const count = await prisma.batch.count({
+     *   where: {
+     *     // ... the filter for the Batches we want to count
+     *   }
+     * })
+    **/
+    count<T extends BatchCountArgs>(
+      args?: Subset<T, BatchCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BatchCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Batch.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BatchAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BatchAggregateArgs>(args: Subset<T, BatchAggregateArgs>): Prisma.PrismaPromise<GetBatchAggregateType<T>>
+
+    /**
+     * Group by Batch.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BatchGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BatchGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BatchGroupByArgs['orderBy'] }
+        : { orderBy?: BatchGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BatchGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBatchGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Batch model
+   */
+  readonly fields: BatchFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Batch.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BatchClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    analysis_jobs<T extends Batch$analysis_jobsArgs<ExtArgs> = {}>(args?: Subset<T, Batch$analysis_jobsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Batch model
+   */
+  interface BatchFieldRefs {
+    readonly id: FieldRef<"Batch", 'String'>
+    readonly batch_id: FieldRef<"Batch", 'String'>
+    readonly status: FieldRef<"Batch", 'String'>
+    readonly event_count: FieldRef<"Batch", 'Int'>
+    readonly sealed_at: FieldRef<"Batch", 'DateTime'>
+    readonly created_at: FieldRef<"Batch", 'DateTime'>
+    readonly updated_at: FieldRef<"Batch", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Batch findUnique
+   */
+  export type BatchFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BatchInclude<ExtArgs> | null
+    /**
+     * Filter, which Batch to fetch.
+     */
+    where: BatchWhereUniqueInput
+  }
+
+  /**
+   * Batch findUniqueOrThrow
+   */
+  export type BatchFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BatchInclude<ExtArgs> | null
+    /**
+     * Filter, which Batch to fetch.
+     */
+    where: BatchWhereUniqueInput
+  }
+
+  /**
+   * Batch findFirst
+   */
+  export type BatchFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BatchInclude<ExtArgs> | null
+    /**
+     * Filter, which Batch to fetch.
+     */
+    where?: BatchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Batches to fetch.
+     */
+    orderBy?: BatchOrderByWithRelationInput | BatchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Batches.
+     */
+    cursor?: BatchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Batches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Batches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Batches.
+     */
+    distinct?: BatchScalarFieldEnum | BatchScalarFieldEnum[]
+  }
+
+  /**
+   * Batch findFirstOrThrow
+   */
+  export type BatchFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BatchInclude<ExtArgs> | null
+    /**
+     * Filter, which Batch to fetch.
+     */
+    where?: BatchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Batches to fetch.
+     */
+    orderBy?: BatchOrderByWithRelationInput | BatchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Batches.
+     */
+    cursor?: BatchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Batches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Batches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Batches.
+     */
+    distinct?: BatchScalarFieldEnum | BatchScalarFieldEnum[]
+  }
+
+  /**
+   * Batch findMany
+   */
+  export type BatchFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BatchInclude<ExtArgs> | null
+    /**
+     * Filter, which Batches to fetch.
+     */
+    where?: BatchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Batches to fetch.
+     */
+    orderBy?: BatchOrderByWithRelationInput | BatchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Batches.
+     */
+    cursor?: BatchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Batches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Batches.
+     */
+    skip?: number
+    distinct?: BatchScalarFieldEnum | BatchScalarFieldEnum[]
+  }
+
+  /**
+   * Batch create
+   */
+  export type BatchCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BatchInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Batch.
+     */
+    data: XOR<BatchCreateInput, BatchUncheckedCreateInput>
+  }
+
+  /**
+   * Batch createMany
+   */
+  export type BatchCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Batches.
+     */
+    data: BatchCreateManyInput | BatchCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Batch createManyAndReturn
+   */
+  export type BatchCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * The data used to create many Batches.
+     */
+    data: BatchCreateManyInput | BatchCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Batch update
+   */
+  export type BatchUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BatchInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Batch.
+     */
+    data: XOR<BatchUpdateInput, BatchUncheckedUpdateInput>
+    /**
+     * Choose, which Batch to update.
+     */
+    where: BatchWhereUniqueInput
+  }
+
+  /**
+   * Batch updateMany
+   */
+  export type BatchUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Batches.
+     */
+    data: XOR<BatchUpdateManyMutationInput, BatchUncheckedUpdateManyInput>
+    /**
+     * Filter which Batches to update
+     */
+    where?: BatchWhereInput
+    /**
+     * Limit how many Batches to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Batch updateManyAndReturn
+   */
+  export type BatchUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * The data used to update Batches.
+     */
+    data: XOR<BatchUpdateManyMutationInput, BatchUncheckedUpdateManyInput>
+    /**
+     * Filter which Batches to update
+     */
+    where?: BatchWhereInput
+    /**
+     * Limit how many Batches to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Batch upsert
+   */
+  export type BatchUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BatchInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Batch to update in case it exists.
+     */
+    where: BatchWhereUniqueInput
+    /**
+     * In case the Batch found by the `where` argument doesn't exist, create a new Batch with this data.
+     */
+    create: XOR<BatchCreateInput, BatchUncheckedCreateInput>
+    /**
+     * In case the Batch was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BatchUpdateInput, BatchUncheckedUpdateInput>
+  }
+
+  /**
+   * Batch delete
+   */
+  export type BatchDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BatchInclude<ExtArgs> | null
+    /**
+     * Filter which Batch to delete.
+     */
+    where: BatchWhereUniqueInput
+  }
+
+  /**
+   * Batch deleteMany
+   */
+  export type BatchDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Batches to delete
+     */
+    where?: BatchWhereInput
+    /**
+     * Limit how many Batches to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Batch.analysis_jobs
+   */
+  export type Batch$analysis_jobsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+    where?: AnalysisJobWhereInput
+    orderBy?: AnalysisJobOrderByWithRelationInput | AnalysisJobOrderByWithRelationInput[]
+    cursor?: AnalysisJobWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AnalysisJobScalarFieldEnum | AnalysisJobScalarFieldEnum[]
+  }
+
+  /**
+   * Batch without action
+   */
+  export type BatchDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Batch
+     */
+    select?: BatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Batch
+     */
+    omit?: BatchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BatchInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AnalysisJob
+   */
+
+  export type AggregateAnalysisJob = {
+    _count: AnalysisJobCountAggregateOutputType | null
+    _avg: AnalysisJobAvgAggregateOutputType | null
+    _sum: AnalysisJobSumAggregateOutputType | null
+    _min: AnalysisJobMinAggregateOutputType | null
+    _max: AnalysisJobMaxAggregateOutputType | null
+  }
+
+  export type AnalysisJobAvgAggregateOutputType = {
+    attempt_count: number | null
+    max_attempts: number | null
+    analysis_time_ms: number | null
+  }
+
+  export type AnalysisJobSumAggregateOutputType = {
+    attempt_count: number | null
+    max_attempts: number | null
+    analysis_time_ms: number | null
+  }
+
+  export type AnalysisJobMinAggregateOutputType = {
+    id: string | null
+    job_id: string | null
+    batch_id: string | null
+    status: string | null
+    attempt_count: number | null
+    max_attempts: number | null
+    lock_expires_at: Date | null
+    trigger_type: string | null
+    last_error: string | null
+    analysis_time_ms: number | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type AnalysisJobMaxAggregateOutputType = {
+    id: string | null
+    job_id: string | null
+    batch_id: string | null
+    status: string | null
+    attempt_count: number | null
+    max_attempts: number | null
+    lock_expires_at: Date | null
+    trigger_type: string | null
+    last_error: string | null
+    analysis_time_ms: number | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type AnalysisJobCountAggregateOutputType = {
+    id: number
+    job_id: number
+    batch_id: number
+    status: number
+    attempt_count: number
+    max_attempts: number
+    lock_expires_at: number
+    trigger_type: number
+    last_error: number
+    error_context: number
+    analysis_time_ms: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type AnalysisJobAvgAggregateInputType = {
+    attempt_count?: true
+    max_attempts?: true
+    analysis_time_ms?: true
+  }
+
+  export type AnalysisJobSumAggregateInputType = {
+    attempt_count?: true
+    max_attempts?: true
+    analysis_time_ms?: true
+  }
+
+  export type AnalysisJobMinAggregateInputType = {
+    id?: true
+    job_id?: true
+    batch_id?: true
+    status?: true
+    attempt_count?: true
+    max_attempts?: true
+    lock_expires_at?: true
+    trigger_type?: true
+    last_error?: true
+    analysis_time_ms?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type AnalysisJobMaxAggregateInputType = {
+    id?: true
+    job_id?: true
+    batch_id?: true
+    status?: true
+    attempt_count?: true
+    max_attempts?: true
+    lock_expires_at?: true
+    trigger_type?: true
+    last_error?: true
+    analysis_time_ms?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type AnalysisJobCountAggregateInputType = {
+    id?: true
+    job_id?: true
+    batch_id?: true
+    status?: true
+    attempt_count?: true
+    max_attempts?: true
+    lock_expires_at?: true
+    trigger_type?: true
+    last_error?: true
+    error_context?: true
+    analysis_time_ms?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type AnalysisJobAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AnalysisJob to aggregate.
+     */
+    where?: AnalysisJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AnalysisJobs to fetch.
+     */
+    orderBy?: AnalysisJobOrderByWithRelationInput | AnalysisJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AnalysisJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AnalysisJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AnalysisJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AnalysisJobs
+    **/
+    _count?: true | AnalysisJobCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AnalysisJobAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AnalysisJobSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AnalysisJobMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AnalysisJobMaxAggregateInputType
+  }
+
+  export type GetAnalysisJobAggregateType<T extends AnalysisJobAggregateArgs> = {
+        [P in keyof T & keyof AggregateAnalysisJob]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAnalysisJob[P]>
+      : GetScalarType<T[P], AggregateAnalysisJob[P]>
+  }
+
+
+
+
+  export type AnalysisJobGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AnalysisJobWhereInput
+    orderBy?: AnalysisJobOrderByWithAggregationInput | AnalysisJobOrderByWithAggregationInput[]
+    by: AnalysisJobScalarFieldEnum[] | AnalysisJobScalarFieldEnum
+    having?: AnalysisJobScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AnalysisJobCountAggregateInputType | true
+    _avg?: AnalysisJobAvgAggregateInputType
+    _sum?: AnalysisJobSumAggregateInputType
+    _min?: AnalysisJobMinAggregateInputType
+    _max?: AnalysisJobMaxAggregateInputType
+  }
+
+  export type AnalysisJobGroupByOutputType = {
+    id: string
+    job_id: string
+    batch_id: string
+    status: string
+    attempt_count: number
+    max_attempts: number
+    lock_expires_at: Date | null
+    trigger_type: string
+    last_error: string | null
+    error_context: JsonValue | null
+    analysis_time_ms: number | null
+    created_at: Date
+    updated_at: Date
+    _count: AnalysisJobCountAggregateOutputType | null
+    _avg: AnalysisJobAvgAggregateOutputType | null
+    _sum: AnalysisJobSumAggregateOutputType | null
+    _min: AnalysisJobMinAggregateOutputType | null
+    _max: AnalysisJobMaxAggregateOutputType | null
+  }
+
+  type GetAnalysisJobGroupByPayload<T extends AnalysisJobGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AnalysisJobGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AnalysisJobGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AnalysisJobGroupByOutputType[P]>
+            : GetScalarType<T[P], AnalysisJobGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AnalysisJobSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    job_id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    attempt_count?: boolean
+    max_attempts?: boolean
+    lock_expires_at?: boolean
+    trigger_type?: boolean
+    last_error?: boolean
+    error_context?: boolean
+    analysis_time_ms?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["analysisJob"]>
+
+  export type AnalysisJobSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    job_id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    attempt_count?: boolean
+    max_attempts?: boolean
+    lock_expires_at?: boolean
+    trigger_type?: boolean
+    last_error?: boolean
+    error_context?: boolean
+    analysis_time_ms?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["analysisJob"]>
+
+  export type AnalysisJobSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    job_id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    attempt_count?: boolean
+    max_attempts?: boolean
+    lock_expires_at?: boolean
+    trigger_type?: boolean
+    last_error?: boolean
+    error_context?: boolean
+    analysis_time_ms?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["analysisJob"]>
+
+  export type AnalysisJobSelectScalar = {
+    id?: boolean
+    job_id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    attempt_count?: boolean
+    max_attempts?: boolean
+    lock_expires_at?: boolean
+    trigger_type?: boolean
+    last_error?: boolean
+    error_context?: boolean
+    analysis_time_ms?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type AnalysisJobOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "job_id" | "batch_id" | "status" | "attempt_count" | "max_attempts" | "lock_expires_at" | "trigger_type" | "last_error" | "error_context" | "analysis_time_ms" | "created_at" | "updated_at", ExtArgs["result"]["analysisJob"]>
+  export type AnalysisJobInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+  }
+  export type AnalysisJobIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+  }
+  export type AnalysisJobIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    batch?: boolean | BatchDefaultArgs<ExtArgs>
+  }
+
+  export type $AnalysisJobPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AnalysisJob"
+    objects: {
+      batch: Prisma.$BatchPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      job_id: string
+      batch_id: string
+      status: string
+      attempt_count: number
+      max_attempts: number
+      lock_expires_at: Date | null
+      trigger_type: string
+      last_error: string | null
+      error_context: Prisma.JsonValue | null
+      analysis_time_ms: number | null
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["analysisJob"]>
+    composites: {}
+  }
+
+  type AnalysisJobGetPayload<S extends boolean | null | undefined | AnalysisJobDefaultArgs> = $Result.GetResult<Prisma.$AnalysisJobPayload, S>
+
+  type AnalysisJobCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AnalysisJobFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AnalysisJobCountAggregateInputType | true
+    }
+
+  export interface AnalysisJobDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AnalysisJob'], meta: { name: 'AnalysisJob' } }
+    /**
+     * Find zero or one AnalysisJob that matches the filter.
+     * @param {AnalysisJobFindUniqueArgs} args - Arguments to find a AnalysisJob
+     * @example
+     * // Get one AnalysisJob
+     * const analysisJob = await prisma.analysisJob.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AnalysisJobFindUniqueArgs>(args: SelectSubset<T, AnalysisJobFindUniqueArgs<ExtArgs>>): Prisma__AnalysisJobClient<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AnalysisJob that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AnalysisJobFindUniqueOrThrowArgs} args - Arguments to find a AnalysisJob
+     * @example
+     * // Get one AnalysisJob
+     * const analysisJob = await prisma.analysisJob.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AnalysisJobFindUniqueOrThrowArgs>(args: SelectSubset<T, AnalysisJobFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AnalysisJobClient<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AnalysisJob that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AnalysisJobFindFirstArgs} args - Arguments to find a AnalysisJob
+     * @example
+     * // Get one AnalysisJob
+     * const analysisJob = await prisma.analysisJob.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AnalysisJobFindFirstArgs>(args?: SelectSubset<T, AnalysisJobFindFirstArgs<ExtArgs>>): Prisma__AnalysisJobClient<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AnalysisJob that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AnalysisJobFindFirstOrThrowArgs} args - Arguments to find a AnalysisJob
+     * @example
+     * // Get one AnalysisJob
+     * const analysisJob = await prisma.analysisJob.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AnalysisJobFindFirstOrThrowArgs>(args?: SelectSubset<T, AnalysisJobFindFirstOrThrowArgs<ExtArgs>>): Prisma__AnalysisJobClient<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AnalysisJobs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AnalysisJobFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AnalysisJobs
+     * const analysisJobs = await prisma.analysisJob.findMany()
+     * 
+     * // Get first 10 AnalysisJobs
+     * const analysisJobs = await prisma.analysisJob.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const analysisJobWithIdOnly = await prisma.analysisJob.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AnalysisJobFindManyArgs>(args?: SelectSubset<T, AnalysisJobFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AnalysisJob.
+     * @param {AnalysisJobCreateArgs} args - Arguments to create a AnalysisJob.
+     * @example
+     * // Create one AnalysisJob
+     * const AnalysisJob = await prisma.analysisJob.create({
+     *   data: {
+     *     // ... data to create a AnalysisJob
+     *   }
+     * })
+     * 
+     */
+    create<T extends AnalysisJobCreateArgs>(args: SelectSubset<T, AnalysisJobCreateArgs<ExtArgs>>): Prisma__AnalysisJobClient<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AnalysisJobs.
+     * @param {AnalysisJobCreateManyArgs} args - Arguments to create many AnalysisJobs.
+     * @example
+     * // Create many AnalysisJobs
+     * const analysisJob = await prisma.analysisJob.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AnalysisJobCreateManyArgs>(args?: SelectSubset<T, AnalysisJobCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AnalysisJobs and returns the data saved in the database.
+     * @param {AnalysisJobCreateManyAndReturnArgs} args - Arguments to create many AnalysisJobs.
+     * @example
+     * // Create many AnalysisJobs
+     * const analysisJob = await prisma.analysisJob.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AnalysisJobs and only return the `id`
+     * const analysisJobWithIdOnly = await prisma.analysisJob.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AnalysisJobCreateManyAndReturnArgs>(args?: SelectSubset<T, AnalysisJobCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AnalysisJob.
+     * @param {AnalysisJobDeleteArgs} args - Arguments to delete one AnalysisJob.
+     * @example
+     * // Delete one AnalysisJob
+     * const AnalysisJob = await prisma.analysisJob.delete({
+     *   where: {
+     *     // ... filter to delete one AnalysisJob
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AnalysisJobDeleteArgs>(args: SelectSubset<T, AnalysisJobDeleteArgs<ExtArgs>>): Prisma__AnalysisJobClient<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AnalysisJob.
+     * @param {AnalysisJobUpdateArgs} args - Arguments to update one AnalysisJob.
+     * @example
+     * // Update one AnalysisJob
+     * const analysisJob = await prisma.analysisJob.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AnalysisJobUpdateArgs>(args: SelectSubset<T, AnalysisJobUpdateArgs<ExtArgs>>): Prisma__AnalysisJobClient<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AnalysisJobs.
+     * @param {AnalysisJobDeleteManyArgs} args - Arguments to filter AnalysisJobs to delete.
+     * @example
+     * // Delete a few AnalysisJobs
+     * const { count } = await prisma.analysisJob.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AnalysisJobDeleteManyArgs>(args?: SelectSubset<T, AnalysisJobDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AnalysisJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AnalysisJobUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AnalysisJobs
+     * const analysisJob = await prisma.analysisJob.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AnalysisJobUpdateManyArgs>(args: SelectSubset<T, AnalysisJobUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AnalysisJobs and returns the data updated in the database.
+     * @param {AnalysisJobUpdateManyAndReturnArgs} args - Arguments to update many AnalysisJobs.
+     * @example
+     * // Update many AnalysisJobs
+     * const analysisJob = await prisma.analysisJob.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AnalysisJobs and only return the `id`
+     * const analysisJobWithIdOnly = await prisma.analysisJob.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AnalysisJobUpdateManyAndReturnArgs>(args: SelectSubset<T, AnalysisJobUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AnalysisJob.
+     * @param {AnalysisJobUpsertArgs} args - Arguments to update or create a AnalysisJob.
+     * @example
+     * // Update or create a AnalysisJob
+     * const analysisJob = await prisma.analysisJob.upsert({
+     *   create: {
+     *     // ... data to create a AnalysisJob
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AnalysisJob we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AnalysisJobUpsertArgs>(args: SelectSubset<T, AnalysisJobUpsertArgs<ExtArgs>>): Prisma__AnalysisJobClient<$Result.GetResult<Prisma.$AnalysisJobPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AnalysisJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AnalysisJobCountArgs} args - Arguments to filter AnalysisJobs to count.
+     * @example
+     * // Count the number of AnalysisJobs
+     * const count = await prisma.analysisJob.count({
+     *   where: {
+     *     // ... the filter for the AnalysisJobs we want to count
+     *   }
+     * })
+    **/
+    count<T extends AnalysisJobCountArgs>(
+      args?: Subset<T, AnalysisJobCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AnalysisJobCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AnalysisJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AnalysisJobAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AnalysisJobAggregateArgs>(args: Subset<T, AnalysisJobAggregateArgs>): Prisma.PrismaPromise<GetAnalysisJobAggregateType<T>>
+
+    /**
+     * Group by AnalysisJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AnalysisJobGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AnalysisJobGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AnalysisJobGroupByArgs['orderBy'] }
+        : { orderBy?: AnalysisJobGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AnalysisJobGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAnalysisJobGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AnalysisJob model
+   */
+  readonly fields: AnalysisJobFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AnalysisJob.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AnalysisJobClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    batch<T extends BatchDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BatchDefaultArgs<ExtArgs>>): Prisma__BatchClient<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AnalysisJob model
+   */
+  interface AnalysisJobFieldRefs {
+    readonly id: FieldRef<"AnalysisJob", 'String'>
+    readonly job_id: FieldRef<"AnalysisJob", 'String'>
+    readonly batch_id: FieldRef<"AnalysisJob", 'String'>
+    readonly status: FieldRef<"AnalysisJob", 'String'>
+    readonly attempt_count: FieldRef<"AnalysisJob", 'Int'>
+    readonly max_attempts: FieldRef<"AnalysisJob", 'Int'>
+    readonly lock_expires_at: FieldRef<"AnalysisJob", 'DateTime'>
+    readonly trigger_type: FieldRef<"AnalysisJob", 'String'>
+    readonly last_error: FieldRef<"AnalysisJob", 'String'>
+    readonly error_context: FieldRef<"AnalysisJob", 'Json'>
+    readonly analysis_time_ms: FieldRef<"AnalysisJob", 'Int'>
+    readonly created_at: FieldRef<"AnalysisJob", 'DateTime'>
+    readonly updated_at: FieldRef<"AnalysisJob", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AnalysisJob findUnique
+   */
+  export type AnalysisJobFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+    /**
+     * Filter, which AnalysisJob to fetch.
+     */
+    where: AnalysisJobWhereUniqueInput
+  }
+
+  /**
+   * AnalysisJob findUniqueOrThrow
+   */
+  export type AnalysisJobFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+    /**
+     * Filter, which AnalysisJob to fetch.
+     */
+    where: AnalysisJobWhereUniqueInput
+  }
+
+  /**
+   * AnalysisJob findFirst
+   */
+  export type AnalysisJobFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+    /**
+     * Filter, which AnalysisJob to fetch.
+     */
+    where?: AnalysisJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AnalysisJobs to fetch.
+     */
+    orderBy?: AnalysisJobOrderByWithRelationInput | AnalysisJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AnalysisJobs.
+     */
+    cursor?: AnalysisJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AnalysisJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AnalysisJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AnalysisJobs.
+     */
+    distinct?: AnalysisJobScalarFieldEnum | AnalysisJobScalarFieldEnum[]
+  }
+
+  /**
+   * AnalysisJob findFirstOrThrow
+   */
+  export type AnalysisJobFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+    /**
+     * Filter, which AnalysisJob to fetch.
+     */
+    where?: AnalysisJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AnalysisJobs to fetch.
+     */
+    orderBy?: AnalysisJobOrderByWithRelationInput | AnalysisJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AnalysisJobs.
+     */
+    cursor?: AnalysisJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AnalysisJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AnalysisJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AnalysisJobs.
+     */
+    distinct?: AnalysisJobScalarFieldEnum | AnalysisJobScalarFieldEnum[]
+  }
+
+  /**
+   * AnalysisJob findMany
+   */
+  export type AnalysisJobFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+    /**
+     * Filter, which AnalysisJobs to fetch.
+     */
+    where?: AnalysisJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AnalysisJobs to fetch.
+     */
+    orderBy?: AnalysisJobOrderByWithRelationInput | AnalysisJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AnalysisJobs.
+     */
+    cursor?: AnalysisJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AnalysisJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AnalysisJobs.
+     */
+    skip?: number
+    distinct?: AnalysisJobScalarFieldEnum | AnalysisJobScalarFieldEnum[]
+  }
+
+  /**
+   * AnalysisJob create
+   */
+  export type AnalysisJobCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AnalysisJob.
+     */
+    data: XOR<AnalysisJobCreateInput, AnalysisJobUncheckedCreateInput>
+  }
+
+  /**
+   * AnalysisJob createMany
+   */
+  export type AnalysisJobCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AnalysisJobs.
+     */
+    data: AnalysisJobCreateManyInput | AnalysisJobCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AnalysisJob createManyAndReturn
+   */
+  export type AnalysisJobCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * The data used to create many AnalysisJobs.
+     */
+    data: AnalysisJobCreateManyInput | AnalysisJobCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AnalysisJob update
+   */
+  export type AnalysisJobUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AnalysisJob.
+     */
+    data: XOR<AnalysisJobUpdateInput, AnalysisJobUncheckedUpdateInput>
+    /**
+     * Choose, which AnalysisJob to update.
+     */
+    where: AnalysisJobWhereUniqueInput
+  }
+
+  /**
+   * AnalysisJob updateMany
+   */
+  export type AnalysisJobUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AnalysisJobs.
+     */
+    data: XOR<AnalysisJobUpdateManyMutationInput, AnalysisJobUncheckedUpdateManyInput>
+    /**
+     * Filter which AnalysisJobs to update
+     */
+    where?: AnalysisJobWhereInput
+    /**
+     * Limit how many AnalysisJobs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AnalysisJob updateManyAndReturn
+   */
+  export type AnalysisJobUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * The data used to update AnalysisJobs.
+     */
+    data: XOR<AnalysisJobUpdateManyMutationInput, AnalysisJobUncheckedUpdateManyInput>
+    /**
+     * Filter which AnalysisJobs to update
+     */
+    where?: AnalysisJobWhereInput
+    /**
+     * Limit how many AnalysisJobs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AnalysisJob upsert
+   */
+  export type AnalysisJobUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AnalysisJob to update in case it exists.
+     */
+    where: AnalysisJobWhereUniqueInput
+    /**
+     * In case the AnalysisJob found by the `where` argument doesn't exist, create a new AnalysisJob with this data.
+     */
+    create: XOR<AnalysisJobCreateInput, AnalysisJobUncheckedCreateInput>
+    /**
+     * In case the AnalysisJob was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AnalysisJobUpdateInput, AnalysisJobUncheckedUpdateInput>
+  }
+
+  /**
+   * AnalysisJob delete
+   */
+  export type AnalysisJobDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+    /**
+     * Filter which AnalysisJob to delete.
+     */
+    where: AnalysisJobWhereUniqueInput
+  }
+
+  /**
+   * AnalysisJob deleteMany
+   */
+  export type AnalysisJobDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AnalysisJobs to delete
+     */
+    where?: AnalysisJobWhereInput
+    /**
+     * Limit how many AnalysisJobs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AnalysisJob without action
+   */
+  export type AnalysisJobDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AnalysisJob
+     */
+    select?: AnalysisJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AnalysisJob
+     */
+    omit?: AnalysisJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AnalysisJobInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DeadLetterJob
+   */
+
+  export type AggregateDeadLetterJob = {
+    _count: DeadLetterJobCountAggregateOutputType | null
+    _avg: DeadLetterJobAvgAggregateOutputType | null
+    _sum: DeadLetterJobSumAggregateOutputType | null
+    _min: DeadLetterJobMinAggregateOutputType | null
+    _max: DeadLetterJobMaxAggregateOutputType | null
+  }
+
+  export type DeadLetterJobAvgAggregateOutputType = {
+    attempt_count: number | null
+  }
+
+  export type DeadLetterJobSumAggregateOutputType = {
+    attempt_count: number | null
+  }
+
+  export type DeadLetterJobMinAggregateOutputType = {
+    id: string | null
+    dlq_id: string | null
+    job_id: string | null
+    batch_id: string | null
+    attempt_count: number | null
+    last_error: string | null
+    failed_at: Date | null
+  }
+
+  export type DeadLetterJobMaxAggregateOutputType = {
+    id: string | null
+    dlq_id: string | null
+    job_id: string | null
+    batch_id: string | null
+    attempt_count: number | null
+    last_error: string | null
+    failed_at: Date | null
+  }
+
+  export type DeadLetterJobCountAggregateOutputType = {
+    id: number
+    dlq_id: number
+    job_id: number
+    batch_id: number
+    attempt_count: number
+    last_error: number
+    error_context: number
+    failed_at: number
+    _all: number
+  }
+
+
+  export type DeadLetterJobAvgAggregateInputType = {
+    attempt_count?: true
+  }
+
+  export type DeadLetterJobSumAggregateInputType = {
+    attempt_count?: true
+  }
+
+  export type DeadLetterJobMinAggregateInputType = {
+    id?: true
+    dlq_id?: true
+    job_id?: true
+    batch_id?: true
+    attempt_count?: true
+    last_error?: true
+    failed_at?: true
+  }
+
+  export type DeadLetterJobMaxAggregateInputType = {
+    id?: true
+    dlq_id?: true
+    job_id?: true
+    batch_id?: true
+    attempt_count?: true
+    last_error?: true
+    failed_at?: true
+  }
+
+  export type DeadLetterJobCountAggregateInputType = {
+    id?: true
+    dlq_id?: true
+    job_id?: true
+    batch_id?: true
+    attempt_count?: true
+    last_error?: true
+    error_context?: true
+    failed_at?: true
+    _all?: true
+  }
+
+  export type DeadLetterJobAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DeadLetterJob to aggregate.
+     */
+    where?: DeadLetterJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DeadLetterJobs to fetch.
+     */
+    orderBy?: DeadLetterJobOrderByWithRelationInput | DeadLetterJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DeadLetterJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DeadLetterJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DeadLetterJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DeadLetterJobs
+    **/
+    _count?: true | DeadLetterJobCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DeadLetterJobAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DeadLetterJobSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DeadLetterJobMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DeadLetterJobMaxAggregateInputType
+  }
+
+  export type GetDeadLetterJobAggregateType<T extends DeadLetterJobAggregateArgs> = {
+        [P in keyof T & keyof AggregateDeadLetterJob]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDeadLetterJob[P]>
+      : GetScalarType<T[P], AggregateDeadLetterJob[P]>
+  }
+
+
+
+
+  export type DeadLetterJobGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DeadLetterJobWhereInput
+    orderBy?: DeadLetterJobOrderByWithAggregationInput | DeadLetterJobOrderByWithAggregationInput[]
+    by: DeadLetterJobScalarFieldEnum[] | DeadLetterJobScalarFieldEnum
+    having?: DeadLetterJobScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DeadLetterJobCountAggregateInputType | true
+    _avg?: DeadLetterJobAvgAggregateInputType
+    _sum?: DeadLetterJobSumAggregateInputType
+    _min?: DeadLetterJobMinAggregateInputType
+    _max?: DeadLetterJobMaxAggregateInputType
+  }
+
+  export type DeadLetterJobGroupByOutputType = {
+    id: string
+    dlq_id: string
+    job_id: string
+    batch_id: string
+    attempt_count: number
+    last_error: string
+    error_context: JsonValue
+    failed_at: Date
+    _count: DeadLetterJobCountAggregateOutputType | null
+    _avg: DeadLetterJobAvgAggregateOutputType | null
+    _sum: DeadLetterJobSumAggregateOutputType | null
+    _min: DeadLetterJobMinAggregateOutputType | null
+    _max: DeadLetterJobMaxAggregateOutputType | null
+  }
+
+  type GetDeadLetterJobGroupByPayload<T extends DeadLetterJobGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DeadLetterJobGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DeadLetterJobGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DeadLetterJobGroupByOutputType[P]>
+            : GetScalarType<T[P], DeadLetterJobGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DeadLetterJobSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    dlq_id?: boolean
+    job_id?: boolean
+    batch_id?: boolean
+    attempt_count?: boolean
+    last_error?: boolean
+    error_context?: boolean
+    failed_at?: boolean
+  }, ExtArgs["result"]["deadLetterJob"]>
+
+  export type DeadLetterJobSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    dlq_id?: boolean
+    job_id?: boolean
+    batch_id?: boolean
+    attempt_count?: boolean
+    last_error?: boolean
+    error_context?: boolean
+    failed_at?: boolean
+  }, ExtArgs["result"]["deadLetterJob"]>
+
+  export type DeadLetterJobSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    dlq_id?: boolean
+    job_id?: boolean
+    batch_id?: boolean
+    attempt_count?: boolean
+    last_error?: boolean
+    error_context?: boolean
+    failed_at?: boolean
+  }, ExtArgs["result"]["deadLetterJob"]>
+
+  export type DeadLetterJobSelectScalar = {
+    id?: boolean
+    dlq_id?: boolean
+    job_id?: boolean
+    batch_id?: boolean
+    attempt_count?: boolean
+    last_error?: boolean
+    error_context?: boolean
+    failed_at?: boolean
+  }
+
+  export type DeadLetterJobOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "dlq_id" | "job_id" | "batch_id" | "attempt_count" | "last_error" | "error_context" | "failed_at", ExtArgs["result"]["deadLetterJob"]>
+
+  export type $DeadLetterJobPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DeadLetterJob"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      dlq_id: string
+      job_id: string
+      batch_id: string
+      attempt_count: number
+      last_error: string
+      error_context: Prisma.JsonValue
+      failed_at: Date
+    }, ExtArgs["result"]["deadLetterJob"]>
+    composites: {}
+  }
+
+  type DeadLetterJobGetPayload<S extends boolean | null | undefined | DeadLetterJobDefaultArgs> = $Result.GetResult<Prisma.$DeadLetterJobPayload, S>
+
+  type DeadLetterJobCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DeadLetterJobFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DeadLetterJobCountAggregateInputType | true
+    }
+
+  export interface DeadLetterJobDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DeadLetterJob'], meta: { name: 'DeadLetterJob' } }
+    /**
+     * Find zero or one DeadLetterJob that matches the filter.
+     * @param {DeadLetterJobFindUniqueArgs} args - Arguments to find a DeadLetterJob
+     * @example
+     * // Get one DeadLetterJob
+     * const deadLetterJob = await prisma.deadLetterJob.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DeadLetterJobFindUniqueArgs>(args: SelectSubset<T, DeadLetterJobFindUniqueArgs<ExtArgs>>): Prisma__DeadLetterJobClient<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DeadLetterJob that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DeadLetterJobFindUniqueOrThrowArgs} args - Arguments to find a DeadLetterJob
+     * @example
+     * // Get one DeadLetterJob
+     * const deadLetterJob = await prisma.deadLetterJob.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DeadLetterJobFindUniqueOrThrowArgs>(args: SelectSubset<T, DeadLetterJobFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DeadLetterJobClient<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DeadLetterJob that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DeadLetterJobFindFirstArgs} args - Arguments to find a DeadLetterJob
+     * @example
+     * // Get one DeadLetterJob
+     * const deadLetterJob = await prisma.deadLetterJob.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DeadLetterJobFindFirstArgs>(args?: SelectSubset<T, DeadLetterJobFindFirstArgs<ExtArgs>>): Prisma__DeadLetterJobClient<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DeadLetterJob that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DeadLetterJobFindFirstOrThrowArgs} args - Arguments to find a DeadLetterJob
+     * @example
+     * // Get one DeadLetterJob
+     * const deadLetterJob = await prisma.deadLetterJob.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DeadLetterJobFindFirstOrThrowArgs>(args?: SelectSubset<T, DeadLetterJobFindFirstOrThrowArgs<ExtArgs>>): Prisma__DeadLetterJobClient<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DeadLetterJobs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DeadLetterJobFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DeadLetterJobs
+     * const deadLetterJobs = await prisma.deadLetterJob.findMany()
+     * 
+     * // Get first 10 DeadLetterJobs
+     * const deadLetterJobs = await prisma.deadLetterJob.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const deadLetterJobWithIdOnly = await prisma.deadLetterJob.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DeadLetterJobFindManyArgs>(args?: SelectSubset<T, DeadLetterJobFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DeadLetterJob.
+     * @param {DeadLetterJobCreateArgs} args - Arguments to create a DeadLetterJob.
+     * @example
+     * // Create one DeadLetterJob
+     * const DeadLetterJob = await prisma.deadLetterJob.create({
+     *   data: {
+     *     // ... data to create a DeadLetterJob
+     *   }
+     * })
+     * 
+     */
+    create<T extends DeadLetterJobCreateArgs>(args: SelectSubset<T, DeadLetterJobCreateArgs<ExtArgs>>): Prisma__DeadLetterJobClient<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DeadLetterJobs.
+     * @param {DeadLetterJobCreateManyArgs} args - Arguments to create many DeadLetterJobs.
+     * @example
+     * // Create many DeadLetterJobs
+     * const deadLetterJob = await prisma.deadLetterJob.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DeadLetterJobCreateManyArgs>(args?: SelectSubset<T, DeadLetterJobCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DeadLetterJobs and returns the data saved in the database.
+     * @param {DeadLetterJobCreateManyAndReturnArgs} args - Arguments to create many DeadLetterJobs.
+     * @example
+     * // Create many DeadLetterJobs
+     * const deadLetterJob = await prisma.deadLetterJob.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DeadLetterJobs and only return the `id`
+     * const deadLetterJobWithIdOnly = await prisma.deadLetterJob.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DeadLetterJobCreateManyAndReturnArgs>(args?: SelectSubset<T, DeadLetterJobCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DeadLetterJob.
+     * @param {DeadLetterJobDeleteArgs} args - Arguments to delete one DeadLetterJob.
+     * @example
+     * // Delete one DeadLetterJob
+     * const DeadLetterJob = await prisma.deadLetterJob.delete({
+     *   where: {
+     *     // ... filter to delete one DeadLetterJob
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DeadLetterJobDeleteArgs>(args: SelectSubset<T, DeadLetterJobDeleteArgs<ExtArgs>>): Prisma__DeadLetterJobClient<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DeadLetterJob.
+     * @param {DeadLetterJobUpdateArgs} args - Arguments to update one DeadLetterJob.
+     * @example
+     * // Update one DeadLetterJob
+     * const deadLetterJob = await prisma.deadLetterJob.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DeadLetterJobUpdateArgs>(args: SelectSubset<T, DeadLetterJobUpdateArgs<ExtArgs>>): Prisma__DeadLetterJobClient<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DeadLetterJobs.
+     * @param {DeadLetterJobDeleteManyArgs} args - Arguments to filter DeadLetterJobs to delete.
+     * @example
+     * // Delete a few DeadLetterJobs
+     * const { count } = await prisma.deadLetterJob.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DeadLetterJobDeleteManyArgs>(args?: SelectSubset<T, DeadLetterJobDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DeadLetterJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DeadLetterJobUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DeadLetterJobs
+     * const deadLetterJob = await prisma.deadLetterJob.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DeadLetterJobUpdateManyArgs>(args: SelectSubset<T, DeadLetterJobUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DeadLetterJobs and returns the data updated in the database.
+     * @param {DeadLetterJobUpdateManyAndReturnArgs} args - Arguments to update many DeadLetterJobs.
+     * @example
+     * // Update many DeadLetterJobs
+     * const deadLetterJob = await prisma.deadLetterJob.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DeadLetterJobs and only return the `id`
+     * const deadLetterJobWithIdOnly = await prisma.deadLetterJob.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DeadLetterJobUpdateManyAndReturnArgs>(args: SelectSubset<T, DeadLetterJobUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DeadLetterJob.
+     * @param {DeadLetterJobUpsertArgs} args - Arguments to update or create a DeadLetterJob.
+     * @example
+     * // Update or create a DeadLetterJob
+     * const deadLetterJob = await prisma.deadLetterJob.upsert({
+     *   create: {
+     *     // ... data to create a DeadLetterJob
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DeadLetterJob we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DeadLetterJobUpsertArgs>(args: SelectSubset<T, DeadLetterJobUpsertArgs<ExtArgs>>): Prisma__DeadLetterJobClient<$Result.GetResult<Prisma.$DeadLetterJobPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DeadLetterJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DeadLetterJobCountArgs} args - Arguments to filter DeadLetterJobs to count.
+     * @example
+     * // Count the number of DeadLetterJobs
+     * const count = await prisma.deadLetterJob.count({
+     *   where: {
+     *     // ... the filter for the DeadLetterJobs we want to count
+     *   }
+     * })
+    **/
+    count<T extends DeadLetterJobCountArgs>(
+      args?: Subset<T, DeadLetterJobCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DeadLetterJobCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DeadLetterJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DeadLetterJobAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DeadLetterJobAggregateArgs>(args: Subset<T, DeadLetterJobAggregateArgs>): Prisma.PrismaPromise<GetDeadLetterJobAggregateType<T>>
+
+    /**
+     * Group by DeadLetterJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DeadLetterJobGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DeadLetterJobGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DeadLetterJobGroupByArgs['orderBy'] }
+        : { orderBy?: DeadLetterJobGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DeadLetterJobGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDeadLetterJobGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DeadLetterJob model
+   */
+  readonly fields: DeadLetterJobFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DeadLetterJob.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DeadLetterJobClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DeadLetterJob model
+   */
+  interface DeadLetterJobFieldRefs {
+    readonly id: FieldRef<"DeadLetterJob", 'String'>
+    readonly dlq_id: FieldRef<"DeadLetterJob", 'String'>
+    readonly job_id: FieldRef<"DeadLetterJob", 'String'>
+    readonly batch_id: FieldRef<"DeadLetterJob", 'String'>
+    readonly attempt_count: FieldRef<"DeadLetterJob", 'Int'>
+    readonly last_error: FieldRef<"DeadLetterJob", 'String'>
+    readonly error_context: FieldRef<"DeadLetterJob", 'Json'>
+    readonly failed_at: FieldRef<"DeadLetterJob", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DeadLetterJob findUnique
+   */
+  export type DeadLetterJobFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * Filter, which DeadLetterJob to fetch.
+     */
+    where: DeadLetterJobWhereUniqueInput
+  }
+
+  /**
+   * DeadLetterJob findUniqueOrThrow
+   */
+  export type DeadLetterJobFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * Filter, which DeadLetterJob to fetch.
+     */
+    where: DeadLetterJobWhereUniqueInput
+  }
+
+  /**
+   * DeadLetterJob findFirst
+   */
+  export type DeadLetterJobFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * Filter, which DeadLetterJob to fetch.
+     */
+    where?: DeadLetterJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DeadLetterJobs to fetch.
+     */
+    orderBy?: DeadLetterJobOrderByWithRelationInput | DeadLetterJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DeadLetterJobs.
+     */
+    cursor?: DeadLetterJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DeadLetterJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DeadLetterJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DeadLetterJobs.
+     */
+    distinct?: DeadLetterJobScalarFieldEnum | DeadLetterJobScalarFieldEnum[]
+  }
+
+  /**
+   * DeadLetterJob findFirstOrThrow
+   */
+  export type DeadLetterJobFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * Filter, which DeadLetterJob to fetch.
+     */
+    where?: DeadLetterJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DeadLetterJobs to fetch.
+     */
+    orderBy?: DeadLetterJobOrderByWithRelationInput | DeadLetterJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DeadLetterJobs.
+     */
+    cursor?: DeadLetterJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DeadLetterJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DeadLetterJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DeadLetterJobs.
+     */
+    distinct?: DeadLetterJobScalarFieldEnum | DeadLetterJobScalarFieldEnum[]
+  }
+
+  /**
+   * DeadLetterJob findMany
+   */
+  export type DeadLetterJobFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * Filter, which DeadLetterJobs to fetch.
+     */
+    where?: DeadLetterJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DeadLetterJobs to fetch.
+     */
+    orderBy?: DeadLetterJobOrderByWithRelationInput | DeadLetterJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DeadLetterJobs.
+     */
+    cursor?: DeadLetterJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DeadLetterJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DeadLetterJobs.
+     */
+    skip?: number
+    distinct?: DeadLetterJobScalarFieldEnum | DeadLetterJobScalarFieldEnum[]
+  }
+
+  /**
+   * DeadLetterJob create
+   */
+  export type DeadLetterJobCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * The data needed to create a DeadLetterJob.
+     */
+    data: XOR<DeadLetterJobCreateInput, DeadLetterJobUncheckedCreateInput>
+  }
+
+  /**
+   * DeadLetterJob createMany
+   */
+  export type DeadLetterJobCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DeadLetterJobs.
+     */
+    data: DeadLetterJobCreateManyInput | DeadLetterJobCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DeadLetterJob createManyAndReturn
+   */
+  export type DeadLetterJobCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * The data used to create many DeadLetterJobs.
+     */
+    data: DeadLetterJobCreateManyInput | DeadLetterJobCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DeadLetterJob update
+   */
+  export type DeadLetterJobUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * The data needed to update a DeadLetterJob.
+     */
+    data: XOR<DeadLetterJobUpdateInput, DeadLetterJobUncheckedUpdateInput>
+    /**
+     * Choose, which DeadLetterJob to update.
+     */
+    where: DeadLetterJobWhereUniqueInput
+  }
+
+  /**
+   * DeadLetterJob updateMany
+   */
+  export type DeadLetterJobUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DeadLetterJobs.
+     */
+    data: XOR<DeadLetterJobUpdateManyMutationInput, DeadLetterJobUncheckedUpdateManyInput>
+    /**
+     * Filter which DeadLetterJobs to update
+     */
+    where?: DeadLetterJobWhereInput
+    /**
+     * Limit how many DeadLetterJobs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DeadLetterJob updateManyAndReturn
+   */
+  export type DeadLetterJobUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * The data used to update DeadLetterJobs.
+     */
+    data: XOR<DeadLetterJobUpdateManyMutationInput, DeadLetterJobUncheckedUpdateManyInput>
+    /**
+     * Filter which DeadLetterJobs to update
+     */
+    where?: DeadLetterJobWhereInput
+    /**
+     * Limit how many DeadLetterJobs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DeadLetterJob upsert
+   */
+  export type DeadLetterJobUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * The filter to search for the DeadLetterJob to update in case it exists.
+     */
+    where: DeadLetterJobWhereUniqueInput
+    /**
+     * In case the DeadLetterJob found by the `where` argument doesn't exist, create a new DeadLetterJob with this data.
+     */
+    create: XOR<DeadLetterJobCreateInput, DeadLetterJobUncheckedCreateInput>
+    /**
+     * In case the DeadLetterJob was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DeadLetterJobUpdateInput, DeadLetterJobUncheckedUpdateInput>
+  }
+
+  /**
+   * DeadLetterJob delete
+   */
+  export type DeadLetterJobDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+    /**
+     * Filter which DeadLetterJob to delete.
+     */
+    where: DeadLetterJobWhereUniqueInput
+  }
+
+  /**
+   * DeadLetterJob deleteMany
+   */
+  export type DeadLetterJobDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DeadLetterJobs to delete
+     */
+    where?: DeadLetterJobWhereInput
+    /**
+     * Limit how many DeadLetterJobs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DeadLetterJob without action
+   */
+  export type DeadLetterJobDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DeadLetterJob
+     */
+    select?: DeadLetterJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DeadLetterJob
+     */
+    omit?: DeadLetterJobOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model KafkaOutbox
+   */
+
+  export type AggregateKafkaOutbox = {
+    _count: KafkaOutboxCountAggregateOutputType | null
+    _min: KafkaOutboxMinAggregateOutputType | null
+    _max: KafkaOutboxMaxAggregateOutputType | null
+  }
+
+  export type KafkaOutboxMinAggregateOutputType = {
+    id: string | null
+    outbox_id: string | null
+    aggregate_id: string | null
+    event_type: string | null
+    published: boolean | null
+    created_at: Date | null
+  }
+
+  export type KafkaOutboxMaxAggregateOutputType = {
+    id: string | null
+    outbox_id: string | null
+    aggregate_id: string | null
+    event_type: string | null
+    published: boolean | null
+    created_at: Date | null
+  }
+
+  export type KafkaOutboxCountAggregateOutputType = {
+    id: number
+    outbox_id: number
+    aggregate_id: number
+    event_type: number
+    payload: number
+    published: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type KafkaOutboxMinAggregateInputType = {
+    id?: true
+    outbox_id?: true
+    aggregate_id?: true
+    event_type?: true
+    published?: true
+    created_at?: true
+  }
+
+  export type KafkaOutboxMaxAggregateInputType = {
+    id?: true
+    outbox_id?: true
+    aggregate_id?: true
+    event_type?: true
+    published?: true
+    created_at?: true
+  }
+
+  export type KafkaOutboxCountAggregateInputType = {
+    id?: true
+    outbox_id?: true
+    aggregate_id?: true
+    event_type?: true
+    payload?: true
+    published?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type KafkaOutboxAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KafkaOutbox to aggregate.
+     */
+    where?: KafkaOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KafkaOutboxes to fetch.
+     */
+    orderBy?: KafkaOutboxOrderByWithRelationInput | KafkaOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: KafkaOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KafkaOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KafkaOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned KafkaOutboxes
+    **/
+    _count?: true | KafkaOutboxCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: KafkaOutboxMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: KafkaOutboxMaxAggregateInputType
+  }
+
+  export type GetKafkaOutboxAggregateType<T extends KafkaOutboxAggregateArgs> = {
+        [P in keyof T & keyof AggregateKafkaOutbox]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateKafkaOutbox[P]>
+      : GetScalarType<T[P], AggregateKafkaOutbox[P]>
+  }
+
+
+
+
+  export type KafkaOutboxGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KafkaOutboxWhereInput
+    orderBy?: KafkaOutboxOrderByWithAggregationInput | KafkaOutboxOrderByWithAggregationInput[]
+    by: KafkaOutboxScalarFieldEnum[] | KafkaOutboxScalarFieldEnum
+    having?: KafkaOutboxScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: KafkaOutboxCountAggregateInputType | true
+    _min?: KafkaOutboxMinAggregateInputType
+    _max?: KafkaOutboxMaxAggregateInputType
+  }
+
+  export type KafkaOutboxGroupByOutputType = {
+    id: string
+    outbox_id: string
+    aggregate_id: string
+    event_type: string
+    payload: JsonValue
+    published: boolean
+    created_at: Date
+    _count: KafkaOutboxCountAggregateOutputType | null
+    _min: KafkaOutboxMinAggregateOutputType | null
+    _max: KafkaOutboxMaxAggregateOutputType | null
+  }
+
+  type GetKafkaOutboxGroupByPayload<T extends KafkaOutboxGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<KafkaOutboxGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof KafkaOutboxGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], KafkaOutboxGroupByOutputType[P]>
+            : GetScalarType<T[P], KafkaOutboxGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type KafkaOutboxSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    outbox_id?: boolean
+    aggregate_id?: boolean
+    event_type?: boolean
+    payload?: boolean
+    published?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["kafkaOutbox"]>
+
+  export type KafkaOutboxSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    outbox_id?: boolean
+    aggregate_id?: boolean
+    event_type?: boolean
+    payload?: boolean
+    published?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["kafkaOutbox"]>
+
+  export type KafkaOutboxSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    outbox_id?: boolean
+    aggregate_id?: boolean
+    event_type?: boolean
+    payload?: boolean
+    published?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["kafkaOutbox"]>
+
+  export type KafkaOutboxSelectScalar = {
+    id?: boolean
+    outbox_id?: boolean
+    aggregate_id?: boolean
+    event_type?: boolean
+    payload?: boolean
+    published?: boolean
+    created_at?: boolean
+  }
+
+  export type KafkaOutboxOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "outbox_id" | "aggregate_id" | "event_type" | "payload" | "published" | "created_at", ExtArgs["result"]["kafkaOutbox"]>
+
+  export type $KafkaOutboxPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "KafkaOutbox"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      outbox_id: string
+      aggregate_id: string
+      event_type: string
+      payload: Prisma.JsonValue
+      published: boolean
+      created_at: Date
+    }, ExtArgs["result"]["kafkaOutbox"]>
+    composites: {}
+  }
+
+  type KafkaOutboxGetPayload<S extends boolean | null | undefined | KafkaOutboxDefaultArgs> = $Result.GetResult<Prisma.$KafkaOutboxPayload, S>
+
+  type KafkaOutboxCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<KafkaOutboxFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: KafkaOutboxCountAggregateInputType | true
+    }
+
+  export interface KafkaOutboxDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['KafkaOutbox'], meta: { name: 'KafkaOutbox' } }
+    /**
+     * Find zero or one KafkaOutbox that matches the filter.
+     * @param {KafkaOutboxFindUniqueArgs} args - Arguments to find a KafkaOutbox
+     * @example
+     * // Get one KafkaOutbox
+     * const kafkaOutbox = await prisma.kafkaOutbox.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends KafkaOutboxFindUniqueArgs>(args: SelectSubset<T, KafkaOutboxFindUniqueArgs<ExtArgs>>): Prisma__KafkaOutboxClient<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one KafkaOutbox that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {KafkaOutboxFindUniqueOrThrowArgs} args - Arguments to find a KafkaOutbox
+     * @example
+     * // Get one KafkaOutbox
+     * const kafkaOutbox = await prisma.kafkaOutbox.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends KafkaOutboxFindUniqueOrThrowArgs>(args: SelectSubset<T, KafkaOutboxFindUniqueOrThrowArgs<ExtArgs>>): Prisma__KafkaOutboxClient<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KafkaOutbox that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KafkaOutboxFindFirstArgs} args - Arguments to find a KafkaOutbox
+     * @example
+     * // Get one KafkaOutbox
+     * const kafkaOutbox = await prisma.kafkaOutbox.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends KafkaOutboxFindFirstArgs>(args?: SelectSubset<T, KafkaOutboxFindFirstArgs<ExtArgs>>): Prisma__KafkaOutboxClient<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KafkaOutbox that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KafkaOutboxFindFirstOrThrowArgs} args - Arguments to find a KafkaOutbox
+     * @example
+     * // Get one KafkaOutbox
+     * const kafkaOutbox = await prisma.kafkaOutbox.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends KafkaOutboxFindFirstOrThrowArgs>(args?: SelectSubset<T, KafkaOutboxFindFirstOrThrowArgs<ExtArgs>>): Prisma__KafkaOutboxClient<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more KafkaOutboxes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KafkaOutboxFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all KafkaOutboxes
+     * const kafkaOutboxes = await prisma.kafkaOutbox.findMany()
+     * 
+     * // Get first 10 KafkaOutboxes
+     * const kafkaOutboxes = await prisma.kafkaOutbox.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const kafkaOutboxWithIdOnly = await prisma.kafkaOutbox.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends KafkaOutboxFindManyArgs>(args?: SelectSubset<T, KafkaOutboxFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a KafkaOutbox.
+     * @param {KafkaOutboxCreateArgs} args - Arguments to create a KafkaOutbox.
+     * @example
+     * // Create one KafkaOutbox
+     * const KafkaOutbox = await prisma.kafkaOutbox.create({
+     *   data: {
+     *     // ... data to create a KafkaOutbox
+     *   }
+     * })
+     * 
+     */
+    create<T extends KafkaOutboxCreateArgs>(args: SelectSubset<T, KafkaOutboxCreateArgs<ExtArgs>>): Prisma__KafkaOutboxClient<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many KafkaOutboxes.
+     * @param {KafkaOutboxCreateManyArgs} args - Arguments to create many KafkaOutboxes.
+     * @example
+     * // Create many KafkaOutboxes
+     * const kafkaOutbox = await prisma.kafkaOutbox.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends KafkaOutboxCreateManyArgs>(args?: SelectSubset<T, KafkaOutboxCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many KafkaOutboxes and returns the data saved in the database.
+     * @param {KafkaOutboxCreateManyAndReturnArgs} args - Arguments to create many KafkaOutboxes.
+     * @example
+     * // Create many KafkaOutboxes
+     * const kafkaOutbox = await prisma.kafkaOutbox.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many KafkaOutboxes and only return the `id`
+     * const kafkaOutboxWithIdOnly = await prisma.kafkaOutbox.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends KafkaOutboxCreateManyAndReturnArgs>(args?: SelectSubset<T, KafkaOutboxCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a KafkaOutbox.
+     * @param {KafkaOutboxDeleteArgs} args - Arguments to delete one KafkaOutbox.
+     * @example
+     * // Delete one KafkaOutbox
+     * const KafkaOutbox = await prisma.kafkaOutbox.delete({
+     *   where: {
+     *     // ... filter to delete one KafkaOutbox
+     *   }
+     * })
+     * 
+     */
+    delete<T extends KafkaOutboxDeleteArgs>(args: SelectSubset<T, KafkaOutboxDeleteArgs<ExtArgs>>): Prisma__KafkaOutboxClient<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one KafkaOutbox.
+     * @param {KafkaOutboxUpdateArgs} args - Arguments to update one KafkaOutbox.
+     * @example
+     * // Update one KafkaOutbox
+     * const kafkaOutbox = await prisma.kafkaOutbox.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends KafkaOutboxUpdateArgs>(args: SelectSubset<T, KafkaOutboxUpdateArgs<ExtArgs>>): Prisma__KafkaOutboxClient<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more KafkaOutboxes.
+     * @param {KafkaOutboxDeleteManyArgs} args - Arguments to filter KafkaOutboxes to delete.
+     * @example
+     * // Delete a few KafkaOutboxes
+     * const { count } = await prisma.kafkaOutbox.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends KafkaOutboxDeleteManyArgs>(args?: SelectSubset<T, KafkaOutboxDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KafkaOutboxes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KafkaOutboxUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many KafkaOutboxes
+     * const kafkaOutbox = await prisma.kafkaOutbox.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends KafkaOutboxUpdateManyArgs>(args: SelectSubset<T, KafkaOutboxUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KafkaOutboxes and returns the data updated in the database.
+     * @param {KafkaOutboxUpdateManyAndReturnArgs} args - Arguments to update many KafkaOutboxes.
+     * @example
+     * // Update many KafkaOutboxes
+     * const kafkaOutbox = await prisma.kafkaOutbox.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more KafkaOutboxes and only return the `id`
+     * const kafkaOutboxWithIdOnly = await prisma.kafkaOutbox.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends KafkaOutboxUpdateManyAndReturnArgs>(args: SelectSubset<T, KafkaOutboxUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one KafkaOutbox.
+     * @param {KafkaOutboxUpsertArgs} args - Arguments to update or create a KafkaOutbox.
+     * @example
+     * // Update or create a KafkaOutbox
+     * const kafkaOutbox = await prisma.kafkaOutbox.upsert({
+     *   create: {
+     *     // ... data to create a KafkaOutbox
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the KafkaOutbox we want to update
+     *   }
+     * })
+     */
+    upsert<T extends KafkaOutboxUpsertArgs>(args: SelectSubset<T, KafkaOutboxUpsertArgs<ExtArgs>>): Prisma__KafkaOutboxClient<$Result.GetResult<Prisma.$KafkaOutboxPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of KafkaOutboxes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KafkaOutboxCountArgs} args - Arguments to filter KafkaOutboxes to count.
+     * @example
+     * // Count the number of KafkaOutboxes
+     * const count = await prisma.kafkaOutbox.count({
+     *   where: {
+     *     // ... the filter for the KafkaOutboxes we want to count
+     *   }
+     * })
+    **/
+    count<T extends KafkaOutboxCountArgs>(
+      args?: Subset<T, KafkaOutboxCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], KafkaOutboxCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a KafkaOutbox.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KafkaOutboxAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends KafkaOutboxAggregateArgs>(args: Subset<T, KafkaOutboxAggregateArgs>): Prisma.PrismaPromise<GetKafkaOutboxAggregateType<T>>
+
+    /**
+     * Group by KafkaOutbox.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KafkaOutboxGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends KafkaOutboxGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: KafkaOutboxGroupByArgs['orderBy'] }
+        : { orderBy?: KafkaOutboxGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, KafkaOutboxGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKafkaOutboxGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the KafkaOutbox model
+   */
+  readonly fields: KafkaOutboxFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for KafkaOutbox.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__KafkaOutboxClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the KafkaOutbox model
+   */
+  interface KafkaOutboxFieldRefs {
+    readonly id: FieldRef<"KafkaOutbox", 'String'>
+    readonly outbox_id: FieldRef<"KafkaOutbox", 'String'>
+    readonly aggregate_id: FieldRef<"KafkaOutbox", 'String'>
+    readonly event_type: FieldRef<"KafkaOutbox", 'String'>
+    readonly payload: FieldRef<"KafkaOutbox", 'Json'>
+    readonly published: FieldRef<"KafkaOutbox", 'Boolean'>
+    readonly created_at: FieldRef<"KafkaOutbox", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * KafkaOutbox findUnique
+   */
+  export type KafkaOutboxFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * Filter, which KafkaOutbox to fetch.
+     */
+    where: KafkaOutboxWhereUniqueInput
+  }
+
+  /**
+   * KafkaOutbox findUniqueOrThrow
+   */
+  export type KafkaOutboxFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * Filter, which KafkaOutbox to fetch.
+     */
+    where: KafkaOutboxWhereUniqueInput
+  }
+
+  /**
+   * KafkaOutbox findFirst
+   */
+  export type KafkaOutboxFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * Filter, which KafkaOutbox to fetch.
+     */
+    where?: KafkaOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KafkaOutboxes to fetch.
+     */
+    orderBy?: KafkaOutboxOrderByWithRelationInput | KafkaOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KafkaOutboxes.
+     */
+    cursor?: KafkaOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KafkaOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KafkaOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KafkaOutboxes.
+     */
+    distinct?: KafkaOutboxScalarFieldEnum | KafkaOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * KafkaOutbox findFirstOrThrow
+   */
+  export type KafkaOutboxFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * Filter, which KafkaOutbox to fetch.
+     */
+    where?: KafkaOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KafkaOutboxes to fetch.
+     */
+    orderBy?: KafkaOutboxOrderByWithRelationInput | KafkaOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KafkaOutboxes.
+     */
+    cursor?: KafkaOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KafkaOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KafkaOutboxes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KafkaOutboxes.
+     */
+    distinct?: KafkaOutboxScalarFieldEnum | KafkaOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * KafkaOutbox findMany
+   */
+  export type KafkaOutboxFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * Filter, which KafkaOutboxes to fetch.
+     */
+    where?: KafkaOutboxWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KafkaOutboxes to fetch.
+     */
+    orderBy?: KafkaOutboxOrderByWithRelationInput | KafkaOutboxOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing KafkaOutboxes.
+     */
+    cursor?: KafkaOutboxWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KafkaOutboxes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KafkaOutboxes.
+     */
+    skip?: number
+    distinct?: KafkaOutboxScalarFieldEnum | KafkaOutboxScalarFieldEnum[]
+  }
+
+  /**
+   * KafkaOutbox create
+   */
+  export type KafkaOutboxCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * The data needed to create a KafkaOutbox.
+     */
+    data: XOR<KafkaOutboxCreateInput, KafkaOutboxUncheckedCreateInput>
+  }
+
+  /**
+   * KafkaOutbox createMany
+   */
+  export type KafkaOutboxCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many KafkaOutboxes.
+     */
+    data: KafkaOutboxCreateManyInput | KafkaOutboxCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * KafkaOutbox createManyAndReturn
+   */
+  export type KafkaOutboxCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * The data used to create many KafkaOutboxes.
+     */
+    data: KafkaOutboxCreateManyInput | KafkaOutboxCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * KafkaOutbox update
+   */
+  export type KafkaOutboxUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * The data needed to update a KafkaOutbox.
+     */
+    data: XOR<KafkaOutboxUpdateInput, KafkaOutboxUncheckedUpdateInput>
+    /**
+     * Choose, which KafkaOutbox to update.
+     */
+    where: KafkaOutboxWhereUniqueInput
+  }
+
+  /**
+   * KafkaOutbox updateMany
+   */
+  export type KafkaOutboxUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update KafkaOutboxes.
+     */
+    data: XOR<KafkaOutboxUpdateManyMutationInput, KafkaOutboxUncheckedUpdateManyInput>
+    /**
+     * Filter which KafkaOutboxes to update
+     */
+    where?: KafkaOutboxWhereInput
+    /**
+     * Limit how many KafkaOutboxes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * KafkaOutbox updateManyAndReturn
+   */
+  export type KafkaOutboxUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * The data used to update KafkaOutboxes.
+     */
+    data: XOR<KafkaOutboxUpdateManyMutationInput, KafkaOutboxUncheckedUpdateManyInput>
+    /**
+     * Filter which KafkaOutboxes to update
+     */
+    where?: KafkaOutboxWhereInput
+    /**
+     * Limit how many KafkaOutboxes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * KafkaOutbox upsert
+   */
+  export type KafkaOutboxUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * The filter to search for the KafkaOutbox to update in case it exists.
+     */
+    where: KafkaOutboxWhereUniqueInput
+    /**
+     * In case the KafkaOutbox found by the `where` argument doesn't exist, create a new KafkaOutbox with this data.
+     */
+    create: XOR<KafkaOutboxCreateInput, KafkaOutboxUncheckedCreateInput>
+    /**
+     * In case the KafkaOutbox was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<KafkaOutboxUpdateInput, KafkaOutboxUncheckedUpdateInput>
+  }
+
+  /**
+   * KafkaOutbox delete
+   */
+  export type KafkaOutboxDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+    /**
+     * Filter which KafkaOutbox to delete.
+     */
+    where: KafkaOutboxWhereUniqueInput
+  }
+
+  /**
+   * KafkaOutbox deleteMany
+   */
+  export type KafkaOutboxDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KafkaOutboxes to delete
+     */
+    where?: KafkaOutboxWhereInput
+    /**
+     * Limit how many KafkaOutboxes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * KafkaOutbox without action
+   */
+  export type KafkaOutboxDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KafkaOutbox
+     */
+    select?: KafkaOutboxSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KafkaOutbox
+     */
+    omit?: KafkaOutboxOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ArchivedBatch
+   */
+
+  export type AggregateArchivedBatch = {
+    _count: ArchivedBatchCountAggregateOutputType | null
+    _avg: ArchivedBatchAvgAggregateOutputType | null
+    _sum: ArchivedBatchSumAggregateOutputType | null
+    _min: ArchivedBatchMinAggregateOutputType | null
+    _max: ArchivedBatchMaxAggregateOutputType | null
+  }
+
+  export type ArchivedBatchAvgAggregateOutputType = {
+    event_count: number | null
+  }
+
+  export type ArchivedBatchSumAggregateOutputType = {
+    event_count: number | null
+  }
+
+  export type ArchivedBatchMinAggregateOutputType = {
+    id: string | null
+    batch_id: string | null
+    status: string | null
+    event_count: number | null
+    sealed_at: Date | null
+    archived_at: Date | null
+    original_created_at: Date | null
+  }
+
+  export type ArchivedBatchMaxAggregateOutputType = {
+    id: string | null
+    batch_id: string | null
+    status: string | null
+    event_count: number | null
+    sealed_at: Date | null
+    archived_at: Date | null
+    original_created_at: Date | null
+  }
+
+  export type ArchivedBatchCountAggregateOutputType = {
+    id: number
+    batch_id: number
+    status: number
+    event_count: number
+    sealed_at: number
+    archived_at: number
+    original_created_at: number
+    _all: number
+  }
+
+
+  export type ArchivedBatchAvgAggregateInputType = {
+    event_count?: true
+  }
+
+  export type ArchivedBatchSumAggregateInputType = {
+    event_count?: true
+  }
+
+  export type ArchivedBatchMinAggregateInputType = {
+    id?: true
+    batch_id?: true
+    status?: true
+    event_count?: true
+    sealed_at?: true
+    archived_at?: true
+    original_created_at?: true
+  }
+
+  export type ArchivedBatchMaxAggregateInputType = {
+    id?: true
+    batch_id?: true
+    status?: true
+    event_count?: true
+    sealed_at?: true
+    archived_at?: true
+    original_created_at?: true
+  }
+
+  export type ArchivedBatchCountAggregateInputType = {
+    id?: true
+    batch_id?: true
+    status?: true
+    event_count?: true
+    sealed_at?: true
+    archived_at?: true
+    original_created_at?: true
+    _all?: true
+  }
+
+  export type ArchivedBatchAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ArchivedBatch to aggregate.
+     */
+    where?: ArchivedBatchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArchivedBatches to fetch.
+     */
+    orderBy?: ArchivedBatchOrderByWithRelationInput | ArchivedBatchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ArchivedBatchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArchivedBatches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArchivedBatches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ArchivedBatches
+    **/
+    _count?: true | ArchivedBatchCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ArchivedBatchAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ArchivedBatchSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ArchivedBatchMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ArchivedBatchMaxAggregateInputType
+  }
+
+  export type GetArchivedBatchAggregateType<T extends ArchivedBatchAggregateArgs> = {
+        [P in keyof T & keyof AggregateArchivedBatch]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateArchivedBatch[P]>
+      : GetScalarType<T[P], AggregateArchivedBatch[P]>
+  }
+
+
+
+
+  export type ArchivedBatchGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArchivedBatchWhereInput
+    orderBy?: ArchivedBatchOrderByWithAggregationInput | ArchivedBatchOrderByWithAggregationInput[]
+    by: ArchivedBatchScalarFieldEnum[] | ArchivedBatchScalarFieldEnum
+    having?: ArchivedBatchScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ArchivedBatchCountAggregateInputType | true
+    _avg?: ArchivedBatchAvgAggregateInputType
+    _sum?: ArchivedBatchSumAggregateInputType
+    _min?: ArchivedBatchMinAggregateInputType
+    _max?: ArchivedBatchMaxAggregateInputType
+  }
+
+  export type ArchivedBatchGroupByOutputType = {
+    id: string
+    batch_id: string
+    status: string
+    event_count: number
+    sealed_at: Date | null
+    archived_at: Date
+    original_created_at: Date
+    _count: ArchivedBatchCountAggregateOutputType | null
+    _avg: ArchivedBatchAvgAggregateOutputType | null
+    _sum: ArchivedBatchSumAggregateOutputType | null
+    _min: ArchivedBatchMinAggregateOutputType | null
+    _max: ArchivedBatchMaxAggregateOutputType | null
+  }
+
+  type GetArchivedBatchGroupByPayload<T extends ArchivedBatchGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ArchivedBatchGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ArchivedBatchGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ArchivedBatchGroupByOutputType[P]>
+            : GetScalarType<T[P], ArchivedBatchGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ArchivedBatchSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    event_count?: boolean
+    sealed_at?: boolean
+    archived_at?: boolean
+    original_created_at?: boolean
+  }, ExtArgs["result"]["archivedBatch"]>
+
+  export type ArchivedBatchSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    event_count?: boolean
+    sealed_at?: boolean
+    archived_at?: boolean
+    original_created_at?: boolean
+  }, ExtArgs["result"]["archivedBatch"]>
+
+  export type ArchivedBatchSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    event_count?: boolean
+    sealed_at?: boolean
+    archived_at?: boolean
+    original_created_at?: boolean
+  }, ExtArgs["result"]["archivedBatch"]>
+
+  export type ArchivedBatchSelectScalar = {
+    id?: boolean
+    batch_id?: boolean
+    status?: boolean
+    event_count?: boolean
+    sealed_at?: boolean
+    archived_at?: boolean
+    original_created_at?: boolean
+  }
+
+  export type ArchivedBatchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "batch_id" | "status" | "event_count" | "sealed_at" | "archived_at" | "original_created_at", ExtArgs["result"]["archivedBatch"]>
+
+  export type $ArchivedBatchPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ArchivedBatch"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      batch_id: string
+      status: string
+      event_count: number
+      sealed_at: Date | null
+      archived_at: Date
+      original_created_at: Date
+    }, ExtArgs["result"]["archivedBatch"]>
+    composites: {}
+  }
+
+  type ArchivedBatchGetPayload<S extends boolean | null | undefined | ArchivedBatchDefaultArgs> = $Result.GetResult<Prisma.$ArchivedBatchPayload, S>
+
+  type ArchivedBatchCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ArchivedBatchFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ArchivedBatchCountAggregateInputType | true
+    }
+
+  export interface ArchivedBatchDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ArchivedBatch'], meta: { name: 'ArchivedBatch' } }
+    /**
+     * Find zero or one ArchivedBatch that matches the filter.
+     * @param {ArchivedBatchFindUniqueArgs} args - Arguments to find a ArchivedBatch
+     * @example
+     * // Get one ArchivedBatch
+     * const archivedBatch = await prisma.archivedBatch.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ArchivedBatchFindUniqueArgs>(args: SelectSubset<T, ArchivedBatchFindUniqueArgs<ExtArgs>>): Prisma__ArchivedBatchClient<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ArchivedBatch that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ArchivedBatchFindUniqueOrThrowArgs} args - Arguments to find a ArchivedBatch
+     * @example
+     * // Get one ArchivedBatch
+     * const archivedBatch = await prisma.archivedBatch.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ArchivedBatchFindUniqueOrThrowArgs>(args: SelectSubset<T, ArchivedBatchFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ArchivedBatchClient<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ArchivedBatch that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArchivedBatchFindFirstArgs} args - Arguments to find a ArchivedBatch
+     * @example
+     * // Get one ArchivedBatch
+     * const archivedBatch = await prisma.archivedBatch.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ArchivedBatchFindFirstArgs>(args?: SelectSubset<T, ArchivedBatchFindFirstArgs<ExtArgs>>): Prisma__ArchivedBatchClient<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ArchivedBatch that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArchivedBatchFindFirstOrThrowArgs} args - Arguments to find a ArchivedBatch
+     * @example
+     * // Get one ArchivedBatch
+     * const archivedBatch = await prisma.archivedBatch.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ArchivedBatchFindFirstOrThrowArgs>(args?: SelectSubset<T, ArchivedBatchFindFirstOrThrowArgs<ExtArgs>>): Prisma__ArchivedBatchClient<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ArchivedBatches that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArchivedBatchFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ArchivedBatches
+     * const archivedBatches = await prisma.archivedBatch.findMany()
+     * 
+     * // Get first 10 ArchivedBatches
+     * const archivedBatches = await prisma.archivedBatch.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const archivedBatchWithIdOnly = await prisma.archivedBatch.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ArchivedBatchFindManyArgs>(args?: SelectSubset<T, ArchivedBatchFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ArchivedBatch.
+     * @param {ArchivedBatchCreateArgs} args - Arguments to create a ArchivedBatch.
+     * @example
+     * // Create one ArchivedBatch
+     * const ArchivedBatch = await prisma.archivedBatch.create({
+     *   data: {
+     *     // ... data to create a ArchivedBatch
+     *   }
+     * })
+     * 
+     */
+    create<T extends ArchivedBatchCreateArgs>(args: SelectSubset<T, ArchivedBatchCreateArgs<ExtArgs>>): Prisma__ArchivedBatchClient<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ArchivedBatches.
+     * @param {ArchivedBatchCreateManyArgs} args - Arguments to create many ArchivedBatches.
+     * @example
+     * // Create many ArchivedBatches
+     * const archivedBatch = await prisma.archivedBatch.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ArchivedBatchCreateManyArgs>(args?: SelectSubset<T, ArchivedBatchCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ArchivedBatches and returns the data saved in the database.
+     * @param {ArchivedBatchCreateManyAndReturnArgs} args - Arguments to create many ArchivedBatches.
+     * @example
+     * // Create many ArchivedBatches
+     * const archivedBatch = await prisma.archivedBatch.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ArchivedBatches and only return the `id`
+     * const archivedBatchWithIdOnly = await prisma.archivedBatch.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ArchivedBatchCreateManyAndReturnArgs>(args?: SelectSubset<T, ArchivedBatchCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ArchivedBatch.
+     * @param {ArchivedBatchDeleteArgs} args - Arguments to delete one ArchivedBatch.
+     * @example
+     * // Delete one ArchivedBatch
+     * const ArchivedBatch = await prisma.archivedBatch.delete({
+     *   where: {
+     *     // ... filter to delete one ArchivedBatch
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ArchivedBatchDeleteArgs>(args: SelectSubset<T, ArchivedBatchDeleteArgs<ExtArgs>>): Prisma__ArchivedBatchClient<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ArchivedBatch.
+     * @param {ArchivedBatchUpdateArgs} args - Arguments to update one ArchivedBatch.
+     * @example
+     * // Update one ArchivedBatch
+     * const archivedBatch = await prisma.archivedBatch.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ArchivedBatchUpdateArgs>(args: SelectSubset<T, ArchivedBatchUpdateArgs<ExtArgs>>): Prisma__ArchivedBatchClient<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ArchivedBatches.
+     * @param {ArchivedBatchDeleteManyArgs} args - Arguments to filter ArchivedBatches to delete.
+     * @example
+     * // Delete a few ArchivedBatches
+     * const { count } = await prisma.archivedBatch.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ArchivedBatchDeleteManyArgs>(args?: SelectSubset<T, ArchivedBatchDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ArchivedBatches.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArchivedBatchUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ArchivedBatches
+     * const archivedBatch = await prisma.archivedBatch.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ArchivedBatchUpdateManyArgs>(args: SelectSubset<T, ArchivedBatchUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ArchivedBatches and returns the data updated in the database.
+     * @param {ArchivedBatchUpdateManyAndReturnArgs} args - Arguments to update many ArchivedBatches.
+     * @example
+     * // Update many ArchivedBatches
+     * const archivedBatch = await prisma.archivedBatch.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ArchivedBatches and only return the `id`
+     * const archivedBatchWithIdOnly = await prisma.archivedBatch.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ArchivedBatchUpdateManyAndReturnArgs>(args: SelectSubset<T, ArchivedBatchUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ArchivedBatch.
+     * @param {ArchivedBatchUpsertArgs} args - Arguments to update or create a ArchivedBatch.
+     * @example
+     * // Update or create a ArchivedBatch
+     * const archivedBatch = await prisma.archivedBatch.upsert({
+     *   create: {
+     *     // ... data to create a ArchivedBatch
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ArchivedBatch we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ArchivedBatchUpsertArgs>(args: SelectSubset<T, ArchivedBatchUpsertArgs<ExtArgs>>): Prisma__ArchivedBatchClient<$Result.GetResult<Prisma.$ArchivedBatchPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ArchivedBatches.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArchivedBatchCountArgs} args - Arguments to filter ArchivedBatches to count.
+     * @example
+     * // Count the number of ArchivedBatches
+     * const count = await prisma.archivedBatch.count({
+     *   where: {
+     *     // ... the filter for the ArchivedBatches we want to count
+     *   }
+     * })
+    **/
+    count<T extends ArchivedBatchCountArgs>(
+      args?: Subset<T, ArchivedBatchCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ArchivedBatchCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ArchivedBatch.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArchivedBatchAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ArchivedBatchAggregateArgs>(args: Subset<T, ArchivedBatchAggregateArgs>): Prisma.PrismaPromise<GetArchivedBatchAggregateType<T>>
+
+    /**
+     * Group by ArchivedBatch.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArchivedBatchGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ArchivedBatchGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ArchivedBatchGroupByArgs['orderBy'] }
+        : { orderBy?: ArchivedBatchGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ArchivedBatchGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetArchivedBatchGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ArchivedBatch model
+   */
+  readonly fields: ArchivedBatchFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ArchivedBatch.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ArchivedBatchClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ArchivedBatch model
+   */
+  interface ArchivedBatchFieldRefs {
+    readonly id: FieldRef<"ArchivedBatch", 'String'>
+    readonly batch_id: FieldRef<"ArchivedBatch", 'String'>
+    readonly status: FieldRef<"ArchivedBatch", 'String'>
+    readonly event_count: FieldRef<"ArchivedBatch", 'Int'>
+    readonly sealed_at: FieldRef<"ArchivedBatch", 'DateTime'>
+    readonly archived_at: FieldRef<"ArchivedBatch", 'DateTime'>
+    readonly original_created_at: FieldRef<"ArchivedBatch", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ArchivedBatch findUnique
+   */
+  export type ArchivedBatchFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * Filter, which ArchivedBatch to fetch.
+     */
+    where: ArchivedBatchWhereUniqueInput
+  }
+
+  /**
+   * ArchivedBatch findUniqueOrThrow
+   */
+  export type ArchivedBatchFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * Filter, which ArchivedBatch to fetch.
+     */
+    where: ArchivedBatchWhereUniqueInput
+  }
+
+  /**
+   * ArchivedBatch findFirst
+   */
+  export type ArchivedBatchFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * Filter, which ArchivedBatch to fetch.
+     */
+    where?: ArchivedBatchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArchivedBatches to fetch.
+     */
+    orderBy?: ArchivedBatchOrderByWithRelationInput | ArchivedBatchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ArchivedBatches.
+     */
+    cursor?: ArchivedBatchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArchivedBatches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArchivedBatches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArchivedBatches.
+     */
+    distinct?: ArchivedBatchScalarFieldEnum | ArchivedBatchScalarFieldEnum[]
+  }
+
+  /**
+   * ArchivedBatch findFirstOrThrow
+   */
+  export type ArchivedBatchFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * Filter, which ArchivedBatch to fetch.
+     */
+    where?: ArchivedBatchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArchivedBatches to fetch.
+     */
+    orderBy?: ArchivedBatchOrderByWithRelationInput | ArchivedBatchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ArchivedBatches.
+     */
+    cursor?: ArchivedBatchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArchivedBatches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArchivedBatches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArchivedBatches.
+     */
+    distinct?: ArchivedBatchScalarFieldEnum | ArchivedBatchScalarFieldEnum[]
+  }
+
+  /**
+   * ArchivedBatch findMany
+   */
+  export type ArchivedBatchFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * Filter, which ArchivedBatches to fetch.
+     */
+    where?: ArchivedBatchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArchivedBatches to fetch.
+     */
+    orderBy?: ArchivedBatchOrderByWithRelationInput | ArchivedBatchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ArchivedBatches.
+     */
+    cursor?: ArchivedBatchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArchivedBatches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArchivedBatches.
+     */
+    skip?: number
+    distinct?: ArchivedBatchScalarFieldEnum | ArchivedBatchScalarFieldEnum[]
+  }
+
+  /**
+   * ArchivedBatch create
+   */
+  export type ArchivedBatchCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ArchivedBatch.
+     */
+    data: XOR<ArchivedBatchCreateInput, ArchivedBatchUncheckedCreateInput>
+  }
+
+  /**
+   * ArchivedBatch createMany
+   */
+  export type ArchivedBatchCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ArchivedBatches.
+     */
+    data: ArchivedBatchCreateManyInput | ArchivedBatchCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ArchivedBatch createManyAndReturn
+   */
+  export type ArchivedBatchCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * The data used to create many ArchivedBatches.
+     */
+    data: ArchivedBatchCreateManyInput | ArchivedBatchCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ArchivedBatch update
+   */
+  export type ArchivedBatchUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ArchivedBatch.
+     */
+    data: XOR<ArchivedBatchUpdateInput, ArchivedBatchUncheckedUpdateInput>
+    /**
+     * Choose, which ArchivedBatch to update.
+     */
+    where: ArchivedBatchWhereUniqueInput
+  }
+
+  /**
+   * ArchivedBatch updateMany
+   */
+  export type ArchivedBatchUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ArchivedBatches.
+     */
+    data: XOR<ArchivedBatchUpdateManyMutationInput, ArchivedBatchUncheckedUpdateManyInput>
+    /**
+     * Filter which ArchivedBatches to update
+     */
+    where?: ArchivedBatchWhereInput
+    /**
+     * Limit how many ArchivedBatches to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArchivedBatch updateManyAndReturn
+   */
+  export type ArchivedBatchUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * The data used to update ArchivedBatches.
+     */
+    data: XOR<ArchivedBatchUpdateManyMutationInput, ArchivedBatchUncheckedUpdateManyInput>
+    /**
+     * Filter which ArchivedBatches to update
+     */
+    where?: ArchivedBatchWhereInput
+    /**
+     * Limit how many ArchivedBatches to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArchivedBatch upsert
+   */
+  export type ArchivedBatchUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ArchivedBatch to update in case it exists.
+     */
+    where: ArchivedBatchWhereUniqueInput
+    /**
+     * In case the ArchivedBatch found by the `where` argument doesn't exist, create a new ArchivedBatch with this data.
+     */
+    create: XOR<ArchivedBatchCreateInput, ArchivedBatchUncheckedCreateInput>
+    /**
+     * In case the ArchivedBatch was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ArchivedBatchUpdateInput, ArchivedBatchUncheckedUpdateInput>
+  }
+
+  /**
+   * ArchivedBatch delete
+   */
+  export type ArchivedBatchDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+    /**
+     * Filter which ArchivedBatch to delete.
+     */
+    where: ArchivedBatchWhereUniqueInput
+  }
+
+  /**
+   * ArchivedBatch deleteMany
+   */
+  export type ArchivedBatchDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ArchivedBatches to delete
+     */
+    where?: ArchivedBatchWhereInput
+    /**
+     * Limit how many ArchivedBatches to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArchivedBatch without action
+   */
+  export type ArchivedBatchDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArchivedBatch
+     */
+    select?: ArchivedBatchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArchivedBatch
+     */
+    omit?: ArchivedBatchOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -11794,6 +18854,91 @@ export namespace Prisma {
   export type InsightScalarFieldEnum = (typeof InsightScalarFieldEnum)[keyof typeof InsightScalarFieldEnum]
 
 
+  export const EventScalarFieldEnum: {
+    id: 'id',
+    batch_id: 'batch_id',
+    event_type: 'event_type',
+    user_id: 'user_id',
+    data: 'data',
+    timestamp: 'timestamp',
+    created_at: 'created_at'
+  };
+
+  export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
+
+
+  export const BatchScalarFieldEnum: {
+    id: 'id',
+    batch_id: 'batch_id',
+    status: 'status',
+    event_count: 'event_count',
+    sealed_at: 'sealed_at',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type BatchScalarFieldEnum = (typeof BatchScalarFieldEnum)[keyof typeof BatchScalarFieldEnum]
+
+
+  export const AnalysisJobScalarFieldEnum: {
+    id: 'id',
+    job_id: 'job_id',
+    batch_id: 'batch_id',
+    status: 'status',
+    attempt_count: 'attempt_count',
+    max_attempts: 'max_attempts',
+    lock_expires_at: 'lock_expires_at',
+    trigger_type: 'trigger_type',
+    last_error: 'last_error',
+    error_context: 'error_context',
+    analysis_time_ms: 'analysis_time_ms',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type AnalysisJobScalarFieldEnum = (typeof AnalysisJobScalarFieldEnum)[keyof typeof AnalysisJobScalarFieldEnum]
+
+
+  export const DeadLetterJobScalarFieldEnum: {
+    id: 'id',
+    dlq_id: 'dlq_id',
+    job_id: 'job_id',
+    batch_id: 'batch_id',
+    attempt_count: 'attempt_count',
+    last_error: 'last_error',
+    error_context: 'error_context',
+    failed_at: 'failed_at'
+  };
+
+  export type DeadLetterJobScalarFieldEnum = (typeof DeadLetterJobScalarFieldEnum)[keyof typeof DeadLetterJobScalarFieldEnum]
+
+
+  export const KafkaOutboxScalarFieldEnum: {
+    id: 'id',
+    outbox_id: 'outbox_id',
+    aggregate_id: 'aggregate_id',
+    event_type: 'event_type',
+    payload: 'payload',
+    published: 'published',
+    created_at: 'created_at'
+  };
+
+  export type KafkaOutboxScalarFieldEnum = (typeof KafkaOutboxScalarFieldEnum)[keyof typeof KafkaOutboxScalarFieldEnum]
+
+
+  export const ArchivedBatchScalarFieldEnum: {
+    id: 'id',
+    batch_id: 'batch_id',
+    status: 'status',
+    event_count: 'event_count',
+    sealed_at: 'sealed_at',
+    archived_at: 'archived_at',
+    original_created_at: 'original_created_at'
+  };
+
+  export type ArchivedBatchScalarFieldEnum = (typeof ArchivedBatchScalarFieldEnum)[keyof typeof ArchivedBatchScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -11807,6 +18952,14 @@ export namespace Prisma {
   };
 
   export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const QueryMode: {
@@ -12613,6 +19766,427 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Insight"> | Date | string
   }
 
+  export type EventWhereInput = {
+    AND?: EventWhereInput | EventWhereInput[]
+    OR?: EventWhereInput[]
+    NOT?: EventWhereInput | EventWhereInput[]
+    id?: StringFilter<"Event"> | string
+    batch_id?: StringFilter<"Event"> | string
+    event_type?: StringFilter<"Event"> | string
+    user_id?: StringNullableFilter<"Event"> | string | null
+    data?: JsonFilter<"Event">
+    timestamp?: DateTimeFilter<"Event"> | Date | string
+    created_at?: DateTimeFilter<"Event"> | Date | string
+  }
+
+  export type EventOrderByWithRelationInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    event_type?: SortOrder
+    user_id?: SortOrderInput | SortOrder
+    data?: SortOrder
+    timestamp?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type EventWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: EventWhereInput | EventWhereInput[]
+    OR?: EventWhereInput[]
+    NOT?: EventWhereInput | EventWhereInput[]
+    batch_id?: StringFilter<"Event"> | string
+    event_type?: StringFilter<"Event"> | string
+    user_id?: StringNullableFilter<"Event"> | string | null
+    data?: JsonFilter<"Event">
+    timestamp?: DateTimeFilter<"Event"> | Date | string
+    created_at?: DateTimeFilter<"Event"> | Date | string
+  }, "id">
+
+  export type EventOrderByWithAggregationInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    event_type?: SortOrder
+    user_id?: SortOrderInput | SortOrder
+    data?: SortOrder
+    timestamp?: SortOrder
+    created_at?: SortOrder
+    _count?: EventCountOrderByAggregateInput
+    _max?: EventMaxOrderByAggregateInput
+    _min?: EventMinOrderByAggregateInput
+  }
+
+  export type EventScalarWhereWithAggregatesInput = {
+    AND?: EventScalarWhereWithAggregatesInput | EventScalarWhereWithAggregatesInput[]
+    OR?: EventScalarWhereWithAggregatesInput[]
+    NOT?: EventScalarWhereWithAggregatesInput | EventScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Event"> | string
+    batch_id?: StringWithAggregatesFilter<"Event"> | string
+    event_type?: StringWithAggregatesFilter<"Event"> | string
+    user_id?: StringNullableWithAggregatesFilter<"Event"> | string | null
+    data?: JsonWithAggregatesFilter<"Event">
+    timestamp?: DateTimeWithAggregatesFilter<"Event"> | Date | string
+    created_at?: DateTimeWithAggregatesFilter<"Event"> | Date | string
+  }
+
+  export type BatchWhereInput = {
+    AND?: BatchWhereInput | BatchWhereInput[]
+    OR?: BatchWhereInput[]
+    NOT?: BatchWhereInput | BatchWhereInput[]
+    id?: StringFilter<"Batch"> | string
+    batch_id?: StringFilter<"Batch"> | string
+    status?: StringFilter<"Batch"> | string
+    event_count?: IntFilter<"Batch"> | number
+    sealed_at?: DateTimeNullableFilter<"Batch"> | Date | string | null
+    created_at?: DateTimeFilter<"Batch"> | Date | string
+    updated_at?: DateTimeFilter<"Batch"> | Date | string
+    analysis_jobs?: AnalysisJobListRelationFilter
+  }
+
+  export type BatchOrderByWithRelationInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    event_count?: SortOrder
+    sealed_at?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    analysis_jobs?: AnalysisJobOrderByRelationAggregateInput
+  }
+
+  export type BatchWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    batch_id?: string
+    AND?: BatchWhereInput | BatchWhereInput[]
+    OR?: BatchWhereInput[]
+    NOT?: BatchWhereInput | BatchWhereInput[]
+    status?: StringFilter<"Batch"> | string
+    event_count?: IntFilter<"Batch"> | number
+    sealed_at?: DateTimeNullableFilter<"Batch"> | Date | string | null
+    created_at?: DateTimeFilter<"Batch"> | Date | string
+    updated_at?: DateTimeFilter<"Batch"> | Date | string
+    analysis_jobs?: AnalysisJobListRelationFilter
+  }, "id" | "batch_id">
+
+  export type BatchOrderByWithAggregationInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    event_count?: SortOrder
+    sealed_at?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: BatchCountOrderByAggregateInput
+    _avg?: BatchAvgOrderByAggregateInput
+    _max?: BatchMaxOrderByAggregateInput
+    _min?: BatchMinOrderByAggregateInput
+    _sum?: BatchSumOrderByAggregateInput
+  }
+
+  export type BatchScalarWhereWithAggregatesInput = {
+    AND?: BatchScalarWhereWithAggregatesInput | BatchScalarWhereWithAggregatesInput[]
+    OR?: BatchScalarWhereWithAggregatesInput[]
+    NOT?: BatchScalarWhereWithAggregatesInput | BatchScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Batch"> | string
+    batch_id?: StringWithAggregatesFilter<"Batch"> | string
+    status?: StringWithAggregatesFilter<"Batch"> | string
+    event_count?: IntWithAggregatesFilter<"Batch"> | number
+    sealed_at?: DateTimeNullableWithAggregatesFilter<"Batch"> | Date | string | null
+    created_at?: DateTimeWithAggregatesFilter<"Batch"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"Batch"> | Date | string
+  }
+
+  export type AnalysisJobWhereInput = {
+    AND?: AnalysisJobWhereInput | AnalysisJobWhereInput[]
+    OR?: AnalysisJobWhereInput[]
+    NOT?: AnalysisJobWhereInput | AnalysisJobWhereInput[]
+    id?: StringFilter<"AnalysisJob"> | string
+    job_id?: StringFilter<"AnalysisJob"> | string
+    batch_id?: StringFilter<"AnalysisJob"> | string
+    status?: StringFilter<"AnalysisJob"> | string
+    attempt_count?: IntFilter<"AnalysisJob"> | number
+    max_attempts?: IntFilter<"AnalysisJob"> | number
+    lock_expires_at?: DateTimeNullableFilter<"AnalysisJob"> | Date | string | null
+    trigger_type?: StringFilter<"AnalysisJob"> | string
+    last_error?: StringNullableFilter<"AnalysisJob"> | string | null
+    error_context?: JsonNullableFilter<"AnalysisJob">
+    analysis_time_ms?: IntNullableFilter<"AnalysisJob"> | number | null
+    created_at?: DateTimeFilter<"AnalysisJob"> | Date | string
+    updated_at?: DateTimeFilter<"AnalysisJob"> | Date | string
+    batch?: XOR<BatchScalarRelationFilter, BatchWhereInput>
+  }
+
+  export type AnalysisJobOrderByWithRelationInput = {
+    id?: SortOrder
+    job_id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    attempt_count?: SortOrder
+    max_attempts?: SortOrder
+    lock_expires_at?: SortOrderInput | SortOrder
+    trigger_type?: SortOrder
+    last_error?: SortOrderInput | SortOrder
+    error_context?: SortOrderInput | SortOrder
+    analysis_time_ms?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    batch?: BatchOrderByWithRelationInput
+  }
+
+  export type AnalysisJobWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    job_id?: string
+    AND?: AnalysisJobWhereInput | AnalysisJobWhereInput[]
+    OR?: AnalysisJobWhereInput[]
+    NOT?: AnalysisJobWhereInput | AnalysisJobWhereInput[]
+    batch_id?: StringFilter<"AnalysisJob"> | string
+    status?: StringFilter<"AnalysisJob"> | string
+    attempt_count?: IntFilter<"AnalysisJob"> | number
+    max_attempts?: IntFilter<"AnalysisJob"> | number
+    lock_expires_at?: DateTimeNullableFilter<"AnalysisJob"> | Date | string | null
+    trigger_type?: StringFilter<"AnalysisJob"> | string
+    last_error?: StringNullableFilter<"AnalysisJob"> | string | null
+    error_context?: JsonNullableFilter<"AnalysisJob">
+    analysis_time_ms?: IntNullableFilter<"AnalysisJob"> | number | null
+    created_at?: DateTimeFilter<"AnalysisJob"> | Date | string
+    updated_at?: DateTimeFilter<"AnalysisJob"> | Date | string
+    batch?: XOR<BatchScalarRelationFilter, BatchWhereInput>
+  }, "id" | "job_id">
+
+  export type AnalysisJobOrderByWithAggregationInput = {
+    id?: SortOrder
+    job_id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    attempt_count?: SortOrder
+    max_attempts?: SortOrder
+    lock_expires_at?: SortOrderInput | SortOrder
+    trigger_type?: SortOrder
+    last_error?: SortOrderInput | SortOrder
+    error_context?: SortOrderInput | SortOrder
+    analysis_time_ms?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: AnalysisJobCountOrderByAggregateInput
+    _avg?: AnalysisJobAvgOrderByAggregateInput
+    _max?: AnalysisJobMaxOrderByAggregateInput
+    _min?: AnalysisJobMinOrderByAggregateInput
+    _sum?: AnalysisJobSumOrderByAggregateInput
+  }
+
+  export type AnalysisJobScalarWhereWithAggregatesInput = {
+    AND?: AnalysisJobScalarWhereWithAggregatesInput | AnalysisJobScalarWhereWithAggregatesInput[]
+    OR?: AnalysisJobScalarWhereWithAggregatesInput[]
+    NOT?: AnalysisJobScalarWhereWithAggregatesInput | AnalysisJobScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AnalysisJob"> | string
+    job_id?: StringWithAggregatesFilter<"AnalysisJob"> | string
+    batch_id?: StringWithAggregatesFilter<"AnalysisJob"> | string
+    status?: StringWithAggregatesFilter<"AnalysisJob"> | string
+    attempt_count?: IntWithAggregatesFilter<"AnalysisJob"> | number
+    max_attempts?: IntWithAggregatesFilter<"AnalysisJob"> | number
+    lock_expires_at?: DateTimeNullableWithAggregatesFilter<"AnalysisJob"> | Date | string | null
+    trigger_type?: StringWithAggregatesFilter<"AnalysisJob"> | string
+    last_error?: StringNullableWithAggregatesFilter<"AnalysisJob"> | string | null
+    error_context?: JsonNullableWithAggregatesFilter<"AnalysisJob">
+    analysis_time_ms?: IntNullableWithAggregatesFilter<"AnalysisJob"> | number | null
+    created_at?: DateTimeWithAggregatesFilter<"AnalysisJob"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"AnalysisJob"> | Date | string
+  }
+
+  export type DeadLetterJobWhereInput = {
+    AND?: DeadLetterJobWhereInput | DeadLetterJobWhereInput[]
+    OR?: DeadLetterJobWhereInput[]
+    NOT?: DeadLetterJobWhereInput | DeadLetterJobWhereInput[]
+    id?: StringFilter<"DeadLetterJob"> | string
+    dlq_id?: StringFilter<"DeadLetterJob"> | string
+    job_id?: StringFilter<"DeadLetterJob"> | string
+    batch_id?: StringFilter<"DeadLetterJob"> | string
+    attempt_count?: IntFilter<"DeadLetterJob"> | number
+    last_error?: StringFilter<"DeadLetterJob"> | string
+    error_context?: JsonFilter<"DeadLetterJob">
+    failed_at?: DateTimeFilter<"DeadLetterJob"> | Date | string
+  }
+
+  export type DeadLetterJobOrderByWithRelationInput = {
+    id?: SortOrder
+    dlq_id?: SortOrder
+    job_id?: SortOrder
+    batch_id?: SortOrder
+    attempt_count?: SortOrder
+    last_error?: SortOrder
+    error_context?: SortOrder
+    failed_at?: SortOrder
+  }
+
+  export type DeadLetterJobWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    dlq_id?: string
+    AND?: DeadLetterJobWhereInput | DeadLetterJobWhereInput[]
+    OR?: DeadLetterJobWhereInput[]
+    NOT?: DeadLetterJobWhereInput | DeadLetterJobWhereInput[]
+    job_id?: StringFilter<"DeadLetterJob"> | string
+    batch_id?: StringFilter<"DeadLetterJob"> | string
+    attempt_count?: IntFilter<"DeadLetterJob"> | number
+    last_error?: StringFilter<"DeadLetterJob"> | string
+    error_context?: JsonFilter<"DeadLetterJob">
+    failed_at?: DateTimeFilter<"DeadLetterJob"> | Date | string
+  }, "id" | "dlq_id">
+
+  export type DeadLetterJobOrderByWithAggregationInput = {
+    id?: SortOrder
+    dlq_id?: SortOrder
+    job_id?: SortOrder
+    batch_id?: SortOrder
+    attempt_count?: SortOrder
+    last_error?: SortOrder
+    error_context?: SortOrder
+    failed_at?: SortOrder
+    _count?: DeadLetterJobCountOrderByAggregateInput
+    _avg?: DeadLetterJobAvgOrderByAggregateInput
+    _max?: DeadLetterJobMaxOrderByAggregateInput
+    _min?: DeadLetterJobMinOrderByAggregateInput
+    _sum?: DeadLetterJobSumOrderByAggregateInput
+  }
+
+  export type DeadLetterJobScalarWhereWithAggregatesInput = {
+    AND?: DeadLetterJobScalarWhereWithAggregatesInput | DeadLetterJobScalarWhereWithAggregatesInput[]
+    OR?: DeadLetterJobScalarWhereWithAggregatesInput[]
+    NOT?: DeadLetterJobScalarWhereWithAggregatesInput | DeadLetterJobScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DeadLetterJob"> | string
+    dlq_id?: StringWithAggregatesFilter<"DeadLetterJob"> | string
+    job_id?: StringWithAggregatesFilter<"DeadLetterJob"> | string
+    batch_id?: StringWithAggregatesFilter<"DeadLetterJob"> | string
+    attempt_count?: IntWithAggregatesFilter<"DeadLetterJob"> | number
+    last_error?: StringWithAggregatesFilter<"DeadLetterJob"> | string
+    error_context?: JsonWithAggregatesFilter<"DeadLetterJob">
+    failed_at?: DateTimeWithAggregatesFilter<"DeadLetterJob"> | Date | string
+  }
+
+  export type KafkaOutboxWhereInput = {
+    AND?: KafkaOutboxWhereInput | KafkaOutboxWhereInput[]
+    OR?: KafkaOutboxWhereInput[]
+    NOT?: KafkaOutboxWhereInput | KafkaOutboxWhereInput[]
+    id?: StringFilter<"KafkaOutbox"> | string
+    outbox_id?: StringFilter<"KafkaOutbox"> | string
+    aggregate_id?: StringFilter<"KafkaOutbox"> | string
+    event_type?: StringFilter<"KafkaOutbox"> | string
+    payload?: JsonFilter<"KafkaOutbox">
+    published?: BoolFilter<"KafkaOutbox"> | boolean
+    created_at?: DateTimeFilter<"KafkaOutbox"> | Date | string
+  }
+
+  export type KafkaOutboxOrderByWithRelationInput = {
+    id?: SortOrder
+    outbox_id?: SortOrder
+    aggregate_id?: SortOrder
+    event_type?: SortOrder
+    payload?: SortOrder
+    published?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type KafkaOutboxWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    outbox_id?: string
+    AND?: KafkaOutboxWhereInput | KafkaOutboxWhereInput[]
+    OR?: KafkaOutboxWhereInput[]
+    NOT?: KafkaOutboxWhereInput | KafkaOutboxWhereInput[]
+    aggregate_id?: StringFilter<"KafkaOutbox"> | string
+    event_type?: StringFilter<"KafkaOutbox"> | string
+    payload?: JsonFilter<"KafkaOutbox">
+    published?: BoolFilter<"KafkaOutbox"> | boolean
+    created_at?: DateTimeFilter<"KafkaOutbox"> | Date | string
+  }, "id" | "outbox_id">
+
+  export type KafkaOutboxOrderByWithAggregationInput = {
+    id?: SortOrder
+    outbox_id?: SortOrder
+    aggregate_id?: SortOrder
+    event_type?: SortOrder
+    payload?: SortOrder
+    published?: SortOrder
+    created_at?: SortOrder
+    _count?: KafkaOutboxCountOrderByAggregateInput
+    _max?: KafkaOutboxMaxOrderByAggregateInput
+    _min?: KafkaOutboxMinOrderByAggregateInput
+  }
+
+  export type KafkaOutboxScalarWhereWithAggregatesInput = {
+    AND?: KafkaOutboxScalarWhereWithAggregatesInput | KafkaOutboxScalarWhereWithAggregatesInput[]
+    OR?: KafkaOutboxScalarWhereWithAggregatesInput[]
+    NOT?: KafkaOutboxScalarWhereWithAggregatesInput | KafkaOutboxScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"KafkaOutbox"> | string
+    outbox_id?: StringWithAggregatesFilter<"KafkaOutbox"> | string
+    aggregate_id?: StringWithAggregatesFilter<"KafkaOutbox"> | string
+    event_type?: StringWithAggregatesFilter<"KafkaOutbox"> | string
+    payload?: JsonWithAggregatesFilter<"KafkaOutbox">
+    published?: BoolWithAggregatesFilter<"KafkaOutbox"> | boolean
+    created_at?: DateTimeWithAggregatesFilter<"KafkaOutbox"> | Date | string
+  }
+
+  export type ArchivedBatchWhereInput = {
+    AND?: ArchivedBatchWhereInput | ArchivedBatchWhereInput[]
+    OR?: ArchivedBatchWhereInput[]
+    NOT?: ArchivedBatchWhereInput | ArchivedBatchWhereInput[]
+    id?: StringFilter<"ArchivedBatch"> | string
+    batch_id?: StringFilter<"ArchivedBatch"> | string
+    status?: StringFilter<"ArchivedBatch"> | string
+    event_count?: IntFilter<"ArchivedBatch"> | number
+    sealed_at?: DateTimeNullableFilter<"ArchivedBatch"> | Date | string | null
+    archived_at?: DateTimeFilter<"ArchivedBatch"> | Date | string
+    original_created_at?: DateTimeFilter<"ArchivedBatch"> | Date | string
+  }
+
+  export type ArchivedBatchOrderByWithRelationInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    event_count?: SortOrder
+    sealed_at?: SortOrderInput | SortOrder
+    archived_at?: SortOrder
+    original_created_at?: SortOrder
+  }
+
+  export type ArchivedBatchWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    batch_id?: string
+    AND?: ArchivedBatchWhereInput | ArchivedBatchWhereInput[]
+    OR?: ArchivedBatchWhereInput[]
+    NOT?: ArchivedBatchWhereInput | ArchivedBatchWhereInput[]
+    status?: StringFilter<"ArchivedBatch"> | string
+    event_count?: IntFilter<"ArchivedBatch"> | number
+    sealed_at?: DateTimeNullableFilter<"ArchivedBatch"> | Date | string | null
+    archived_at?: DateTimeFilter<"ArchivedBatch"> | Date | string
+    original_created_at?: DateTimeFilter<"ArchivedBatch"> | Date | string
+  }, "id" | "batch_id">
+
+  export type ArchivedBatchOrderByWithAggregationInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    event_count?: SortOrder
+    sealed_at?: SortOrderInput | SortOrder
+    archived_at?: SortOrder
+    original_created_at?: SortOrder
+    _count?: ArchivedBatchCountOrderByAggregateInput
+    _avg?: ArchivedBatchAvgOrderByAggregateInput
+    _max?: ArchivedBatchMaxOrderByAggregateInput
+    _min?: ArchivedBatchMinOrderByAggregateInput
+    _sum?: ArchivedBatchSumOrderByAggregateInput
+  }
+
+  export type ArchivedBatchScalarWhereWithAggregatesInput = {
+    AND?: ArchivedBatchScalarWhereWithAggregatesInput | ArchivedBatchScalarWhereWithAggregatesInput[]
+    OR?: ArchivedBatchScalarWhereWithAggregatesInput[]
+    NOT?: ArchivedBatchScalarWhereWithAggregatesInput | ArchivedBatchScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ArchivedBatch"> | string
+    batch_id?: StringWithAggregatesFilter<"ArchivedBatch"> | string
+    status?: StringWithAggregatesFilter<"ArchivedBatch"> | string
+    event_count?: IntWithAggregatesFilter<"ArchivedBatch"> | number
+    sealed_at?: DateTimeNullableWithAggregatesFilter<"ArchivedBatch"> | Date | string | null
+    archived_at?: DateTimeWithAggregatesFilter<"ArchivedBatch"> | Date | string
+    original_created_at?: DateTimeWithAggregatesFilter<"ArchivedBatch"> | Date | string
+  }
+
   export type ProductCreateInput = {
     id?: string
     name: string
@@ -13406,6 +20980,478 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type EventCreateInput = {
+    id?: string
+    batch_id: string
+    event_type: string
+    user_id?: string | null
+    data: JsonNullValueInput | InputJsonValue
+    timestamp?: Date | string
+    created_at?: Date | string
+  }
+
+  export type EventUncheckedCreateInput = {
+    id?: string
+    batch_id: string
+    event_type: string
+    user_id?: string | null
+    data: JsonNullValueInput | InputJsonValue
+    timestamp?: Date | string
+    created_at?: Date | string
+  }
+
+  export type EventUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    event_type?: StringFieldUpdateOperationsInput | string
+    user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    data?: JsonNullValueInput | InputJsonValue
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    event_type?: StringFieldUpdateOperationsInput | string
+    user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    data?: JsonNullValueInput | InputJsonValue
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventCreateManyInput = {
+    id?: string
+    batch_id: string
+    event_type: string
+    user_id?: string | null
+    data: JsonNullValueInput | InputJsonValue
+    timestamp?: Date | string
+    created_at?: Date | string
+  }
+
+  export type EventUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    event_type?: StringFieldUpdateOperationsInput | string
+    user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    data?: JsonNullValueInput | InputJsonValue
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    event_type?: StringFieldUpdateOperationsInput | string
+    user_id?: NullableStringFieldUpdateOperationsInput | string | null
+    data?: JsonNullValueInput | InputJsonValue
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BatchCreateInput = {
+    id?: string
+    batch_id: string
+    status?: string
+    event_count?: number
+    sealed_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    analysis_jobs?: AnalysisJobCreateNestedManyWithoutBatchInput
+  }
+
+  export type BatchUncheckedCreateInput = {
+    id?: string
+    batch_id: string
+    status?: string
+    event_count?: number
+    sealed_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    analysis_jobs?: AnalysisJobUncheckedCreateNestedManyWithoutBatchInput
+  }
+
+  export type BatchUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    event_count?: IntFieldUpdateOperationsInput | number
+    sealed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    analysis_jobs?: AnalysisJobUpdateManyWithoutBatchNestedInput
+  }
+
+  export type BatchUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    event_count?: IntFieldUpdateOperationsInput | number
+    sealed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    analysis_jobs?: AnalysisJobUncheckedUpdateManyWithoutBatchNestedInput
+  }
+
+  export type BatchCreateManyInput = {
+    id?: string
+    batch_id: string
+    status?: string
+    event_count?: number
+    sealed_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type BatchUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    event_count?: IntFieldUpdateOperationsInput | number
+    sealed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BatchUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    event_count?: IntFieldUpdateOperationsInput | number
+    sealed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AnalysisJobCreateInput = {
+    id?: string
+    job_id: string
+    status?: string
+    attempt_count?: number
+    max_attempts?: number
+    lock_expires_at?: Date | string | null
+    trigger_type?: string
+    last_error?: string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    batch: BatchCreateNestedOneWithoutAnalysis_jobsInput
+  }
+
+  export type AnalysisJobUncheckedCreateInput = {
+    id?: string
+    job_id: string
+    batch_id: string
+    status?: string
+    attempt_count?: number
+    max_attempts?: number
+    lock_expires_at?: Date | string | null
+    trigger_type?: string
+    last_error?: string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AnalysisJobUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    max_attempts?: IntFieldUpdateOperationsInput | number
+    lock_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trigger_type?: StringFieldUpdateOperationsInput | string
+    last_error?: NullableStringFieldUpdateOperationsInput | string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    batch?: BatchUpdateOneRequiredWithoutAnalysis_jobsNestedInput
+  }
+
+  export type AnalysisJobUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    max_attempts?: IntFieldUpdateOperationsInput | number
+    lock_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trigger_type?: StringFieldUpdateOperationsInput | string
+    last_error?: NullableStringFieldUpdateOperationsInput | string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AnalysisJobCreateManyInput = {
+    id?: string
+    job_id: string
+    batch_id: string
+    status?: string
+    attempt_count?: number
+    max_attempts?: number
+    lock_expires_at?: Date | string | null
+    trigger_type?: string
+    last_error?: string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AnalysisJobUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    max_attempts?: IntFieldUpdateOperationsInput | number
+    lock_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trigger_type?: StringFieldUpdateOperationsInput | string
+    last_error?: NullableStringFieldUpdateOperationsInput | string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AnalysisJobUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    max_attempts?: IntFieldUpdateOperationsInput | number
+    lock_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trigger_type?: StringFieldUpdateOperationsInput | string
+    last_error?: NullableStringFieldUpdateOperationsInput | string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DeadLetterJobCreateInput = {
+    id?: string
+    dlq_id: string
+    job_id: string
+    batch_id: string
+    attempt_count: number
+    last_error: string
+    error_context: JsonNullValueInput | InputJsonValue
+    failed_at?: Date | string
+  }
+
+  export type DeadLetterJobUncheckedCreateInput = {
+    id?: string
+    dlq_id: string
+    job_id: string
+    batch_id: string
+    attempt_count: number
+    last_error: string
+    error_context: JsonNullValueInput | InputJsonValue
+    failed_at?: Date | string
+  }
+
+  export type DeadLetterJobUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dlq_id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    last_error?: StringFieldUpdateOperationsInput | string
+    error_context?: JsonNullValueInput | InputJsonValue
+    failed_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DeadLetterJobUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dlq_id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    last_error?: StringFieldUpdateOperationsInput | string
+    error_context?: JsonNullValueInput | InputJsonValue
+    failed_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DeadLetterJobCreateManyInput = {
+    id?: string
+    dlq_id: string
+    job_id: string
+    batch_id: string
+    attempt_count: number
+    last_error: string
+    error_context: JsonNullValueInput | InputJsonValue
+    failed_at?: Date | string
+  }
+
+  export type DeadLetterJobUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dlq_id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    last_error?: StringFieldUpdateOperationsInput | string
+    error_context?: JsonNullValueInput | InputJsonValue
+    failed_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DeadLetterJobUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dlq_id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    last_error?: StringFieldUpdateOperationsInput | string
+    error_context?: JsonNullValueInput | InputJsonValue
+    failed_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KafkaOutboxCreateInput = {
+    id?: string
+    outbox_id: string
+    aggregate_id: string
+    event_type: string
+    payload: JsonNullValueInput | InputJsonValue
+    published?: boolean
+    created_at?: Date | string
+  }
+
+  export type KafkaOutboxUncheckedCreateInput = {
+    id?: string
+    outbox_id: string
+    aggregate_id: string
+    event_type: string
+    payload: JsonNullValueInput | InputJsonValue
+    published?: boolean
+    created_at?: Date | string
+  }
+
+  export type KafkaOutboxUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    outbox_id?: StringFieldUpdateOperationsInput | string
+    aggregate_id?: StringFieldUpdateOperationsInput | string
+    event_type?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KafkaOutboxUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    outbox_id?: StringFieldUpdateOperationsInput | string
+    aggregate_id?: StringFieldUpdateOperationsInput | string
+    event_type?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KafkaOutboxCreateManyInput = {
+    id?: string
+    outbox_id: string
+    aggregate_id: string
+    event_type: string
+    payload: JsonNullValueInput | InputJsonValue
+    published?: boolean
+    created_at?: Date | string
+  }
+
+  export type KafkaOutboxUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    outbox_id?: StringFieldUpdateOperationsInput | string
+    aggregate_id?: StringFieldUpdateOperationsInput | string
+    event_type?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KafkaOutboxUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    outbox_id?: StringFieldUpdateOperationsInput | string
+    aggregate_id?: StringFieldUpdateOperationsInput | string
+    event_type?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    published?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArchivedBatchCreateInput = {
+    id?: string
+    batch_id: string
+    status?: string
+    event_count: number
+    sealed_at?: Date | string | null
+    archived_at?: Date | string
+    original_created_at: Date | string
+  }
+
+  export type ArchivedBatchUncheckedCreateInput = {
+    id?: string
+    batch_id: string
+    status?: string
+    event_count: number
+    sealed_at?: Date | string | null
+    archived_at?: Date | string
+    original_created_at: Date | string
+  }
+
+  export type ArchivedBatchUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    event_count?: IntFieldUpdateOperationsInput | number
+    sealed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    archived_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    original_created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArchivedBatchUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    event_count?: IntFieldUpdateOperationsInput | number
+    sealed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    archived_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    original_created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArchivedBatchCreateManyInput = {
+    id?: string
+    batch_id: string
+    status?: string
+    event_count: number
+    sealed_at?: Date | string | null
+    archived_at?: Date | string
+    original_created_at: Date | string
+  }
+
+  export type ArchivedBatchUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    event_count?: IntFieldUpdateOperationsInput | number
+    sealed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    archived_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    original_created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArchivedBatchUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    event_count?: IntFieldUpdateOperationsInput | number
+    sealed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    archived_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    original_created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -14097,6 +22143,326 @@ export namespace Prisma {
     eventCount?: SortOrder
   }
 
+  export type EventCountOrderByAggregateInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    event_type?: SortOrder
+    user_id?: SortOrder
+    data?: SortOrder
+    timestamp?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type EventMaxOrderByAggregateInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    event_type?: SortOrder
+    user_id?: SortOrder
+    timestamp?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type EventMinOrderByAggregateInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    event_type?: SortOrder
+    user_id?: SortOrder
+    timestamp?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type AnalysisJobListRelationFilter = {
+    every?: AnalysisJobWhereInput
+    some?: AnalysisJobWhereInput
+    none?: AnalysisJobWhereInput
+  }
+
+  export type AnalysisJobOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BatchCountOrderByAggregateInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    event_count?: SortOrder
+    sealed_at?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type BatchAvgOrderByAggregateInput = {
+    event_count?: SortOrder
+  }
+
+  export type BatchMaxOrderByAggregateInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    event_count?: SortOrder
+    sealed_at?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type BatchMinOrderByAggregateInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    event_count?: SortOrder
+    sealed_at?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type BatchSumOrderByAggregateInput = {
+    event_count?: SortOrder
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type BatchScalarRelationFilter = {
+    is?: BatchWhereInput
+    isNot?: BatchWhereInput
+  }
+
+  export type AnalysisJobCountOrderByAggregateInput = {
+    id?: SortOrder
+    job_id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    attempt_count?: SortOrder
+    max_attempts?: SortOrder
+    lock_expires_at?: SortOrder
+    trigger_type?: SortOrder
+    last_error?: SortOrder
+    error_context?: SortOrder
+    analysis_time_ms?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AnalysisJobAvgOrderByAggregateInput = {
+    attempt_count?: SortOrder
+    max_attempts?: SortOrder
+    analysis_time_ms?: SortOrder
+  }
+
+  export type AnalysisJobMaxOrderByAggregateInput = {
+    id?: SortOrder
+    job_id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    attempt_count?: SortOrder
+    max_attempts?: SortOrder
+    lock_expires_at?: SortOrder
+    trigger_type?: SortOrder
+    last_error?: SortOrder
+    analysis_time_ms?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AnalysisJobMinOrderByAggregateInput = {
+    id?: SortOrder
+    job_id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    attempt_count?: SortOrder
+    max_attempts?: SortOrder
+    lock_expires_at?: SortOrder
+    trigger_type?: SortOrder
+    last_error?: SortOrder
+    analysis_time_ms?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AnalysisJobSumOrderByAggregateInput = {
+    attempt_count?: SortOrder
+    max_attempts?: SortOrder
+    analysis_time_ms?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type DeadLetterJobCountOrderByAggregateInput = {
+    id?: SortOrder
+    dlq_id?: SortOrder
+    job_id?: SortOrder
+    batch_id?: SortOrder
+    attempt_count?: SortOrder
+    last_error?: SortOrder
+    error_context?: SortOrder
+    failed_at?: SortOrder
+  }
+
+  export type DeadLetterJobAvgOrderByAggregateInput = {
+    attempt_count?: SortOrder
+  }
+
+  export type DeadLetterJobMaxOrderByAggregateInput = {
+    id?: SortOrder
+    dlq_id?: SortOrder
+    job_id?: SortOrder
+    batch_id?: SortOrder
+    attempt_count?: SortOrder
+    last_error?: SortOrder
+    failed_at?: SortOrder
+  }
+
+  export type DeadLetterJobMinOrderByAggregateInput = {
+    id?: SortOrder
+    dlq_id?: SortOrder
+    job_id?: SortOrder
+    batch_id?: SortOrder
+    attempt_count?: SortOrder
+    last_error?: SortOrder
+    failed_at?: SortOrder
+  }
+
+  export type DeadLetterJobSumOrderByAggregateInput = {
+    attempt_count?: SortOrder
+  }
+
+  export type KafkaOutboxCountOrderByAggregateInput = {
+    id?: SortOrder
+    outbox_id?: SortOrder
+    aggregate_id?: SortOrder
+    event_type?: SortOrder
+    payload?: SortOrder
+    published?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type KafkaOutboxMaxOrderByAggregateInput = {
+    id?: SortOrder
+    outbox_id?: SortOrder
+    aggregate_id?: SortOrder
+    event_type?: SortOrder
+    published?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type KafkaOutboxMinOrderByAggregateInput = {
+    id?: SortOrder
+    outbox_id?: SortOrder
+    aggregate_id?: SortOrder
+    event_type?: SortOrder
+    published?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type ArchivedBatchCountOrderByAggregateInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    event_count?: SortOrder
+    sealed_at?: SortOrder
+    archived_at?: SortOrder
+    original_created_at?: SortOrder
+  }
+
+  export type ArchivedBatchAvgOrderByAggregateInput = {
+    event_count?: SortOrder
+  }
+
+  export type ArchivedBatchMaxOrderByAggregateInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    event_count?: SortOrder
+    sealed_at?: SortOrder
+    archived_at?: SortOrder
+    original_created_at?: SortOrder
+  }
+
+  export type ArchivedBatchMinOrderByAggregateInput = {
+    id?: SortOrder
+    batch_id?: SortOrder
+    status?: SortOrder
+    event_count?: SortOrder
+    sealed_at?: SortOrder
+    archived_at?: SortOrder
+    original_created_at?: SortOrder
+  }
+
+  export type ArchivedBatchSumOrderByAggregateInput = {
+    event_count?: SortOrder
+  }
+
   export type ProductCreatesubcategoriesInput = {
     set: string[]
   }
@@ -14347,6 +22713,70 @@ export namespace Prisma {
   export type InsightUpdatepatternsInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type AnalysisJobCreateNestedManyWithoutBatchInput = {
+    create?: XOR<AnalysisJobCreateWithoutBatchInput, AnalysisJobUncheckedCreateWithoutBatchInput> | AnalysisJobCreateWithoutBatchInput[] | AnalysisJobUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: AnalysisJobCreateOrConnectWithoutBatchInput | AnalysisJobCreateOrConnectWithoutBatchInput[]
+    createMany?: AnalysisJobCreateManyBatchInputEnvelope
+    connect?: AnalysisJobWhereUniqueInput | AnalysisJobWhereUniqueInput[]
+  }
+
+  export type AnalysisJobUncheckedCreateNestedManyWithoutBatchInput = {
+    create?: XOR<AnalysisJobCreateWithoutBatchInput, AnalysisJobUncheckedCreateWithoutBatchInput> | AnalysisJobCreateWithoutBatchInput[] | AnalysisJobUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: AnalysisJobCreateOrConnectWithoutBatchInput | AnalysisJobCreateOrConnectWithoutBatchInput[]
+    createMany?: AnalysisJobCreateManyBatchInputEnvelope
+    connect?: AnalysisJobWhereUniqueInput | AnalysisJobWhereUniqueInput[]
+  }
+
+  export type AnalysisJobUpdateManyWithoutBatchNestedInput = {
+    create?: XOR<AnalysisJobCreateWithoutBatchInput, AnalysisJobUncheckedCreateWithoutBatchInput> | AnalysisJobCreateWithoutBatchInput[] | AnalysisJobUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: AnalysisJobCreateOrConnectWithoutBatchInput | AnalysisJobCreateOrConnectWithoutBatchInput[]
+    upsert?: AnalysisJobUpsertWithWhereUniqueWithoutBatchInput | AnalysisJobUpsertWithWhereUniqueWithoutBatchInput[]
+    createMany?: AnalysisJobCreateManyBatchInputEnvelope
+    set?: AnalysisJobWhereUniqueInput | AnalysisJobWhereUniqueInput[]
+    disconnect?: AnalysisJobWhereUniqueInput | AnalysisJobWhereUniqueInput[]
+    delete?: AnalysisJobWhereUniqueInput | AnalysisJobWhereUniqueInput[]
+    connect?: AnalysisJobWhereUniqueInput | AnalysisJobWhereUniqueInput[]
+    update?: AnalysisJobUpdateWithWhereUniqueWithoutBatchInput | AnalysisJobUpdateWithWhereUniqueWithoutBatchInput[]
+    updateMany?: AnalysisJobUpdateManyWithWhereWithoutBatchInput | AnalysisJobUpdateManyWithWhereWithoutBatchInput[]
+    deleteMany?: AnalysisJobScalarWhereInput | AnalysisJobScalarWhereInput[]
+  }
+
+  export type AnalysisJobUncheckedUpdateManyWithoutBatchNestedInput = {
+    create?: XOR<AnalysisJobCreateWithoutBatchInput, AnalysisJobUncheckedCreateWithoutBatchInput> | AnalysisJobCreateWithoutBatchInput[] | AnalysisJobUncheckedCreateWithoutBatchInput[]
+    connectOrCreate?: AnalysisJobCreateOrConnectWithoutBatchInput | AnalysisJobCreateOrConnectWithoutBatchInput[]
+    upsert?: AnalysisJobUpsertWithWhereUniqueWithoutBatchInput | AnalysisJobUpsertWithWhereUniqueWithoutBatchInput[]
+    createMany?: AnalysisJobCreateManyBatchInputEnvelope
+    set?: AnalysisJobWhereUniqueInput | AnalysisJobWhereUniqueInput[]
+    disconnect?: AnalysisJobWhereUniqueInput | AnalysisJobWhereUniqueInput[]
+    delete?: AnalysisJobWhereUniqueInput | AnalysisJobWhereUniqueInput[]
+    connect?: AnalysisJobWhereUniqueInput | AnalysisJobWhereUniqueInput[]
+    update?: AnalysisJobUpdateWithWhereUniqueWithoutBatchInput | AnalysisJobUpdateWithWhereUniqueWithoutBatchInput[]
+    updateMany?: AnalysisJobUpdateManyWithWhereWithoutBatchInput | AnalysisJobUpdateManyWithWhereWithoutBatchInput[]
+    deleteMany?: AnalysisJobScalarWhereInput | AnalysisJobScalarWhereInput[]
+  }
+
+  export type BatchCreateNestedOneWithoutAnalysis_jobsInput = {
+    create?: XOR<BatchCreateWithoutAnalysis_jobsInput, BatchUncheckedCreateWithoutAnalysis_jobsInput>
+    connectOrCreate?: BatchCreateOrConnectWithoutAnalysis_jobsInput
+    connect?: BatchWhereUniqueInput
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type BatchUpdateOneRequiredWithoutAnalysis_jobsNestedInput = {
+    create?: XOR<BatchCreateWithoutAnalysis_jobsInput, BatchUncheckedCreateWithoutAnalysis_jobsInput>
+    connectOrCreate?: BatchCreateOrConnectWithoutAnalysis_jobsInput
+    upsert?: BatchUpsertWithoutAnalysis_jobsInput
+    connect?: BatchWhereUniqueInput
+    update?: XOR<XOR<BatchUpdateToOneWithWhereWithoutAnalysis_jobsInput, BatchUpdateWithoutAnalysis_jobsInput>, BatchUncheckedUpdateWithoutAnalysis_jobsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -14600,6 +23030,45 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type ReviewCreateWithoutProductInput = {
@@ -15026,6 +23495,137 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type AnalysisJobCreateWithoutBatchInput = {
+    id?: string
+    job_id: string
+    status?: string
+    attempt_count?: number
+    max_attempts?: number
+    lock_expires_at?: Date | string | null
+    trigger_type?: string
+    last_error?: string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AnalysisJobUncheckedCreateWithoutBatchInput = {
+    id?: string
+    job_id: string
+    status?: string
+    attempt_count?: number
+    max_attempts?: number
+    lock_expires_at?: Date | string | null
+    trigger_type?: string
+    last_error?: string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AnalysisJobCreateOrConnectWithoutBatchInput = {
+    where: AnalysisJobWhereUniqueInput
+    create: XOR<AnalysisJobCreateWithoutBatchInput, AnalysisJobUncheckedCreateWithoutBatchInput>
+  }
+
+  export type AnalysisJobCreateManyBatchInputEnvelope = {
+    data: AnalysisJobCreateManyBatchInput | AnalysisJobCreateManyBatchInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AnalysisJobUpsertWithWhereUniqueWithoutBatchInput = {
+    where: AnalysisJobWhereUniqueInput
+    update: XOR<AnalysisJobUpdateWithoutBatchInput, AnalysisJobUncheckedUpdateWithoutBatchInput>
+    create: XOR<AnalysisJobCreateWithoutBatchInput, AnalysisJobUncheckedCreateWithoutBatchInput>
+  }
+
+  export type AnalysisJobUpdateWithWhereUniqueWithoutBatchInput = {
+    where: AnalysisJobWhereUniqueInput
+    data: XOR<AnalysisJobUpdateWithoutBatchInput, AnalysisJobUncheckedUpdateWithoutBatchInput>
+  }
+
+  export type AnalysisJobUpdateManyWithWhereWithoutBatchInput = {
+    where: AnalysisJobScalarWhereInput
+    data: XOR<AnalysisJobUpdateManyMutationInput, AnalysisJobUncheckedUpdateManyWithoutBatchInput>
+  }
+
+  export type AnalysisJobScalarWhereInput = {
+    AND?: AnalysisJobScalarWhereInput | AnalysisJobScalarWhereInput[]
+    OR?: AnalysisJobScalarWhereInput[]
+    NOT?: AnalysisJobScalarWhereInput | AnalysisJobScalarWhereInput[]
+    id?: StringFilter<"AnalysisJob"> | string
+    job_id?: StringFilter<"AnalysisJob"> | string
+    batch_id?: StringFilter<"AnalysisJob"> | string
+    status?: StringFilter<"AnalysisJob"> | string
+    attempt_count?: IntFilter<"AnalysisJob"> | number
+    max_attempts?: IntFilter<"AnalysisJob"> | number
+    lock_expires_at?: DateTimeNullableFilter<"AnalysisJob"> | Date | string | null
+    trigger_type?: StringFilter<"AnalysisJob"> | string
+    last_error?: StringNullableFilter<"AnalysisJob"> | string | null
+    error_context?: JsonNullableFilter<"AnalysisJob">
+    analysis_time_ms?: IntNullableFilter<"AnalysisJob"> | number | null
+    created_at?: DateTimeFilter<"AnalysisJob"> | Date | string
+    updated_at?: DateTimeFilter<"AnalysisJob"> | Date | string
+  }
+
+  export type BatchCreateWithoutAnalysis_jobsInput = {
+    id?: string
+    batch_id: string
+    status?: string
+    event_count?: number
+    sealed_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type BatchUncheckedCreateWithoutAnalysis_jobsInput = {
+    id?: string
+    batch_id: string
+    status?: string
+    event_count?: number
+    sealed_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type BatchCreateOrConnectWithoutAnalysis_jobsInput = {
+    where: BatchWhereUniqueInput
+    create: XOR<BatchCreateWithoutAnalysis_jobsInput, BatchUncheckedCreateWithoutAnalysis_jobsInput>
+  }
+
+  export type BatchUpsertWithoutAnalysis_jobsInput = {
+    update: XOR<BatchUpdateWithoutAnalysis_jobsInput, BatchUncheckedUpdateWithoutAnalysis_jobsInput>
+    create: XOR<BatchCreateWithoutAnalysis_jobsInput, BatchUncheckedCreateWithoutAnalysis_jobsInput>
+    where?: BatchWhereInput
+  }
+
+  export type BatchUpdateToOneWithWhereWithoutAnalysis_jobsInput = {
+    where?: BatchWhereInput
+    data: XOR<BatchUpdateWithoutAnalysis_jobsInput, BatchUncheckedUpdateWithoutAnalysis_jobsInput>
+  }
+
+  export type BatchUpdateWithoutAnalysis_jobsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    event_count?: IntFieldUpdateOperationsInput | number
+    sealed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BatchUncheckedUpdateWithoutAnalysis_jobsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    batch_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    event_count?: IntFieldUpdateOperationsInput | number
+    sealed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ReviewCreateManyProductInput = {
     id?: string
     name: string
@@ -15160,6 +23760,66 @@ export namespace Prisma {
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     impersonatedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AnalysisJobCreateManyBatchInput = {
+    id?: string
+    job_id: string
+    status?: string
+    attempt_count?: number
+    max_attempts?: number
+    lock_expires_at?: Date | string | null
+    trigger_type?: string
+    last_error?: string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AnalysisJobUpdateWithoutBatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    max_attempts?: IntFieldUpdateOperationsInput | number
+    lock_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trigger_type?: StringFieldUpdateOperationsInput | string
+    last_error?: NullableStringFieldUpdateOperationsInput | string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AnalysisJobUncheckedUpdateWithoutBatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    max_attempts?: IntFieldUpdateOperationsInput | number
+    lock_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trigger_type?: StringFieldUpdateOperationsInput | string
+    last_error?: NullableStringFieldUpdateOperationsInput | string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AnalysisJobUncheckedUpdateManyWithoutBatchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    job_id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempt_count?: IntFieldUpdateOperationsInput | number
+    max_attempts?: IntFieldUpdateOperationsInput | number
+    lock_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trigger_type?: StringFieldUpdateOperationsInput | string
+    last_error?: NullableStringFieldUpdateOperationsInput | string | null
+    error_context?: NullableJsonNullValueInput | InputJsonValue
+    analysis_time_ms?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 
