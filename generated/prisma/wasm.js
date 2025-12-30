@@ -232,12 +232,84 @@ exports.Prisma.InsightScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.EventScalarFieldEnum = {
+  id: 'id',
+  batch_id: 'batch_id',
+  event_type: 'event_type',
+  user_id: 'user_id',
+  data: 'data',
+  timestamp: 'timestamp',
+  created_at: 'created_at'
+};
+
+exports.Prisma.BatchScalarFieldEnum = {
+  id: 'id',
+  batch_id: 'batch_id',
+  status: 'status',
+  event_count: 'event_count',
+  sealed_at: 'sealed_at',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.AnalysisJobScalarFieldEnum = {
+  id: 'id',
+  job_id: 'job_id',
+  batch_id: 'batch_id',
+  status: 'status',
+  attempt_count: 'attempt_count',
+  max_attempts: 'max_attempts',
+  lock_expires_at: 'lock_expires_at',
+  trigger_type: 'trigger_type',
+  last_error: 'last_error',
+  error_context: 'error_context',
+  analysis_time_ms: 'analysis_time_ms',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.DeadLetterJobScalarFieldEnum = {
+  id: 'id',
+  dlq_id: 'dlq_id',
+  job_id: 'job_id',
+  batch_id: 'batch_id',
+  attempt_count: 'attempt_count',
+  last_error: 'last_error',
+  error_context: 'error_context',
+  failed_at: 'failed_at'
+};
+
+exports.Prisma.KafkaOutboxScalarFieldEnum = {
+  id: 'id',
+  outbox_id: 'outbox_id',
+  aggregate_id: 'aggregate_id',
+  event_type: 'event_type',
+  payload: 'payload',
+  published: 'published',
+  created_at: 'created_at'
+};
+
+exports.Prisma.ArchivedBatchScalarFieldEnum = {
+  id: 'id',
+  batch_id: 'batch_id',
+  status: 'status',
+  event_count: 'event_count',
+  sealed_at: 'sealed_at',
+  archived_at: 'archived_at',
+  original_created_at: 'original_created_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
 };
 
 exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull
 };
 
@@ -267,7 +339,13 @@ exports.Prisma.ModelName = {
   Verification: 'Verification',
   BusinessSettings: 'BusinessSettings',
   Order: 'Order',
-  Insight: 'Insight'
+  Insight: 'Insight',
+  Event: 'Event',
+  Batch: 'Batch',
+  AnalysisJob: 'AnalysisJob',
+  DeadLetterJob: 'DeadLetterJob',
+  KafkaOutbox: 'KafkaOutbox',
+  ArchivedBatch: 'ArchivedBatch'
 };
 
 /**

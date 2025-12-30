@@ -1,16 +1,49 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getQueueStats } from "@/lib/queue";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { prisma } from "@/lib/prisma";
 
 /**
  * GET /api/analytics/stats
- * Get queue statistics for monitoring
+ * Get batch and job statistics for monitoring
  */
 export async function GET(req: NextRequest) {
+  const headersList = await headers();
+  const session = await auth.api.getSession({ headers: headersList });
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.user.role !== "admin") {
+    return NextResponse.json(
+      { error: "Forbidden - Admin access required" },
+      { status: 403 }
+    );
+  }
+
   try {
-    const stats = await getQueueStats();
+    const [
+      openBatches,
+      sealedBatches,
+      analyzedBatches,
+      pendingJobs,
+      runningJobs,
+    ] = await Promise.all([
+      prisma.batch.count({ where: { status: "OPEN" } }),
+      prisma.batch.count({ where: { status: "SEALED" } }),
+      prisma.batch.count({ where: { status: "ANALYZED" } }),
+      prisma.analysisJob.count({ where: { status: "PENDING" } }),
+      prisma.analysisJob.count({ where: { status: "RUNNING" } }),
+    ]);
 
     return NextResponse.json({
-      queue: stats,
+      batches: {
+        open: openBatches,
+        sealed: sealedBatches,
+        analyzed: analyzedBatches,
+      },
+      jobs: { pending: pendingJobs, running: runningJobs },
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
