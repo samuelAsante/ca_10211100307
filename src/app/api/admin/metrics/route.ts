@@ -70,8 +70,8 @@ async function getJobMetrics() {
     }),
   ]);
 
-  const success = lastHour.filter((j) => j.status === "SUCCESS").length;
-  const failed = lastHour.filter((j) => j.status === "FAILED").length;
+  const success = lastHour.filter((j: any) => j.status === "SUCCESS").length;
+  const failed = lastHour.filter((j: any) => j.status === "FAILED").length;
 
   // Find oldest pending job
   const oldestPending = await prisma.analysisJob.findFirst({

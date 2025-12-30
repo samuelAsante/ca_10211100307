@@ -202,7 +202,7 @@ async function processJob(job: ClaimedJob): Promise<void> {
     );
 
     // Map database events to UserEvent format for AI service
-    const userEvents = events.map((e) => ({
+    const userEvents = events.map((e: any) => ({
       eventId: e.id,
       eventType: e.event_type,
       userId: e.user_id || "anonymous",
