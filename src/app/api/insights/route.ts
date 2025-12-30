@@ -1,11 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 /**
  * GET /api/insights
  * Fetch all insights sorted by creation time
  */
 export async function GET(req: NextRequest) {
+  const headersList = await headers();
+  const session = await auth.api.getSession({ headers: headersList });
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.user.role !== "admin") {
+    return NextResponse.json(
+      { error: "Forbidden - Admin access required" },
+      { status: 403 }
+    );
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const limit = parseInt(searchParams.get("limit") || "50");
