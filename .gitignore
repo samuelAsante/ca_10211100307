@@ -41,9 +41,41 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-/src/generated/prisma
+# Prisma generated files (regenerated on npm install/build)
+/generated/
+/src/generated/
+*.dll.node
+*.so.node
+*.dll.node.tmp*
 
-.vercel
+# Prisma engines (large binary files)
+**/query_engine*
+**/libquery_engine*
+
+# Lock files (optional - uncomment if you want to ignore)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# IDE
+.idea/
+*.swp
+*.swo
+.vscode/settings.json
+
+# OS files
+Thumbs.db
+ehthumbs.db
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
 
 # Copilot instructions (local AI setup)
 .github/copilot-instructions.md
