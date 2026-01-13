@@ -101,3 +101,7 @@ mobile/ios/
 
 # Copilot instructions (local AI setup)
 .github/copilot-instructions.md
+
+references/
+
+mobile/package-lock.json

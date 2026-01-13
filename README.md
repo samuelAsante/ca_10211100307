@@ -29,11 +29,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 ### Environment Variables
 
 Copy `.env.example` to `.env` and fill in the required values:
+
 ```bash
 cp .env.example .env
 ```
 
 ### Tech Stack
+
 - Next.js 14+ (App Router)
 - Prisma ORM
 - TailwindCSS
@@ -52,11 +54,13 @@ npx expo start
 ```
 
 ### Running on devices
+
 - **Android**: `npm run android` or scan QR with Expo Go
 - **iOS**: `npm run ios` (macOS only) or scan QR with Expo Go
 - **Web**: `npm run web`
 
 ### Tech Stack
+
 - React Native with Expo
 - TypeScript
 
