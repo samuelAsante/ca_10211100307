@@ -540,7 +540,6 @@ const ConversionFunnel = ({ conversionData }: ConversionFunnelProps) => {
               {item.value}
             </Text>
           </View>
-          <View></View>
           <View
             style={{
               height: 36,
@@ -563,6 +562,170 @@ const ConversionFunnel = ({ conversionData }: ConversionFunnelProps) => {
           </View>
         </View>
       ))}
+    </View>
+  );
+};
+
+interface DeviceConversion {
+  deviceType: string;
+  rate: number;
+}
+interface CustomerAnalyticsData {
+  avgSessionDuration: string;
+  bounceRate: string;
+  deviceConversion: DeviceConversion[];
+}
+
+const CUSTOMER_ANALYTICS_DATA: CustomerAnalyticsData = {
+  avgSessionDuration: "3m 45s",
+  bounceRate: "42%",
+  deviceConversion: [
+    { deviceType: "Desktop", rate: 55 },
+    { deviceType: "Mobile", rate: 35 },
+    { deviceType: "Tablet", rate: 10 },
+  ],
+};
+
+interface CustomerAnalyticsProps {
+  analyticsData: CustomerAnalyticsData;
+}
+const CustomerAnalytics = ({ analyticsData }: CustomerAnalyticsProps) => {
+  const colorScheme = useColorScheme();
+  const theme = Colors[colorScheme ?? "light"];
+  return (
+    <View
+      style={{
+        backgroundColor: theme.cardBg,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#222222",
+        padding: 16,
+        gap: 16,
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-around",
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 16,
+            backgroundColor: "#141c29",
+            padding: 12,
+            width: "48%",
+            borderRadius: 16,
+          }}
+        >
+          <Text
+            style={{
+              color: theme.tint,
+              fontSize: Typography.sm,
+            }}
+          >
+            Avg. Session
+          </Text>
+          <Text
+            style={{
+              color: theme.text,
+              fontSize: Typography.lg,
+              fontWeight: "600",
+              marginTop: 4,
+            }}
+          >
+            {analyticsData.avgSessionDuration}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 16,
+            backgroundColor: "#141c29",
+            padding: 12,
+            width: "48%",
+            borderRadius: 16,
+          }}
+        >
+          <Text
+            style={{
+              color: theme.tint,
+              fontSize: Typography.sm,
+            }}
+          >
+            Bounce Rate
+          </Text>
+          <Text
+            style={{
+              color: theme.text,
+              fontSize: Typography.lg,
+              fontWeight: "600",
+              marginTop: 4,
+            }}
+          >
+            {analyticsData.bounceRate}
+          </Text>
+        </View>
+      </View>
+      <View>
+        <Text
+          style={{
+            color: theme.tint,
+            fontSize: Typography.sm,
+            marginBottom: 8,
+          }}
+        >
+          Device Conversion
+        </Text>
+        {analyticsData.deviceConversion.map((item, index) => (
+          <View
+            key={index}
+            style={{
+              flexDirection: "column",
+              marginBottom: 16,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 6,
+              }}
+            >
+              <Text style={{ color: theme.text, fontSize: Typography.sm }}>
+                {item.deviceType}
+              </Text>
+              <Text style={{ color: theme.text, fontSize: Typography.sm }}>
+                {item.rate}%
+              </Text>
+            </View>
+            <View
+              style={{
+                height: 8,
+                backgroundColor: colorScheme === "dark" ? "#333" : "#e5e5e5",
+                borderRadius: 4,
+                overflow: "hidden",
+                marginTop: 4,
+              }}
+            >
+              <View
+                style={{
+                  height: "100%",
+                  width: `${item.rate}%`,
+                  backgroundColor: "#4a90e2",
+                }}
+              />
+            </View>
+          </View>
+        ))}
+      </View>
     </View>
   );
 };
@@ -841,6 +1004,34 @@ export default function Reports() {
           Conversion Funnel
         </Text>
         <ConversionFunnel conversionData={CONVERSION_DATA} />
+      </View>
+      <View>
+        <Text
+          style={{
+            fontSize: Typography.lg,
+            fontWeight: "semibold",
+            color: theme.text,
+            marginTop: 24,
+            marginBottom: 12,
+          }}
+        >
+          Customer Analytics
+        </Text>
+        <CustomerAnalytics analyticsData={CUSTOMER_ANALYTICS_DATA} />
+      </View>
+      <View>
+        <Text
+          style={{
+            fontSize: Typography.lg,
+            fontWeight: "semibold",
+            color: theme.text,
+            marginTop: 24,
+            marginBottom: 12,
+          }}
+        >
+          Export Reports
+        </Text>
+        <TopProductsTable data={TOP_PRODUCTS_DATA} />
       </View>
     </ScrollView>
   );
