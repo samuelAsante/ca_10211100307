@@ -9,11 +9,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useState } from "react";
-import { Picker } from "@react-native-picker/picker";
+import { useState, useEffect } from "react";
 import { SFSymbol } from "expo-symbols";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Image } from "expo-image";
+import { apiRequestWithAuth, API_ENDPOINTS } from "@/lib/api";
 
 interface ReportItemCardProps {
   icon: SFSymbol;
@@ -92,35 +92,35 @@ const ReportItemCard = ({
 const SALES_DATA: ReportItemCardProps[] = [
   {
     icon: "dollarsign.circle.fill",
-    iconColor: "#6366f1",
-    iconBgColor: "#14182d",
+    iconColor: "#3B82F6",
+    iconBgColor: "#071020",
     title: "Total Revenue",
-    amount: "$25,000",
-    percentage: "+5.4%",
+    amount: "$84,249",
+    percentage: "+12.5%",
   },
   {
-    icon: "cart.fill",
-    iconColor: "#ff6900",
-    iconBgColor: "#231815",
+    icon: "bag.fill",
+    iconColor: "#F59E0B",
+    iconBgColor: "#1a1208",
     title: "Total Orders",
-    amount: "1,200",
-    percentage: "+3.2%",
+    amount: "2,847",
+    percentage: "+45.3%",
   },
   {
-    icon: "person.2.fill",
-    iconColor: "#2b7fff",
-    iconBgColor: "#0e1a2e",
+    icon: "person.fill",
+    iconColor: "#3B82F6",
+    iconBgColor: "#071020",
     title: "New Customers",
-    amount: "350",
-    percentage: "-1.2%",
+    amount: "1,249",
+    percentage: "+44.1%",
   },
   {
     icon: "chart.bar.fill",
-    iconColor: "#ad46ff",
-    iconBgColor: "#1b152e",
+    iconColor: "#6B5FED",
+    iconBgColor: "#100b1a",
     title: "Conversion Rate",
-    amount: "150",
-    percentage: "+4.8%",
+    amount: "3.8%",
+    percentage: "-5.1%",
   },
 ];
 
@@ -136,92 +136,6 @@ interface SalesPerformanceChartProps {
   data: SalesData;
   timeframe: "week" | "month";
 }
-
-interface PerformanceMetric {
-  label: string;
-  value: string;
-  trend: string;
-  trendDirection: "up" | "down";
-}
-
-const getPerformanceMetrics = (
-  timeframe: "week" | "month"
-): PerformanceMetric[] => {
-  const chartData =
-    timeframe === "week" ? WEEKLY_CHART_DATA : MONTHLY_CHART_DATA;
-  const peakItem = chartData.reduce((prev, current) =>
-    current.sales > prev.sales ? current : prev
-  );
-  const peakLabel = timeframe === "week" ? "Peak Day" : "Peak Month";
-
-  return [
-    {
-      label: "Avg Order",
-      value: "$125.50",
-      trend: "+2.5%",
-      trendDirection: "up",
-    },
-    {
-      label: peakLabel,
-      value: peakItem.label,
-      trend: "+15%",
-      trendDirection: "up",
-    },
-    {
-      label: "Growth Rate",
-      value: "18.5%",
-      trend: "+5.2%",
-      trendDirection: "up",
-    },
-  ];
-};
-
-const PerformanceMetricColumn = ({ metric }: { metric: PerformanceMetric }) => {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? "light"];
-
-  return (
-    <View
-      style={{
-        flexDirection: "column",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-      }}
-    >
-      <Text style={{ fontSize: Typography.sm, color: theme.tint }}>
-        {metric.label}
-      </Text>
-      <View style={{ flexDirection: "column", alignItems: "center", gap: 16 }}>
-        <Text
-          style={{
-            fontSize: Typography.md,
-            fontWeight: "600",
-            color: theme.text,
-          }}
-        >
-          {metric.value}
-        </Text>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-          <IconSymbol
-            name={metric.trendDirection === "up" ? "arrow.up" : "arrow.down"}
-            size={12}
-            color={metric.trendDirection === "up" ? "green" : "red"}
-          />
-          <Text
-            style={{
-              fontSize: Typography.xs,
-              color: metric.trendDirection === "up" ? "green" : "red",
-            }}
-          >
-            {metric.trend}
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
-};
 
 const WEEKLY_CHART_DATA: SalesDataPoint[] = [
   { label: "Mon", sales: 4000 },
@@ -262,11 +176,13 @@ const SalesPerformanceChart = ({
 
   const chartData =
     timeframe === "week"
-      ? data.week ?? WEEKLY_CHART_DATA
-      : data.month ?? MONTHLY_CHART_DATA;
-
+      ? (data.week ?? WEEKLY_CHART_DATA)
+      : (data.month ?? MONTHLY_CHART_DATA);
   const maxSales = Math.max(...chartData.map((d) => d.sales));
-  const performanceMetrics = getPerformanceMetrics(timeframe);
+  const minSales = Math.min(...chartData.map((d) => d.sales));
+  const avgOrder = "$29.00"; // spec value
+  const peak = timeframe === "week" ? "Friday" : "November";
+  const growth = "+9.1%";
 
   return (
     <View
@@ -276,64 +192,77 @@ const SalesPerformanceChart = ({
         borderWidth: 1,
         borderColor: colorScheme === "dark" ? "#222" : "#d0d0d0",
         overflow: "hidden",
+        padding: 12,
       }}
     >
-      {/* Chart Section */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingVertical: 12,
-          alignItems: "flex-end",
-          gap: 12,
+      {/* Placeholder Line Chart Area */}
+      <View
+        style={{
+          height: 180,
+          borderRadius: 12,
+          backgroundColor: colorScheme === "dark" ? "#0F1419" : "#f4f6fb",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        {chartData.map((item, index) => {
-          const barHeight = (item.sales / maxSales) * 150;
-          return (
-            <View
-              key={index}
-              style={{
-                alignItems: "center",
-                width: 48,
-              }}
-            >
-              <View
-                style={{
-                  width: "100%",
-                  height: barHeight,
-                  backgroundColor: "#4a90e2",
-                  borderRadius: 6,
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}
-              />
-              <Text style={{ marginTop: 8, fontSize: 11, color: theme.text }}>
-                {item.label}
-              </Text>
-            </View>
-          );
-        })}
-      </ScrollView>
+        <Text style={{ color: theme.tint }}>Chart Placeholder</Text>
+      </View>
 
-      {/* Metrics Section */}
+      {/* Bottom Metrics Row */}
       <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
-          alignItems: "center",
+          marginTop: 12,
         }}
       >
-        {performanceMetrics.map((metric, index) => (
-          <PerformanceMetricColumn key={index} metric={metric} />
-        ))}
+        <View>
+          <Text style={{ color: theme.tint, fontSize: Typography.xs }}>
+            Min
+          </Text>
+          <Text style={{ color: theme.text, fontSize: Typography.md }}>
+            ${minSales}
+          </Text>
+        </View>
+        <View>
+          <Text style={{ color: theme.tint, fontSize: Typography.xs }}>
+            Max
+          </Text>
+          <Text style={{ color: theme.text, fontSize: Typography.md }}>
+            ${maxSales}
+          </Text>
+        </View>
+        <View>
+          <Text style={{ color: theme.tint, fontSize: Typography.xs }}>
+            Avg Order
+          </Text>
+          <Text style={{ color: theme.text, fontSize: Typography.md }}>
+            {avgOrder}
+          </Text>
+        </View>
+        <View>
+          <Text style={{ color: theme.tint, fontSize: Typography.xs }}>
+            Peak Day
+          </Text>
+          <Text style={{ color: theme.text, fontSize: Typography.md }}>
+            {peak}
+          </Text>
+        </View>
+        <View>
+          <Text style={{ color: theme.tint, fontSize: Typography.xs }}>
+            Growth
+          </Text>
+          <Text style={{ color: "#10B981", fontSize: Typography.md }}>
+            {growth}
+          </Text>
+        </View>
       </View>
     </View>
   );
 };
 
 interface ProductData {
+  name: string;
   imageUrl: string;
   unitsSold: number;
   revenue: string;
@@ -341,24 +270,28 @@ interface ProductData {
 
 const TOP_PRODUCTS_DATA: ProductData[] = [
   {
+    name: "Wireless Earbud",
     imageUrl: "https://via.placeholder.com/40",
-    unitsSold: 150,
-    revenue: "$3,000",
+    unitsSold: 847,
+    revenue: "$126,450",
   },
   {
+    name: "Smart Watch M1",
     imageUrl: "https://via.placeholder.com/40",
-    unitsSold: 120,
-    revenue: "$2,400",
+    unitsSold: 634,
+    revenue: "$19,020",
   },
   {
+    name: "Gaming Keyboard",
     imageUrl: "https://via.placeholder.com/40",
-    unitsSold: 100,
-    revenue: "$2,000",
+    unitsSold: 621,
+    revenue: "$18,630",
   },
   {
+    name: "USB-C Hub",
     imageUrl: "https://via.placeholder.com/40",
-    unitsSold: 90,
-    revenue: "$1,800",
+    unitsSold: 412,
+    revenue: "$12,360",
   },
 ];
 
@@ -447,10 +380,21 @@ const TopProductsTable = ({ data }: TopProductTableProps) => {
               source={{ uri: item.imageUrl }}
               style={{ width: 40, height: 40, borderRadius: 8 }}
             />
-            <Text style={{ color: theme.text }}>{`Product ${index + 1}`}</Text>
+            <Text style={{ color: theme.text }}>{item.name}</Text>
           </View>
-          <Text style={{ color: theme.text, flex: 1 }}>{item.unitsSold}</Text>
-          <Text style={{ color: theme.text, flex: 1 }}>{item.revenue}</Text>
+          <Text style={{ color: theme.text, flex: 1, textAlign: "center" }}>
+            {item.unitsSold}
+          </Text>
+          <Text
+            style={{
+              color: "#6B5FED",
+              flex: 1,
+              textAlign: "right",
+              fontWeight: "600",
+            }}
+          >
+            {item.revenue}
+          </Text>
         </View>
       ))}
     </View>
@@ -463,26 +407,11 @@ interface ConversionFunnelData {
 }
 
 const CONVERSION_DATA: ConversionFunnelData[] = [
-  {
-    dataType: "Website Visits",
-    value: 45820,
-  },
-  {
-    dataType: "Product Views",
-    value: 32540,
-  },
-  {
-    dataType: "Add to Cart",
-    value: 12450,
-  },
-  {
-    dataType: "Checkout Started",
-    value: 8420,
-  },
-  {
-    dataType: "Orders Completed",
-    value: 5420,
-  },
+  { dataType: "Website Visits", value: 45820 },
+  { dataType: "Product Views", value: 28340 },
+  { dataType: "Add to Cart", value: 12470 },
+  { dataType: "Checkout Started", value: 5840 },
+  { dataType: "Orders Completed", value: 2847 },
 ];
 
 interface ConversionFunnelProps {
@@ -555,7 +484,7 @@ const ConversionFunnel = ({ conversionData }: ConversionFunnelProps) => {
                 height: "100%",
                 width: `${(item.value / conversionData[0].value) * 100}%`,
                 backgroundColor:
-                  item.dataType === "Orders Completed" ? "#00c950" : "#4a90e2",
+                  item.dataType === "Orders Completed" ? "#10B981" : "#6B5FED",
                 borderRadius: 4,
               }}
             />
@@ -577,12 +506,12 @@ interface CustomerAnalyticsData {
 }
 
 const CUSTOMER_ANALYTICS_DATA: CustomerAnalyticsData = {
-  avgSessionDuration: "3m 45s",
-  bounceRate: "42%",
+  avgSessionDuration: "4m 32s",
+  bounceRate: "28.4%",
   deviceConversion: [
-    { deviceType: "Desktop", rate: 55 },
-    { deviceType: "Mobile", rate: 35 },
-    { deviceType: "Tablet", rate: 10 },
+    { deviceType: "Mobile", rate: 68 },
+    { deviceType: "Desktop", rate: 24 },
+    { deviceType: "Tablet", rate: 8 },
   ],
 };
 
@@ -719,7 +648,8 @@ const CustomerAnalytics = ({ analyticsData }: CustomerAnalyticsProps) => {
                 style={{
                   height: "100%",
                   width: `${item.rate}%`,
-                  backgroundColor: "#4a90e2",
+                  backgroundColor:
+                    item.deviceType === "Tablet" ? "#6B5FED" : "#3B82F6",
                 }}
               />
             </View>
@@ -819,18 +749,12 @@ interface ScheduleReportProps {
 }
 
 const SCHEDULED_REPORTS_DATA: { title: string; schedule: string }[] = [
+  { title: "Weekly Sales Summary", schedule: "Every Monday at 9:00 AM" },
   {
-    title: "Weekly Sales Summary",
-    schedule: "Every Monday at 8:00 AM",
+    title: "Monthly Performance",
+    schedule: "Every month on the 1st at 10:00 AM",
   },
-  {
-    title: "Monthly Revenue Report",
-    schedule: "1st of every month at 9:00 AM",
-  },
-  {
-    title: "Quarterly Customer Insights",
-    schedule: "1st of Jan, Apr, Jul, Oct at 10:00 AM",
-  },
+  { title: "Inventory Report", schedule: "Daily at 8:00 PM" },
 ];
 
 const ScheduledReports = ({ reportsData }: ScheduleReportProps) => {
@@ -855,70 +779,39 @@ const ScheduledReports = ({ reportsData }: ScheduleReportProps) => {
             paddingVertical: 12,
             gap: 12,
             width: "100%",
+            alignItems: "center",
           }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 16,
-              justifyContent: "center",
-            }}
-          >
-            <IconSymbol
-              name="calendar"
-              size={24}
-              color="#2059b2"
+          <IconSymbol
+            name={
+              index === 0 ? "calendar" : index === 1 ? "chart.bar" : "doc.text"
+            }
+            size={22}
+            color={
+              index === 0 ? "#6B5FED" : index === 1 ? "#F97316" : "#3B82F6"
+            }
+            style={{ backgroundColor: "#0e1724", padding: 12, borderRadius: 8 }}
+          />
+          <View style={{ flexDirection: "column", gap: 2 }}>
+            <Text
               style={{
-                backgroundColor: "#0e1a2e",
-                padding: 16,
-                borderRadius: 8,
-              }}
-            />
-            <View
-              style={{
-                flexDirection: "column",
-                gap: 2,
+                color: theme.text,
+                fontSize: Typography.md,
+                fontWeight: "600",
               }}
             >
-              <Text
-                style={{
-                  color: theme.text,
-                  fontSize: Typography.md,
-                  fontWeight: "600",
-                }}
-              >
-                {item.title}
-              </Text>
-              <Text
-                style={{
-                  color: theme.tint,
-                  fontSize: Typography.sm,
-                }}
-              >
-                {item.schedule}
-              </Text>
-            </View>
+              {item.title}
+            </Text>
+            <Text style={{ color: theme.tint, fontSize: Typography.sm }}>
+              {item.schedule}
+            </Text>
           </View>
-          <View
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 8,
-              backgroundColor: "#0a221d",
-              justifyContent: "center",
-              alignItems: "center",
-              marginLeft: "auto",
-            }}
-          >
-            <View
-              style={{
-                width: 20,
-                height: 20,
-                borderRadius: 10,
-                backgroundColor: "#00c950",
-              }}
-            />
+          <View style={{ marginLeft: "auto" }}>
+            <TouchableOpacity style={{ padding: 6 }} onPress={() => {}}>
+              <View style={{ width: 44, alignItems: "flex-end" }}>
+                <Text style={{ color: "#10B981", fontWeight: "700" }}>On</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       ))}
@@ -974,76 +867,85 @@ const ReportsHeader = ({
   return (
     <View
       style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 16,
+        backgroundColor: "#000000",
+        paddingHorizontal: 16,
+        paddingTop: 16,
+        paddingBottom: 12,
+        marginBottom: 8,
       }}
     >
-      <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
-        <TouchableOpacity onPress={onBack} style={{ marginBottom: 8 }}>
-          <IconSymbol
-            name="arrow.left"
-            size={20}
-            color={theme.text}
-            style={{
-              padding: 16,
-              borderRadius: 8,
-              backgroundColor: theme.cardBg,
-            }}
-          />
-        </TouchableOpacity>
-        <View>
-          <Text
-            style={{
-              fontSize: Typography.lg,
-              fontWeight: "700",
-              color: theme.text,
-            }}
-          >
-            {title}
-          </Text>
-          {subtitle && (
-            <Text
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <View style={{ flexDirection: "row", gap: 16, alignItems: "center" }}>
+          <TouchableOpacity onPress={onBack} style={{ marginBottom: 8 }}>
+            <IconSymbol
+              name="arrow.left"
+              size={20}
+              color={theme.text}
               style={{
-                fontSize: Typography.sm,
-                color: theme.tint,
-                marginTop: 4,
-              }}
-            >
-              {subtitle}
-            </Text>
-          )}
-        </View>
-      </View>
-
-      <View style={{ flexDirection: "row", gap: 16 }}>
-        <TouchableOpacity onPress={onRefresh}>
-          <IconSymbol name="arrow.clockwise" size={24} color={theme.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onDownload}>
-          <IconSymbol
-            name="arrow.down.circle.fill"
-            size={24}
-            color={theme.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
-          <View>
-            <IconSymbol size={22} name="bell.fill" color={theme.icon} />
-            <View
-              style={{
-                position: "absolute",
-                top: -4,
-                right: -4,
-                width: 12,
-                height: 12,
-                borderRadius: 6,
-                backgroundColor: "red",
+                padding: 16,
+                borderRadius: 8,
+                backgroundColor: theme.cardBg,
               }}
             />
+          </TouchableOpacity>
+          <View>
+            <Text
+              style={{
+                fontSize: Typography.lg,
+                fontWeight: "700",
+                color: theme.text,
+              }}
+            >
+              {title}
+            </Text>
+            {subtitle && (
+              <Text
+                style={{
+                  fontSize: Typography.sm,
+                  color: theme.tint,
+                  marginTop: 4,
+                }}
+              >
+                {subtitle}
+              </Text>
+            )}
           </View>
-        </TouchableOpacity>
+        </View>
+
+        <View style={{ flexDirection: "row", gap: 16 }}>
+          <TouchableOpacity onPress={onRefresh}>
+            <IconSymbol name="arrow.clockwise" size={24} color={theme.icon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onDownload}>
+            <IconSymbol
+              name="arrow.down.circle.fill"
+              size={24}
+              color={theme.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {}}>
+            <View>
+              <IconSymbol size={22} name="bell.fill" color={theme.icon} />
+              <View
+                style={{
+                  position: "absolute",
+                  top: -4,
+                  right: -4,
+                  width: 12,
+                  height: 12,
+                  borderRadius: 6,
+                  backgroundColor: "red",
+                }}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -1057,6 +959,41 @@ export default function Reports() {
   const [selectedValue, setSelectedValue] = useState("income");
   const [showReportPicker, setShowReportPicker] = useState(false);
   const [timeframe, setTimeframe] = useState<"week" | "month">("week");
+  const [reportsData, setReportsData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchReportsData();
+  }, []);
+
+  const fetchReportsData = async () => {
+    try {
+      setLoading(true);
+      const data = await apiRequestWithAuth(
+        API_ENDPOINTS.MOBILE.ANALYTICS.REPORTS,
+      );
+      setReportsData(data);
+    } catch (err: any) {
+      // Fallback: show mock data
+      setReportsData({
+        metrics: {
+          revenue: 84249,
+          orders: 2847,
+          customers: 1249,
+          conversion: 3.8,
+        },
+        topProducts: [],
+        conversionFunnel: [],
+        customerAnalytics: {
+          avgSession: 0,
+          bounceRate: 0,
+          devices: [],
+        },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onChange = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
@@ -1069,15 +1006,32 @@ export default function Reports() {
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <ReportsHeader
-        onBack={() => {}}
-        onRefresh={() => {}}
-        onDownload={() => {}}
-        title="Reports"
-        subtitle="Analytics & Insights"
-      />
-      <View>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      {/* Sticky Header */}
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          backgroundColor: "#000000",
+        }}
+      >
+        <ReportsHeader
+          onBack={() => {}}
+          onRefresh={() => {}}
+          onDownload={() => {}}
+          title="Reports"
+          subtitle="Analytics & Insights"
+        />
+      </View>
+
+      {/* Scrollable Content */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: 140, paddingHorizontal: 16 }}
+      >
         <Text
           style={{
             fontSize: Typography.lg,
@@ -1143,35 +1097,68 @@ export default function Reports() {
                 </Text>
                 <TouchableOpacity
                   onPress={() => setShowReportPicker(!showReportPicker)}
+                  style={{
+                    backgroundColor: theme.cardBg,
+                    borderRadius: 6,
+                    paddingHorizontal: 12,
+                    paddingVertical: 10,
+                    marginTop: 8,
+                    borderWidth: 1,
+                    borderColor: "#374151",
+                  }}
                 >
                   <Text style={{ color: theme.text, fontSize: Typography.sm }}>
                     {selectedValue === "income"
                       ? "Income Report"
                       : selectedValue === "expenses"
-                      ? "Expenses Report"
-                      : "Profit & Loss Report"}
+                        ? "Expenses Report"
+                        : "Profit & Loss Report"}
                   </Text>
                 </TouchableOpacity>
                 {showReportPicker && (
-                  <Picker
-                    selectedValue={selectedValue}
+                  <View
                     style={{
-                      height: 50,
-                      width: 150,
-                      color: theme.text,
+                      position: "absolute",
+                      top: 65,
+                      left: 0,
+                      right: 0,
                       backgroundColor: theme.cardBg,
+                      borderRadius: 6,
+                      borderWidth: 1,
+                      borderColor: "#374151",
+                      zIndex: 100,
+                      shadowColor: "#000",
+                      shadowOpacity: 0.1,
+                      shadowRadius: 4,
+                      elevation: 4,
                     }}
-                    onValueChange={(itemValue) =>
-                      setSelectedValue(itemValue as string)
-                    }
                   >
-                    <Picker.Item label="Income Report" value="income" />
-                    <Picker.Item label="Expenses Report" value="expenses" />
-                    <Picker.Item
-                      label="Profit & Loss Report"
-                      value="profit_loss"
-                    />
-                  </Picker>
+                    {[
+                      { label: "Income Report", value: "income" },
+                      { label: "Expenses Report", value: "expenses" },
+                      { label: "Profit & Loss Report", value: "profit_loss" },
+                    ].map((item, idx) => (
+                      <TouchableOpacity
+                        key={item.value}
+                        style={{
+                          paddingHorizontal: 12,
+                          paddingVertical: 12,
+                          borderBottomWidth: idx < 2 ? 1 : 0,
+                          borderBottomColor: "#374151",
+                        }}
+                        onPress={() => {
+                          setSelectedValue(item.value);
+                          setShowReportPicker(false);
+                        }}
+                      >
+                        <Text
+                          style={{ color: theme.text, fontSize: Typography.sm }}
+                        >
+                          {item.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
                 )}
               </View>
             </View>
@@ -1206,40 +1193,7 @@ export default function Reports() {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
-      <View>
-        <Text
-          style={{
-            fontSize: Typography.lg,
-            fontWeight: "semibold",
-            color: theme.text,
-            marginTop: 24,
-            marginBottom: 12,
-          }}
-        >
-          Key Metrics
-        </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: 8,
-            justifyContent: "space-between",
-          }}
-        >
-          {SALES_DATA.map((item, index) => (
-            <ReportItemCard key={index} {...item} />
-          ))}
-        </View>
-      </View>
-      <View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+        <View>
           <Text
             style={{
               fontSize: Typography.lg,
@@ -1249,206 +1203,376 @@ export default function Reports() {
               marginBottom: 12,
             }}
           >
-            Sales Performance
+            Key Metrics
           </Text>
-          <View style={{ flexDirection: "row", gap: 8 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 8,
+              justifyContent: "space-between",
+            }}
+          >
+            {loading
+              ? [1, 2, 3, 4].map((i) => (
+                  <View
+                    key={i}
+                    style={{
+                      width: "48%",
+                      padding: 12,
+                      backgroundColor: "#1A1F2E",
+                      borderRadius: 12,
+                    }}
+                  >
+                    <Text style={{ color: "#888" }}>Loading...</Text>
+                  </View>
+                ))
+              : (reportsData?.metrics
+                  ? [
+                      {
+                        icon: "dollarsign.circle.fill" as SFSymbol,
+                        iconColor: "#3B82F6",
+                        iconBgColor: "#071020",
+                        title: "Total Revenue",
+                        amount:
+                          typeof reportsData.metrics.revenue === "object"
+                            ? reportsData.metrics.revenue.value || "$84,249"
+                            : `$${Number(reportsData.metrics.revenue || 84249).toLocaleString()}`,
+                        percentage:
+                          typeof reportsData.metrics.revenue === "object"
+                            ? reportsData.metrics.revenue.percentage || "+12.5%"
+                            : "+12.5%",
+                      },
+                      {
+                        icon: "cart.fill" as SFSymbol,
+                        iconColor: "#F59E0B",
+                        iconBgColor: "#1a1208",
+                        title: "Total Orders",
+                        amount:
+                          typeof reportsData.metrics.orders === "object"
+                            ? reportsData.metrics.orders.value || "2,847"
+                            : `${Number(reportsData.metrics.orders || 2847).toLocaleString()}`,
+                        percentage:
+                          typeof reportsData.metrics.orders === "object"
+                            ? reportsData.metrics.orders.percentage || "+45.3%"
+                            : "+45.3%",
+                      },
+                      {
+                        icon: "person.fill" as SFSymbol,
+                        iconColor: "#3B82F6",
+                        iconBgColor: "#071020",
+                        title: "New Customers",
+                        amount:
+                          typeof reportsData.metrics.customers === "object"
+                            ? reportsData.metrics.customers.value || "1,249"
+                            : `${Number(reportsData.metrics.customers || 1249).toLocaleString()}`,
+                        percentage:
+                          typeof reportsData.metrics.customers === "object"
+                            ? reportsData.metrics.customers.percentage ||
+                              "+44.1%"
+                            : "+44.1%",
+                      },
+                      {
+                        icon: "chart.bar.fill" as SFSymbol,
+                        iconColor: "#6B5FED",
+                        iconBgColor: "#100b1a",
+                        title: "Conversion Rate",
+                        amount:
+                          typeof reportsData.metrics.conversion === "object"
+                            ? reportsData.metrics.conversion.value || "3.8%"
+                            : `${(typeof reportsData.metrics.conversion === "number" ? reportsData.metrics.conversion : 3.8).toFixed(1)}%`,
+                        percentage:
+                          typeof reportsData.metrics.conversion === "object"
+                            ? reportsData.metrics.conversion.percentage ||
+                              "-5.1%"
+                            : "-5.1%",
+                      },
+                    ]
+                  : SALES_DATA
+                ).map((item, index) => (
+                  <ReportItemCard key={index} {...item} />
+                ))}
+          </View>
+        </View>
+        <View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: Typography.lg,
+                fontWeight: "semibold",
+                color: theme.text,
+                marginTop: 24,
+                marginBottom: 12,
+              }}
+            >
+              Sales Performance
+            </Text>
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              <TouchableOpacity
+                style={{
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 6,
+                  backgroundColor:
+                    timeframe === "week" ? theme.tabIconSelected : theme.cardBg,
+                  borderWidth: 1,
+                  borderColor: colorScheme === "dark" ? "#333" : "#e5e5e5",
+                }}
+                onPress={() => setTimeframe("week")}
+              >
+                <Text
+                  style={{
+                    fontSize: Typography.xs,
+                    color: timeframe === "week" ? "white" : theme.tint,
+                    fontWeight: "500",
+                  }}
+                >
+                  Week
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 6,
+                  backgroundColor:
+                    timeframe === "month"
+                      ? theme.tabIconSelected
+                      : theme.cardBg,
+                  borderWidth: 1,
+                  borderColor: colorScheme === "dark" ? "#333" : "#e5e5e5",
+                }}
+                onPress={() => setTimeframe("month")}
+              >
+                <Text
+                  style={{
+                    fontSize: Typography.xs,
+                    color: timeframe === "month" ? "white" : theme.tint,
+                    fontWeight: "500",
+                  }}
+                >
+                  Month
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <SalesPerformanceChart
+            data={SALES_PERFORMANCE_DATA}
+            timeframe={timeframe}
+          />
+        </View>
+        <View>
+          <Text
+            style={{
+              fontSize: Typography.lg,
+              fontWeight: "semibold",
+              color: theme.text,
+              marginTop: 24,
+              marginBottom: 12,
+            }}
+          >
+            Top Products
+          </Text>
+          <TopProductsTable data={TOP_PRODUCTS_DATA} />
+        </View>
+        <View>
+          <Text
+            style={{
+              fontSize: Typography.lg,
+              fontWeight: "semibold",
+              color: theme.text,
+              marginTop: 24,
+              marginBottom: 12,
+            }}
+          >
+            Conversion Funnel
+          </Text>
+          <ConversionFunnel conversionData={CONVERSION_DATA} />
+        </View>
+        <View>
+          <Text
+            style={{
+              fontSize: Typography.lg,
+              fontWeight: "semibold",
+              color: theme.text,
+              marginTop: 24,
+              marginBottom: 12,
+            }}
+          >
+            Customer Analytics
+          </Text>
+          <CustomerAnalytics analyticsData={CUSTOMER_ANALYTICS_DATA} />
+        </View>
+        <View>
+          <Text
+            style={{
+              fontSize: Typography.lg,
+              fontWeight: "semibold",
+              color: theme.text,
+              marginTop: 24,
+              marginBottom: 12,
+            }}
+          >
+            Export Reports
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 12,
+              justifyContent: "space-between",
+            }}
+          >
+            {EXPORT_OPTONS.map((option, index) => (
+              <ExportHandler
+                key={index}
+                onExport={(format) => {
+                  // Handle export logic here
+                }}
+                format={option.format}
+                iconName={option.iconName}
+                iconColor={option.iconColor}
+                iconBgColor={option.iconBgColor}
+              />
+            ))}
+          </View>
+        </View>
+        <View>
+          <Text
+            style={{
+              fontSize: Typography.lg,
+              fontWeight: "semibold",
+              color: theme.text,
+              marginTop: 24,
+              marginBottom: 12,
+            }}
+          >
+            Scheduled Reports
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 12,
+              justifyContent: "space-between",
+            }}
+          >
+            <ScheduledReports reportsData={SCHEDULED_REPORTS_DATA} />
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: "column",
+            justifyContent: "space-between",
+            gap: 8,
+            paddingVertical: 20,
+            paddingHorizontal: 16,
+            borderColor: colorScheme === "dark" ? "#222" : "#d0d0d0",
+            borderWidth: 1,
+            borderRadius: 16,
+            backgroundColor: theme.cardBg,
+            marginTop: 24,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "#6366f1",
+              padding: 8,
+              borderRadius: 16,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 2,
+              width: 120,
+              justifyContent: "center",
+            }}
+          >
+            <IconSymbol size={16} name="star.slash.fill" color={theme.text} />
+            <Text style={{ color: theme.text }}>AI Insights</Text>
+          </View>
+          {AI_INSIGHTS.map((insight, index) => (
+            <AIInsightsCard key={index} text={insight} />
+          ))}
+
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: 16,
+              justifyContent: "center",
+              gap: 8,
+              padding: 12,
+              borderRadius: 8,
+              backgroundColor: "#1e293b",
+            }}
+          >
+            <IconSymbol size={20} name="bubble.left.fill" color={theme.text} />
+            <Text style={{ color: theme.text }}>Get More Insights</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Key Findings & Recommendations */}
+        <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
+          <Text
+            style={{
+              fontSize: Typography.lg,
+              fontWeight: "600",
+              color: theme.text,
+              marginBottom: 8,
+            }}
+          >
+            Key Findings & Recommendations
+          </Text>
+          <View
+            style={{
+              backgroundColor: theme.cardBg,
+              padding: 16,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: "#222",
+            }}
+          >
+            <View style={{ gap: 8 }}>
+              <Text style={{ color: theme.tint }}>
+                • Revenue Growth: Weekly revenue increased by 12.5% compared to
+                last period.
+              </Text>
+              <Text style={{ color: theme.tint }}>
+                • High Abandonment: 73% cart abandonment observed at
+                checkout—optimize funnel.
+              </Text>
+              <Text style={{ color: theme.tint }}>
+                • Mobile Optimization: 68% of traffic is mobile; improve mobile
+                checkout flow.
+              </Text>
+              <Text style={{ color: theme.tint }}>
+                • Product Synergy: Wireless Earbuds frequently purchased with
+                USB‑C Hubs—bundle opportunity.
+              </Text>
+            </View>
             <TouchableOpacity
               style={{
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 6,
-                backgroundColor:
-                  timeframe === "week" ? theme.tabIconSelected : theme.cardBg,
+                marginTop: 12,
+                padding: 12,
+                borderRadius: 8,
                 borderWidth: 1,
-                borderColor: colorScheme === "dark" ? "#333" : "#e5e5e5",
+                borderColor: "#263244",
+                backgroundColor: "#0F1724",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
               }}
-              onPress={() => setTimeframe("week")}
             >
-              <Text
-                style={{
-                  fontSize: Typography.xs,
-                  color: timeframe === "week" ? "white" : theme.tint,
-                  fontWeight: "500",
-                }}
-              >
-                Week
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 6,
-                backgroundColor:
-                  timeframe === "month" ? theme.tabIconSelected : theme.cardBg,
-                borderWidth: 1,
-                borderColor: colorScheme === "dark" ? "#333" : "#e5e5e5",
-              }}
-              onPress={() => setTimeframe("month")}
-            >
-              <Text
-                style={{
-                  fontSize: Typography.xs,
-                  color: timeframe === "month" ? "white" : theme.tint,
-                  fontWeight: "500",
-                }}
-              >
-                Month
-              </Text>
+              <IconSymbol name="sparkles" size={18} color={theme.text} />
+              <Text style={{ color: theme.text }}>Get More Insights</Text>
             </TouchableOpacity>
           </View>
         </View>
-        <SalesPerformanceChart
-          data={SALES_PERFORMANCE_DATA}
-          timeframe={timeframe}
-        />
-      </View>
-      <View>
-        <Text
-          style={{
-            fontSize: Typography.lg,
-            fontWeight: "semibold",
-            color: theme.text,
-            marginTop: 24,
-            marginBottom: 12,
-          }}
-        >
-          Top Products
-        </Text>
-        <TopProductsTable data={TOP_PRODUCTS_DATA} />
-      </View>
-      <View>
-        <Text
-          style={{
-            fontSize: Typography.lg,
-            fontWeight: "semibold",
-            color: theme.text,
-            marginTop: 24,
-            marginBottom: 12,
-          }}
-        >
-          Conversion Funnel
-        </Text>
-        <ConversionFunnel conversionData={CONVERSION_DATA} />
-      </View>
-      <View>
-        <Text
-          style={{
-            fontSize: Typography.lg,
-            fontWeight: "semibold",
-            color: theme.text,
-            marginTop: 24,
-            marginBottom: 12,
-          }}
-        >
-          Customer Analytics
-        </Text>
-        <CustomerAnalytics analyticsData={CUSTOMER_ANALYTICS_DATA} />
-      </View>
-      <View>
-        <Text
-          style={{
-            fontSize: Typography.lg,
-            fontWeight: "semibold",
-            color: theme.text,
-            marginTop: 24,
-            marginBottom: 12,
-          }}
-        >
-          Export Reports
-        </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 12,
-            justifyContent: "space-between",
-          }}
-        >
-          {EXPORT_OPTONS.map((option, index) => (
-            <ExportHandler
-              key={index}
-              onExport={(format) => {
-                // Handle export logic here
-              }}
-              format={option.format}
-              iconName={option.iconName}
-              iconColor={option.iconColor}
-              iconBgColor={option.iconBgColor}
-            />
-          ))}
-        </View>
-      </View>
-      <View>
-        <Text
-          style={{
-            fontSize: Typography.lg,
-            fontWeight: "semibold",
-            color: theme.text,
-            marginTop: 24,
-            marginBottom: 12,
-          }}
-        >
-          Scheduled Reports
-        </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 12,
-            justifyContent: "space-between",
-          }}
-        >
-          <ScheduledReports reportsData={SCHEDULED_REPORTS_DATA} />
-        </View>
-      </View>
-      <View
-        style={{
-          flexDirection: "column",
-          justifyContent: "space-between",
-          gap: 8,
-          paddingVertical: 20,
-          paddingHorizontal: 16,
-          borderColor: colorScheme === "dark" ? "#222" : "#d0d0d0",
-          borderWidth: 1,
-          borderRadius: 16,
-          backgroundColor: theme.cardBg,
-          marginTop: 24,
-        }}
-      >
-        <View
-          style={{
-            backgroundColor: "#6366f1",
-            padding: 8,
-            borderRadius: 16,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 2,
-            width: 120,
-            justifyContent: "center",
-          }}
-        >
-          <IconSymbol size={16} name="star.slash.fill" color={theme.text} />
-          <Text style={{ color: theme.text }}>AI Insights</Text>
-        </View>
-        {AI_INSIGHTS.map((insight, index) => (
-          <AIInsightsCard key={index} text={insight} />
-        ))}
-
-        <TouchableOpacity
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginTop: 16,
-            justifyContent: "center",
-            gap: 8,
-            padding: 12,
-            borderRadius: 8,
-            backgroundColor: "#1e293b",
-          }}
-        >
-          <IconSymbol size={20} name="bubble.left.fill" color={theme.text} />
-          <Text style={{ color: theme.text }}>Get More Insights</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
