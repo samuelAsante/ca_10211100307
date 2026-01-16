@@ -92,7 +92,6 @@ export default function TabLayout() {
         name="stock"
         options={{
           title: "Stock",
-          headerShown: true,
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="cube.box.fill" color={color} />
           ),
@@ -102,7 +101,6 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: "Settings",
-          headerShown: true,
           headerBackButtonDisplayMode: "minimal",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="gearshape.fill" color={color} />
