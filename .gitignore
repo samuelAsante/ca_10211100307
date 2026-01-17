@@ -41,7 +41,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
+web/next-env.d.ts
+web/.next
 
 # Prisma generated files (regenerated on npm install/build)
 /generated/
