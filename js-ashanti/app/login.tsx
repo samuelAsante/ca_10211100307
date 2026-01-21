@@ -52,6 +52,7 @@ export default function LoginScreen() {
 
     try {
       // Call better-auth API endpoint
+      console.log("tried to log tf in")
       const response = await apiRequest(API_ENDPOINTS.AUTH.LOGIN, {
         method: "POST",
         body: JSON.stringify({
@@ -59,6 +60,8 @@ export default function LoginScreen() {
           password,
         }),
       });
+
+      console.log("response", response) 
 
       if (response.error) {
         setError(response.error.message || "Login failed");
