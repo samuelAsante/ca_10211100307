@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import { useState } from "react"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -57,7 +58,7 @@ export function AddProductForm() {
       const uploadedImageUrls = await Promise.all(uploadPromises);
   
       // Now send product data with uploaded image URLs
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+      const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/products`, {
         method: "POST",
         headers: {

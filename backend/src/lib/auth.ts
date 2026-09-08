@@ -5,24 +5,48 @@ import { customSession, bearer } from "better-auth/plugins";
 import { admin as adminPlugin } from "better-auth/plugins";
 import { ac, admin } from "./permissions";
 import { EmailService } from "../services/email.service";
+import { getAllowedOrigins } from "./origins";
+
+const googleClientId = process.env.GOOGLE_CLIENT_ID?.trim();
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
+
+function isHttpsOrigin(url: string | undefined): boolean {
+  return Boolean(url?.startsWith("https://"));
+}
+
+function getCookieAttributes() {
+  if (process.env.NODE_ENV !== "production") {
+    return {};
+  }
+
+  const https = isHttpsOrigin(process.env.FRONTEND_URL) || isHttpsOrigin(process.env.BETTER_AUTH_URL);
+
+  try {
+    const frontendHost = process.env.FRONTEND_URL
+      ? new URL(process.env.FRONTEND_URL).host
+      : "";
+    const authHost = process.env.BETTER_AUTH_URL
+      ? new URL(process.env.BETTER_AUTH_URL).host
+      : "";
+    const splitOrigins = Boolean(frontendHost && authHost && frontendHost !== authHost);
+
+    return {
+      sameSite: (splitOrigins && https ? "none" : "lax") as "none" | "lax",
+      secure: https,
+    };
+  } catch {
+    return {
+      sameSite: "lax" as const,
+      secure: https,
+    };
+  }
+}
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  // Must include any Origin the clients send. Web uses FRONTEND_URL; Expo injects
-  // X-Expo-Origin (see server.ts) — typically http://localhost:8081 for Metro.
-  trustedOrigins: [
-    process.env.FRONTEND_URL || "http://localhost:3000",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:8081",
-    "http://127.0.0.1:8081",
-    "http://localhost:8082",
-    ...(process.env.BETTER_AUTH_ADDITIONAL_ORIGINS?.split(",")
-      .map((s) => s.trim())
-      .filter(Boolean) || []),
-  ],
+  trustedOrigins: getAllowedOrigins(),
   emailVerification: {
     sendVerificationEmail: async ({ url, user }) => {
       try {
@@ -42,11 +66,15 @@ export const auth = betterAuth({
     // callbackUrl: '/', // Not needed for API-only backend typically, or set to frontend URL
   },
   socialProviders: {
-    google: {
-      prompt: "select_account",
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    },
+    ...(googleClientId && googleClientSecret
+      ? {
+          google: {
+            prompt: "select_account" as const,
+            clientId: googleClientId,
+            clientSecret: googleClientSecret,
+          },
+        }
+      : {}),
   },
   session: {
     expiresIn: 60 * 60 * 24,
@@ -66,8 +94,10 @@ export const auth = betterAuth({
         },
       };
     }),
+    // better-auth admin plugin types don't match BetterAuthPlugin in this version
+    // @ts-ignore
     adminPlugin({
-      adminUserIds: [process.env.ADMIN_ID!],
+      adminUserIds: process.env.ADMIN_ID ? [process.env.ADMIN_ID] : [],
       adminRoles: ["admin"],
       ac,
       roles: {
@@ -83,6 +113,9 @@ export const auth = betterAuth({
         attributes: {},
       },
     },
-    useSecureCookies: process.env.NODE_ENV === "production",
+    useSecureCookies:
+      process.env.NODE_ENV === "production" &&
+      (isHttpsOrigin(process.env.FRONTEND_URL) || isHttpsOrigin(process.env.BETTER_AUTH_URL)),
+    defaultCookieAttributes: getCookieAttributes(),
   },
 });

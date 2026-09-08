@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useSocket } from "@/components/analytics/socket-provider";
 import { EventType } from "@/interface/analytics";
 import { usePathname } from "next/navigation";
 
 /**
- * Hook for tracking user events
+ * Manual event helpers. Page views are owned by GlobalPageTracker so
+ * calling this hook (e.g. on a product card) does not emit a duplicate PAGE_VIEW.
  */
 export function useAnalytics() {
   const { emitEvent } = useSocket();
@@ -36,26 +37,6 @@ export function useAnalytics() {
     return false;
   };
 
-  // Track page views automatically
-  useEffect(() => {
-    if (!pathname) return; // Skip if pathname is null
-
-    const userId = getUserId();
-    const sessionId = getSessionId();
-
-    emitEvent({
-      eventType: EventType.PAGE_VIEW,
-      userId,
-      sessionId,
-      page: pathname,
-      metadata: {
-        referrer: document.referrer,
-        userAgent: navigator.userAgent,
-      },
-    });
-  }, [pathname, emitEvent]);
-
-  // Manual tracking methods
   const trackEvent = (
     eventType: string,
     metadata?: Record<any, any>,

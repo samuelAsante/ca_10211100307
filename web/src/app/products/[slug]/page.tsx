@@ -1,4 +1,5 @@
 //@ts-nocheck
+import { getBackendUrl } from "@/lib/backend-url";
 
 import { Metadata } from "next";
 
@@ -10,22 +11,32 @@ import { ProductDisplayCarousel } from "@/components/products/displayCarousel";
 import { ColorPlatte } from "@/components/products/colorPlatte";
 // import {prisma} from "@/lib/prisma"; // Removed Prisma
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+const BACKEND_URL = getBackendUrl();
 
 async function getProduct(slug: string) {
-    const res = await fetch(`${BACKEND_URL}/api/products/${slug}`, {
-        next: { revalidate: 3600 } // Cache for 1 hour
-    });
-    if (!res.ok) return null;
-    return res.json();
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/products/${slug}`, {
+            next: { revalidate: 3600 }
+        });
+        if (!res.ok) return null;
+        return res.json();
+    } catch (error) {
+        console.error("Error fetching product:", error);
+        return null;
+    }
 }
 
 async function getAllProducts() {
-    const res = await fetch(`${BACKEND_URL}/api/products`, {
-        next: { revalidate: 3600 }
-    });
-    if (!res.ok) return [];
-    return res.json();
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/products`, {
+            next: { revalidate: 3600 }
+        });
+        if (!res.ok) return [];
+        return res.json();
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        return [];
+    }
 }
 
 import { ProductCount } from "@/components/products/productCount";

@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { getBackendUrl } from "@/lib/backend-url";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { UserEvent } from "@/interface/analytics";
 
@@ -23,7 +24,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+    const backendUrl = getBackendUrl();
     const socketInstance = io(backendUrl, {
       withCredentials: true,
       transports: ["websocket", "polling"],
@@ -54,20 +55,23 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const emitEvent = (event: Omit<UserEvent, "eventId" | "timestamp">) => {
-    if (!socket || !isConnected) {
-      console.warn("Socket not connected, event not sent");
-      return;
-    }
+  const emitEvent = useCallback(
+    (event: Omit<UserEvent, "eventId" | "timestamp">) => {
+      if (!socket || !isConnected) {
+        console.warn("Socket not connected, event not sent");
+        return;
+      }
 
-    const fullEvent: UserEvent = {
-      ...event,
-      eventId: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
-      timestamp: new Date().toISOString(),
-    };
+      const fullEvent: UserEvent = {
+        ...event,
+        eventId: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+        timestamp: new Date().toISOString(),
+      };
 
-    socket.emit("user:event", fullEvent);
-  };
+      socket.emit("user:event", fullEvent);
+    },
+    [socket, isConnected]
+  );
 
   return (
     <SocketContext.Provider value={{ socket, isConnected, emitEvent }}>

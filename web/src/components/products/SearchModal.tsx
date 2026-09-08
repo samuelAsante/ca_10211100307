@@ -1,4 +1,5 @@
 'use client';
+import { getBackendUrl } from "@/lib/backend-url";
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -31,22 +32,22 @@ export function SearchModal({
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+                const backendUrl = getBackendUrl();
                 const response = await fetch(`${backendUrl}/api/products`);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch products (${response.status})`);
                 }
                 const data = await response.json();
                 if (Array.isArray(data) && data.length > 0) {
-                    setProducts(data);
+                    setProducts(data.map((p: any) => ({ name: p.name || p.title, description: p.description, slug: p.slug })));
                     setLoadError(null);
                     return;
                 }
-                setProducts(mockProducts);
+                setProducts(mockProducts.map(p => ({ name: (p as any).name || (p as any).title, description: p.description, slug: p.slug })));
                 setLoadError("Using fallback products while backend product list is empty.");
             } catch (error) {
                 console.error("Error fetching products:", error);
-                setProducts(mockProducts);
+                setProducts(mockProducts.map(p => ({ name: (p as any).name || (p as any).title, description: p.description, slug: p.slug })));
                 setLoadError("Unable to load products from backend. Showing fallback products.");
             }
         };

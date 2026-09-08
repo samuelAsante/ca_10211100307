@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import { useCartStore } from "@/lib/store/cartStore";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -46,7 +47,7 @@ export default function CheckoutPage() {
   } = useForm<ShippingForm>();
 
   const pollPaymentStatus = useCallback(async (ref: string, orderId: string) => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+    const backendUrl = getBackendUrl();
     let attempts = 0;
     const maxAttempts = 20;
 
@@ -85,7 +86,7 @@ export default function CheckoutPage() {
 
   const handleRetry = async () => {
     if (!payment) return;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+    const backendUrl = getBackendUrl();
     try {
       setPayment(prev => prev ? { ...prev, status: "INITIATED" } : null);
       const res = await axios.post(`${backendUrl}/api/payments/${payment.paymentRef}/retry`);
@@ -100,7 +101,7 @@ export default function CheckoutPage() {
 
   const onSubmit = async (data: ShippingForm) => {
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+      const backendUrl = getBackendUrl();
       trackCheckout("start", finalTotal);
 
       const response = await axios.post(

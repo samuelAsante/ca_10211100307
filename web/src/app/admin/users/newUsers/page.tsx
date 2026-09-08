@@ -1,8 +1,9 @@
+import { getBackendUrl } from "@/lib/backend-url";
 import { NewUserForm } from "@/components/admin/users/createUser";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+const BACKEND_URL = getBackendUrl();
 
 export const dynamic = "force-dynamic";
 

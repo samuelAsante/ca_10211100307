@@ -13,7 +13,7 @@ export class SettingsController {
                 return res.status(401).json({ error: "Unauthorized" });
             }
 
-            const hasPermission = await auth.api.userHasPermission({
+            const hasPermission = await (auth.api as any).userHasPermission({
                 headers: fromNodeHeaders(req.headers),
                 body: {
                     userId: session.user.id,

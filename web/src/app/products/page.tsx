@@ -1,4 +1,5 @@
 //@ts-nocheck
+import { fetchBackend } from "@/lib/fetch-backend";
 import type { Metadata } from "next"
 import { ProductsClient } from "@/components/products/ProductsClient";
 import { products as mockProducts } from "@/data/data";
@@ -15,22 +16,16 @@ interface ProductsProps {
 export default async function Products({ searchParams: searchParamsPromise }: ProductsProps) {
   const searchParams = await searchParamsPromise;
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001"}/api/products`,
-    {
-      next: { revalidate: 60 },
+  const res = await fetchBackend("/api/products", {
+    next: { revalidate: 60 },
+  });
+
+  let products = mockProducts;
+  if (res?.ok) {
+    const data = await res.json();
+    if (Array.isArray(data) && data.length > 0) {
+      products = data;
     }
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch products")
-  }
-
-  let products = await res.json();
-
-  // Fallback to mock data if DB is empty
-  if (Array.isArray(products) && products.length === 0) {
-    products = mockProducts;
   }
 
   if (Array.isArray(products)) {

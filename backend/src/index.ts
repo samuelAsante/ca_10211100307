@@ -1,3 +1,4 @@
+import "./lib/dns";
 import dotenv from "dotenv";
 import { startServer } from "./server";
 import { startWorker } from "./worker/worker";

@@ -27,7 +27,7 @@ const headerInfo = {
   description: "The best way to buy the products you love.",
 };
 
-export function ProductsClient({ products, searchParams }: { products: any[]; searchParams: { [key: string]: string } }) {
+export function ProductsClient({ products, searchParams }: { products: any[]; searchParams: { [key: string]: string | undefined } }) {
   const [selectedTab, setSelectedTab] = useState("all-Products");
   const [isLoading, setIsLoading] = useState(true);
 

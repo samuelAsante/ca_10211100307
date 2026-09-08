@@ -1,3 +1,4 @@
+import { getBackendUrl } from "@/lib/backend-url";
 import { Suspense } from "react";
 import { ProductsList } from "./ProductsList";
 import { ProductCardSkeleton } from "./ProductCardSkeleton";
@@ -6,7 +7,7 @@ import { pickFeaturedProducts } from "@/lib/utils";
 export default async function Products() {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001"}/api/products`,
+      `${getBackendUrl()}/api/products`,
       {
         next: { revalidate: 3600 }, // Cache for 1 hour
         cache: "force-cache",

@@ -1,8 +1,9 @@
+import { getBackendUrl } from "@/lib/backend-url";
 import { notFound } from 'next/navigation';
 // import { prisma } from '@/lib/prisma'; // Removed Prisma
 import { ProductForm } from './ProductForm';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+const BACKEND_URL = getBackendUrl();
 
 async function getProduct(slug: string) {
   const res = await fetch(`${BACKEND_URL}/api/products/${slug}`, {

@@ -28,7 +28,7 @@ import {
           <Heading style={heading}>Hi {name}!</Heading>
           <Section style={buttonContainer}></Section>
           <Text style={paragraph}>
-            Thank you for signing up with J'S Ashanti! Please click the link below to verify your
+            Thank you for signing up with J&apos;S Ashanti! Please click the link below to verify your
             email address and complete your registration.
           </Text>
           <Hr style={hr} />

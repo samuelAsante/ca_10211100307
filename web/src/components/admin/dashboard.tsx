@@ -1,4 +1,5 @@
 "use client";
+import { getBackendUrl } from "@/lib/backend-url";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-hot-toast";
@@ -28,7 +29,7 @@ type Order = {
   createdAt: string;
 };
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+const BACKEND_URL = getBackendUrl();
 
 export function AdminDashboard() {
   const [user, setUser] = useState<any>(null);

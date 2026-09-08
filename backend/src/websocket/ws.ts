@@ -4,6 +4,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { nanoid } from 'nanoid';
 import { createHash } from 'crypto';
+import { getAllowedOrigins } from '../lib/origins';
 
 let io: Server;
 const clients = new Map<string, Socket>();
@@ -149,12 +150,7 @@ export async function trackSystemEvent(params: {
 }
 
 export const initializeWebSocket = (httpServer: HttpServer) => {
-    const configuredOrigin = process.env.FRONTEND_URL;
-    const allowedOrigins = new Set(
-        [configuredOrigin, "http://localhost:3000", "http://127.0.0.1:3000"].filter(
-            Boolean
-        ) as string[]
-    );
+    const allowedOrigins = new Set(getAllowedOrigins());
 
     io = new Server(httpServer, {
         cors: {

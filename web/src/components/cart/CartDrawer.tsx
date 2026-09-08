@@ -2,7 +2,7 @@
 import { useCartStore } from "@/lib/store/cartStore";
 
 export default function CartDrawer() {
-  const { items, removeItem, getTotalPrice, getDiscountedPrice } = useCartStore();
+  const { items, removeItem, getTotalPrice } = useCartStore();
 
   const total = getTotalPrice();
   // const discountedTotal = getDiscountedPrice(10); // e.g. 10% off

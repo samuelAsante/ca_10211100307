@@ -153,6 +153,10 @@ class CircuitBreaker {
   getState(): CircuitBreakerState {
     return this.state;
   }
+
+  isOpen(): boolean {
+    return this.state === "OPEN";
+  }
 }
 
 export class CircuitBreakerOpenError extends Error {

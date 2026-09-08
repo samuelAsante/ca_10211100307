@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import * as React from "react";
 import {
   Carousel,
@@ -23,7 +24,7 @@ type Product = {
 export function Hero() {
   const [displayProducts, setDisplayProducts] = React.useState<Product[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+  const backendUrl = getBackendUrl();
 
   const autoplayPlugin = React.useRef(
     Autoplay({ delay: 7000, stopOnInteraction: false })

@@ -22,6 +22,4 @@ Thumbs.db
 # typescript
 *.tsbuildinfo
 
-# prisma
-/generated/
 package-lock.json

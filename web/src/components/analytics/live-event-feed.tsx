@@ -85,7 +85,8 @@ export function LiveEventFeed() {
                   </div>
                   <div className="text-xs space-y-1">
                     <p>
-                      <strong>User:</strong> {event.userId}
+                      <strong>User:</strong>{" "}
+                      <span title={event.userId}>{shortenId(event.userId)}</span>
                     </p>
                     {event.page && (
                       <p>
@@ -94,10 +95,7 @@ export function LiveEventFeed() {
                     )}
                     {event.metadata &&
                       Object.keys(event.metadata).length > 0 && (
-                        <p>
-                          <strong>Data:</strong>{" "}
-                          {JSON.stringify(event.metadata, null, 2)}
-                        </p>
+                        <EventMetadata metadata={event.metadata} />
                       )}
                   </div>
                 </div>
@@ -107,5 +105,61 @@ export function LiveEventFeed() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function shortenId(id: string): string {
+  if (id.length <= 18) return id;
+  return `${id.slice(0, 8)}…${id.slice(-6)}`;
+}
+
+function summarizeUserAgent(ua: string): string {
+  const os = /Mac OS X/i.test(ua)
+    ? "macOS"
+    : /Windows/i.test(ua)
+      ? "Windows"
+      : /Android/i.test(ua)
+        ? "Android"
+        : /iPhone|iPad/i.test(ua)
+          ? "iOS"
+          : /Linux/i.test(ua)
+            ? "Linux"
+            : "Unknown OS";
+  const browser = /Edg\//.test(ua)
+    ? "Edge"
+    : /Chrome\//.test(ua)
+      ? "Chrome"
+      : /Firefox\//.test(ua)
+        ? "Firefox"
+        : /Safari\//.test(ua)
+          ? "Safari"
+          : "Browser";
+  return `${browser} on ${os}`;
+}
+
+function formatMetaValue(key: string, value: unknown): string {
+  if (value == null) return "";
+  if (key === "userAgent" && typeof value === "string") {
+    return summarizeUserAgent(value);
+  }
+  const text = typeof value === "string" ? value : JSON.stringify(value);
+  if (text.length > 72) return `${text.slice(0, 69)}…`;
+  return text;
+}
+
+function EventMetadata({ metadata }: { metadata: Record<string, unknown> }) {
+  const entries = Object.entries(metadata).filter(
+    ([, value]) => value !== undefined && value !== null && value !== ""
+  );
+  if (entries.length === 0) return null;
+
+  return (
+    <div className="space-y-0.5">
+      {entries.map(([key, value]) => (
+        <p key={key} className="break-words">
+          <strong className="capitalize">{key}:</strong> {formatMetaValue(key, value)}
+        </p>
+      ))}
+    </div>
   );
 }

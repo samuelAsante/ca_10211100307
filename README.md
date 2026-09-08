@@ -105,5 +105,48 @@ Make sure the backend is fully running first so the mobile app can connect succe
 cd mobile
 npm run ios
 ```
-Wait for Expo to start the Metro bundler completely and deploy to the iOS simulator. The Expo bundler runs locally on port `8081`. 
+Wait for Expo to start the Metro bundler completely and deploy to the iOS simulator. The Expo bundler runs locally on port `8081`.
 *Note*: If you only need the Metro packager to connect an existing app via Expo Go, you can do `npm start` instead of `npm run ios`.
+
+## Production deploy
+
+The API is a long-running Node process (Socket.IO + analytics workers). It cannot run as Vercel serverless alone.
+
+You cannot invent Cloudinary, Resend, or Google OAuth keys. The app boots without them: image uploads return 503, emails are skipped, and Google login is hidden.
+
+### Docker (recommended)
+
+From the repo root, create a gitignored `.env` (do not commit it):
+
+```bash
+PUBLIC_URL=http://localhost
+POSTGRES_PASSWORD=choose-a-strong-password
+GROQ_API_KEY=your-groq-key
+GROQ_MODEL=openai/gpt-oss-20b
+BETTER_AUTH_SECRET=generate-a-32-byte-hex-secret
+```
+
+Then:
+
+```bash
+chmod +x scripts/deploy-prod.sh
+./scripts/deploy-prod.sh
+```
+
+Open [http://localhost](http://localhost). Nginx serves the storefront and proxies `/api` and `/socket.io` to the backend.
+
+Admin login after seed:
+
+- Email: `admin@example.com`
+- Password: `password123`
+
+### Render
+
+`render.yaml` defines Postgres + API + web. After connecting the GitHub repo in the Render dashboard:
+
+1. Set `GROQ_API_KEY` on `js-ashanti-api`
+2. Set `BETTER_AUTH_URL` and `FRONTEND_URL` to the public HTTPS URLs
+3. Set `NEXT_PUBLIC_BACKEND_URL` on `js-ashanti-web` to the API URL (or the public origin if you put a reverse proxy in front)
+
+Rotate any Groq key that was pasted into chat before using it in production.
+

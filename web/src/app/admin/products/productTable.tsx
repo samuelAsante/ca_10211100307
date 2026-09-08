@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import {
   Table,
   TableBody,
@@ -17,7 +18,7 @@ export function AdminProductsTable({ products }: { products: any[] }) {
     const router = useRouter();
     const deleteProduct = async (productId: string) => {
       try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+        const backendUrl = getBackendUrl();
         const res = await fetch(`${backendUrl}/api/products`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },

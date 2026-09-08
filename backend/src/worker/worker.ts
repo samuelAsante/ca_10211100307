@@ -8,6 +8,10 @@ import { prisma } from "../lib/prisma";
 import { analyzeEventBatch } from "../services/ai.service";
 import { UserEvent } from "../interfaces/analytics";
 import { nanoid } from "nanoid";
+import {
+  aiCircuitBreaker,
+  CircuitBreakerOpenError,
+} from "../lib/circuit-breaker";
 
 const MAX_JOB_ATTEMPTS = 5;
 const JOB_LOCK_TIMEOUT_MS = 10 * 60 * 1000;
@@ -19,20 +23,39 @@ export interface JobError {
 }
 
 export function classifyError(error: unknown): JobError {
+  if (error instanceof CircuitBreakerOpenError) {
+    return {
+      type: "TRANSIENT",
+      code: "CIRCUIT_BREAKER_OPEN",
+      message: error.message,
+    };
+  }
+
   if (error instanceof Error) {
     const message = error.message.toLowerCase();
+
+    if (message.includes("groq_api_key not configured")) {
+      return { type: "FATAL", code: "CONFIG_ERROR", message: error.message };
+    }
 
     if (
       message.includes("timeout") ||
       message.includes("econnrefused") ||
       message.includes("econnreset") ||
+      message.includes("enotfound") ||
+      message.includes("connection error") ||
+      message.includes("fetcherror") ||
       message.includes("429")
     ) {
       return { type: "TRANSIENT", code: "NETWORK_ERROR", message: error.message };
     }
 
     if (message.includes("circuit breaker") || message.includes("open")) {
-      return { type: "TRANSIENT", code: "CIRCUIT_BREAKER_OPEN", message: error.message };
+      return {
+        type: "TRANSIENT",
+        code: "CIRCUIT_BREAKER_OPEN",
+        message: error.message,
+      };
     }
 
     if (message.includes("401") || message.includes("403")) {
@@ -105,6 +128,49 @@ async function claimJob(): Promise<ClaimedJob | null> {
     }
     return null;
   }
+}
+
+async function releaseJobWithoutAttempt(job: ClaimedJob, reason: string): Promise<void> {
+  await prisma.analysisJob.update({
+    where: { id: job.id },
+    data: {
+      status: "PENDING",
+      lock_expires_at: new Date(Date.now() + 15_000),
+      last_error: reason,
+      updated_at: new Date(),
+    },
+  });
+  console.warn(`[Worker] Deferred job ${job.job_id}: ${reason}`);
+}
+
+async function requeueFailedJobsForSealedBatches(): Promise<number> {
+  const sealed = await prisma.batch.findMany({
+    where: { status: "SEALED" },
+    select: { batch_id: true },
+  });
+  if (sealed.length === 0) return 0;
+
+  const result = await prisma.analysisJob.updateMany({
+    where: {
+      batch_id: { in: sealed.map((batch) => batch.batch_id) },
+      status: { in: ["FAILED", "RUNNING"] },
+    },
+    data: {
+      status: "PENDING",
+      attempt_count: 0,
+      last_error: null,
+      lock_expires_at: null,
+      updated_at: new Date(),
+    },
+  });
+
+  if (result.count > 0) {
+    console.log(
+      `[Worker] Requeued ${result.count} failed/stuck job(s) for sealed batches`
+    );
+  }
+
+  return result.count;
 }
 
 async function processJob(job: ClaimedJob): Promise<void> {
@@ -208,6 +274,10 @@ async function processJob(job: ClaimedJob): Promise<void> {
     console.log(`[Worker] Job ${job.job_id} completed in ${analysisTimeMs}ms`);
   } catch (error) {
     const jobError = classifyError(error);
+    if (jobError.code === "CIRCUIT_BREAKER_OPEN") {
+      await releaseJobWithoutAttempt(job, jobError.message);
+      return;
+    }
     await markJobFailed(job, jobError.message, jobError.type);
   }
 }
@@ -279,9 +349,15 @@ async function markJobFailed(
 
 export async function startWorker(pollIntervalMs: number = 5000): Promise<void> {
   console.log(`[Worker] Starting (polling every ${pollIntervalMs}ms)`);
+  await requeueFailedJobsForSealedBatches();
 
   const runLoop = async () => {
     try {
+      if (aiCircuitBreaker.isOpen()) {
+        setTimeout(runLoop, pollIntervalMs);
+        return;
+      }
+
       const job = await claimJob();
       if (job) await processJob(job);
       setTimeout(runLoop, pollIntervalMs);

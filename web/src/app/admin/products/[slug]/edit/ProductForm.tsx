@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -56,7 +57,7 @@ export function ProductForm({ product }: ProductFormProps) {
 
   const onSubmit: SubmitHandler<ProductFormInputs> = async (data) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4001'}/api/products/${product.slug}`, {
+      const response = await fetch(`${getBackendUrl()}/api/products/${product.slug}`, {
         method: "PUT",
           credentials: "include" as RequestCredentials,
         headers: {

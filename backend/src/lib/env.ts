@@ -6,10 +6,14 @@ const REQUIRED_ENV_KEYS = [
   "ADMIN_ID",
 ] as const;
 
-type RequiredEnvKey = (typeof REQUIRED_ENV_KEYS)[number];
+const PRODUCTION_REQUIRED_ENV_KEYS = ["BETTER_AUTH_SECRET", "FRONTEND_URL"] as const;
 
-function getMissingEnvKeys(): RequiredEnvKey[] {
-  return REQUIRED_ENV_KEYS.filter((key) => !process.env[key]?.trim());
+function getMissingEnvKeys(): string[] {
+  const required: string[] = [...REQUIRED_ENV_KEYS];
+  if (process.env.NODE_ENV === "production") {
+    required.push(...PRODUCTION_REQUIRED_ENV_KEYS);
+  }
+  return required.filter((key) => !process.env[key]?.trim());
 }
 
 export async function validateRuntimeEnv(): Promise<void> {
@@ -23,6 +27,10 @@ export async function validateRuntimeEnv(): Promise<void> {
     ].join("\n");
 
     throw new Error(details);
+  }
+
+  if (!process.env.GROQ_API_KEY?.trim()) {
+    console.warn("[Config] GROQ_API_KEY is not set; AI insights will fail until it is configured.");
   }
 
   try {

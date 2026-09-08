@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import { useEffect, useMemo, useState } from "react";
 import { LiveEventFeed } from "@/components/analytics/live-event-feed";
 import { InsightsTimeline } from "@/components/analytics/insights-timeline";
@@ -30,7 +31,7 @@ export default function AnalyticsDashboard() {
   const [loadingCommerce, setLoadingCommerce] = useState(true);
   const [commerceError, setCommerceError] = useState<string | null>(null);
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+  const backendUrl = getBackendUrl();
 
   useEffect(() => {
     const fetchCommerceSnapshot = async () => {

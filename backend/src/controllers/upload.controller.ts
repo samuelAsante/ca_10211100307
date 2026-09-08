@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import cloudinary from '../lib/cloudinary';
+import cloudinary, { isCloudinaryConfigured } from '../lib/cloudinary';
 import { UploadApiResponse } from 'cloudinary';
 
 export class UploadController {
@@ -7,6 +7,12 @@ export class UploadController {
         try {
             if (!req.file) {
                 return res.status(400).json({ error: "No file provided" });
+            }
+
+            if (!isCloudinaryConfigured()) {
+                return res.status(503).json({
+                    error: "Image uploads are unavailable until Cloudinary is configured.",
+                });
             }
 
             const buffer = req.file.buffer;

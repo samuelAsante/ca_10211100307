@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import {
   Tabs,
   TabsList,
@@ -111,7 +112,7 @@ export default function AdminSettingsPage() {
         );
         logoUrl = res.data.secure_url;
       }
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+      const backendUrl = getBackendUrl();
       await axios.post(`${backendUrl}/api/business-settings`, {
         name: data.name,
         phone: data.phone,

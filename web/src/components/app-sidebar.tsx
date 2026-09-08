@@ -1,6 +1,7 @@
 //@ts-nocheck
 "use client"
 
+import Link from "next/link";
 import * as React from "react"
 import { useEffect } from "react"
 import {
@@ -113,10 +114,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="/">
+              <Link href="/">
               {/* Use a ternary operator to display logo or business name  */}
-                <span className="text-base font-semibold logo">J'S Ashantis</span>
-              </a>
+                <span className="text-base font-semibold logo">J&apos;S Ashantis</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

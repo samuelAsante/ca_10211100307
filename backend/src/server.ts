@@ -5,6 +5,7 @@ import { createServer } from 'http';
 import { toNodeHandler } from 'better-auth/node';
 import { auth } from './lib/auth';
 import { initializeWebSocket } from './websocket/ws';
+import { getAllowedOrigins } from './lib/origins';
 
 // Routes
 import productRoutes from './routes/product.routes';
@@ -23,16 +24,7 @@ const app = express();
 const httpServer = createServer(app);
 const port = process.env.PORT || 4001;
 
-const configuredOrigin = process.env.FRONTEND_URL;
-const allowedOrigins = new Set(
-  [
-    configuredOrigin,
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:8081",
-    "http://localhost:8082",
-  ].filter(Boolean) as string[]
-);
+const allowedOrigins = new Set(getAllowedOrigins());
 
 app.use(
   cors({

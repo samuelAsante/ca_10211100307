@@ -104,14 +104,11 @@ async function createJobsForSealedBatches(): Promise<number> {
       const existingJob = await prisma.analysisJob.findFirst({
         where: {
           batch_id: batch.batch_id,
-          status: {
-            in: ["PENDING", "RUNNING", "SUCCESS"],
-          },
         },
+        orderBy: { created_at: "desc" },
       });
 
       if (existingJob) {
-        // Job already exists, skip
         continue;
       }
 

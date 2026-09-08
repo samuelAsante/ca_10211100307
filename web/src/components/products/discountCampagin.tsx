@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import { useEffect, useState } from "react";
 import {
   Table,
@@ -25,7 +26,7 @@ export default function DiscountCampaign() {
   const [products, setProducts] = useState<Product[]>([]);
   const [discounts, setDiscounts] = useState<{ [productId: string]: number }>({});
   const [loadingSlug, setLoadingSlug] = useState<string | null>(null);
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+  const backendUrl = getBackendUrl();
 
   // Fetch products
   useEffect(() => {

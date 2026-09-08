@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useState } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -302,9 +303,9 @@ export function SignupForm() {
       <div className="w-full max-w-lg px-4 sm:px-6 lg:px-8">
         <Card className="border-none shadow-lg pb-0">
           <CardHeader className="flex flex-col items-center space-y-1.5 pb-4 pt-6">
-            <a href="/">
-              <p className="logo">J's Ashanti's</p>
-            </a>
+            <Link href="/">
+              <p className="logo">J&apos;s Ashanti&apos;s</p>
+            </Link>
             <div className="space-y-0.5 flex flex-col items-center">
               <h2 className="text-2xl font-semibold text-foreground">
                 Create an account
