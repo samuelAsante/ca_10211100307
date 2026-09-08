@@ -135,6 +135,7 @@ async function releaseJobWithoutAttempt(job: ClaimedJob, reason: string): Promis
     where: { id: job.id },
     data: {
       status: "PENDING",
+      attempt_count: 0,
       lock_expires_at: new Date(Date.now() + 15_000),
       last_error: reason,
       updated_at: new Date(),
