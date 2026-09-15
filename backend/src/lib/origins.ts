@@ -2,6 +2,8 @@ export function getAllowedOrigins(): string[] {
   const origins = [
     process.env.FRONTEND_URL,
     process.env.BETTER_AUTH_URL,
+    "https://ashantiskitchenware.com",
+    "https://www.ashantiskitchenware.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:8081",
