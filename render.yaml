@@ -28,11 +28,9 @@ services:
       - key: BETTER_AUTH_SECRET
         generateValue: true
       - key: BETTER_AUTH_URL
-        sync: false
+        value: https://js-ashanti-api.onrender.com
       - key: FRONTEND_URL
-        sync: false
-      - key: ADMIN_ID
-        sync: false
+        value: https://js-ashanti-web.onrender.com
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
@@ -56,10 +54,10 @@ services:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_BACKEND_URL
-        sync: false
+        value: https://js-ashanti-api.onrender.com
       - key: NEXT_PUBLIC_BASE_URL
-        sync: false
+        value: https://js-ashanti-web.onrender.com
       - key: BACKEND_INTERNAL_URL
-        sync: false
+        value: http://js-ashanti-api:10000
       - key: BETTER_AUTH_URL
-        sync: false
+        value: https://js-ashanti-api.onrender.com

@@ -142,11 +142,9 @@ Admin login after seed:
 
 ### Render
 
-`render.yaml` defines Postgres + API + web. After connecting the GitHub repo in the Render dashboard:
+`render.yaml` defines Postgres + API + web, with database URL, auth secret, and all inter-service URLs (public and internal) pre-wired. After connecting the GitHub repo in the Render dashboard, fill in the remaining third-party secrets on `js-ashanti-api`: `GROQ_API_KEY`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `RESEND_API_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`.
 
-1. Set `GROQ_API_KEY` on `js-ashanti-api`
-2. Set `BETTER_AUTH_URL` and `FRONTEND_URL` to the public HTTPS URLs
-3. Set `NEXT_PUBLIC_BACKEND_URL` on `js-ashanti-web` to the API URL (or the public origin if you put a reverse proxy in front)
+The hardcoded URLs in `render.yaml` (`https://js-ashanti-api.onrender.com`, `https://js-ashanti-web.onrender.com`) assume those exact service names are available on `onrender.com`. If Render appends a suffix because a name is already taken, update the affected env vars to match the real assigned URLs after first deploy.
 
 Rotate any Groq key that was pasted into chat before using it in production.
 
