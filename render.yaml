@@ -55,6 +55,8 @@ services:
         value: production
       - key: NEXT_PUBLIC_BACKEND_URL
         value: https://js-ashanti-api.onrender.com
+      - key: NEXT_PUBLIC_ENABLE_GOOGLE_LOGIN
+        value: "true"
       - key: NEXT_PUBLIC_BASE_URL
         value: https://js-ashanti-web.onrender.com
       - key: BACKEND_INTERNAL_URL
