@@ -8,6 +8,7 @@ services:
   - type: web
     name: js-ashanti-api
     runtime: docker
+    plan: free
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     healthCheckPath: /api/health
@@ -48,6 +49,7 @@ services:
   - type: web
     name: js-ashanti-web
     runtime: docker
+    plan: free
     dockerfilePath: ./web/Dockerfile
     dockerContext: ./web
     envVars:
