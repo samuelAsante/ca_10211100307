@@ -133,13 +133,18 @@ export default async function ProductDetailPage({ params }: Params) {
             )
           }
           </div>
-          <div className="flex gap-4 text-blue-500 mb-4">
-            <CustomerRatings rating={product.ratingFromManufacturer} /> ({product.ratingFromManufacturer} Customers Reviews)
-          </div>
+          {product.ratingFromManufacturer > 0 && (
+            <div className="flex items-center gap-2 text-blue-500 mb-4">
+              <CustomerRatings rating={product.ratingFromManufacturer} />
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                {product.ratingFromManufacturer}/5 product rating
+              </span>
+            </div>
+          )}
           <p className="text-gray-600 mb-6 text-justify">{product.description}</p>
          
           <div className="items-center gap-2 mb-6">
-              <h5 className="text-neutral-400 dark:text-neutral-300 text-md md:text-xl mb-2">Colors</h5>
+              <h5 className="text-neutral-600 dark:text-neutral-300 text-md md:text-xl mb-2">Colors</h5>
               <div className="flex gap-2">
                 <ColorPlatte colors={product.colors} />
               </div>

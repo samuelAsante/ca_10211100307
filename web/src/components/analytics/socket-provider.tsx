@@ -4,6 +4,7 @@ import { getBackendUrl } from "@/lib/backend-url";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { UserEvent } from "@/interface/analytics";
+import { hasAnalyticsConsent } from "@/lib/consent";
 
 interface SocketContextType {
   socket: Socket | null;
@@ -57,6 +58,11 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
   const emitEvent = useCallback(
     (event: Omit<UserEvent, "eventId" | "timestamp">) => {
+      // Respect the user's cookie choice: no analytics without consent.
+      if (!hasAnalyticsConsent()) {
+        return;
+      }
+
       if (!socket || !isConnected) {
         console.warn("Socket not connected, event not sent");
         return;

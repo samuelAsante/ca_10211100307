@@ -151,11 +151,14 @@ export function ProductReviews({ productSlug }: { productSlug: string }) {
       {showForm && (
         <form onSubmit={handleSubmit(onSubmit)} className="border-t pt-6 space-y-4">
           <div>
-            <label className="block text-md font-medium mb-1">Your Name</label>
+            <label htmlFor="review-name" className="block text-md font-medium mb-1">Your Name</label>
             <input
+              id="review-name"
               type="text"
+              autoComplete="name"
               disabled={isSubmitting}
               placeholder="Full Name"
+              aria-invalid={errors.customerName ? "true" : "false"}
               className="w-full border p-2 rounded"
               {...register("customerName", {
                 required: "Enter your full name",
@@ -165,10 +168,12 @@ export function ProductReviews({ productSlug }: { productSlug: string }) {
           </div>
 
           <div>
-            <label className="block text-md font-medium mb-1">Your Review</label>
+            <label htmlFor="review-text" className="block text-md font-medium mb-1">Your Review</label>
             <textarea
+              id="review-text"
               placeholder="Write your review..."
               disabled={isSubmitting}
+              aria-invalid={errors.review ? "true" : "false"}
               className="w-full border p-2 rounded"
               {...register("review", {
                 required: "Type a review",
@@ -182,19 +187,22 @@ export function ProductReviews({ productSlug }: { productSlug: string }) {
           </div>
 
           <div className='flex justify-between'>
-            <label className="block text-md font-medium mb-1">Rating</label>
-            <div className="flex space-x-1">
+            <span id="rating-label" className="block text-md font-medium mb-1">Rating</span>
+            <div className="flex space-x-1" role="group" aria-labelledby="rating-label">
               {Array.from({ length: 5 }, (_, i) => (
                 <button
                   key={i}
                   type="button"
+                  aria-label={`Rate ${i + 1} star${i + 1 > 1 ? "s" : ""}`}
+                  aria-pressed={selectedRating === i + 1}
                   onClick={() => {
                     setSelectedRating(i + 1);
                     setValue("rating", i + 1); // update react-hook-form value
                   }}
-                  className="focus:outline-none"
+                  className="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   <Star
+                    aria-hidden="true"
                     className={clsx("w-6 h-6", {
                       "text-yellow-500 fill-yellow-500": i < selectedRating,
                       "text-gray-300": i >= selectedRating,

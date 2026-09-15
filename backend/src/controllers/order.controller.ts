@@ -3,6 +3,16 @@ import { prisma } from '../lib/prisma';
 import { EmailService } from '../services/email.service';
 import { orderConfirmationTemplate } from '../mail/order-confirmation-template';
 import { trackSystemEvent } from '../websocket/ws';
+import { initiatePayment } from '../services/payment.service';
+
+/** Frontend base URL used for the Paystack post-payment redirect. */
+function getFrontendUrl(req: Request): string {
+    return (
+        process.env.FRONTEND_URL?.replace(/\/$/, "") ||
+        (req.headers.origin as string | undefined)?.replace(/\/$/, "") ||
+        "http://localhost:3000"
+    );
+}
 
 /** Must match `getTotalPrice()` in web/src/lib/store/cartStore.ts */
 function expectedCheckoutTotal(cartItems: unknown[]): number {
@@ -88,109 +98,33 @@ export class OrderController {
                 // We don't fail the request if email fails, but maybe log it
             }
 
-            // Initiate payment simulation
-            const paymentRef = `PAY-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-
+            // Initiate payment (Paystack when configured, otherwise simulation)
             try {
-                await prisma.payment.create({
-                    data: {
-                        paymentRef,
-                        orderId: order.id,
-                        amount: total,
-                        currency: "GHS",
-                        provider: "SIMULATION",
-                        status: "INITIATED",
-                        customerEmail: email,
-                        customerName: fullName,
-                        metadata: { itemCount: cartItems.length },
-                    },
+                const payment = await initiatePayment({
+                    orderId: order.id,
+                    amount: Number(total),
+                    email,
+                    customerName: fullName,
+                    currency: "GHS",
+                    metadata: { itemCount: cartItems.length },
+                    callbackUrl: `${getFrontendUrl(req)}/checkout/success`,
                 });
 
-                await prisma.order.update({
-                    where: { id: order.id },
-                    data: { paymentRef, paymentProvider: "SIMULATION" },
+                return res.json({
+                    success: true,
+                    orderId: order.id,
+                    paymentRef: payment.paymentRef,
+                    paymentStatus: payment.status,
+                    provider: payment.provider,
+                    authorizationUrl: payment.authorizationUrl,
                 });
-
-                await trackSystemEvent({
-                    eventType: "PAYMENT_INITIATED",
-                    userId: email,
-                    sessionId: "checkout",
-                    metadata: { paymentRef, orderId: order.id, amount: total },
-                });
-
-                // Simulate async payment processing (1.5-4s delay)
-                setTimeout(async () => {
-                    try {
-                        await prisma.payment.update({
-                            where: { paymentRef },
-                            data: { status: "PROCESSING" },
-                        });
-
-                        const roll = Math.random();
-                        const isSuccess = roll < 0.85;
-                        const delay = 1500 + Math.random() * 2500;
-
-                        setTimeout(async () => {
-                            try {
-                                if (isSuccess) {
-                                    await prisma.$transaction([
-                                        prisma.payment.update({
-                                            where: { paymentRef },
-                                            data: { status: "SUCCESS", processedAt: new Date() },
-                                        }),
-                                        prisma.order.update({
-                                            where: { id: order.id },
-                                            data: { status: "PAID", paidAt: new Date() },
-                                        }),
-                                    ]);
-
-                                    await trackSystemEvent({
-                                        eventType: "PAYMENT_SUCCESS",
-                                        userId: email,
-                                        sessionId: "payment",
-                                        metadata: { paymentRef, orderId: order.id, amount: total },
-                                    });
-
-                                    await trackSystemEvent({
-                                        eventType: "ORDER_CONFIRMED",
-                                        userId: email,
-                                        sessionId: "payment",
-                                        metadata: { orderId: order.id, paymentRef },
-                                    });
-                                } else {
-                                    const reasons = ["Insufficient funds", "Card declined", "Network timeout"];
-                                    const reason = reasons[Math.floor(Math.random() * reasons.length)];
-
-                                    await prisma.payment.update({
-                                        where: { paymentRef },
-                                        data: { status: "FAILED", failureReason: reason, processedAt: new Date() },
-                                    });
-
-                                    await trackSystemEvent({
-                                        eventType: "PAYMENT_FAILED",
-                                        userId: email,
-                                        sessionId: "payment",
-                                        metadata: { paymentRef, orderId: order.id, reason },
-                                    });
-                                }
-                            } catch (procErr) {
-                                console.error("[Payment] Processing error:", procErr);
-                            }
-                        }, delay);
-                    } catch (statusErr) {
-                        console.error("[Payment] Status update error:", statusErr);
-                    }
-                }, 500);
             } catch (paymentErr) {
                 console.error("[Payment] Initiation error:", paymentErr);
+                return res.status(502).json({
+                    error: "Order created but payment could not be initiated. Please try again.",
+                    orderId: order.id,
+                });
             }
-
-            return res.json({
-                success: true,
-                orderId: order.id,
-                paymentRef,
-                paymentStatus: "INITIATED",
-            });
         } catch (error) {
             console.error("Checkout failed:", error);
             return res.status(500).json({ error: "Failed to place order" });
