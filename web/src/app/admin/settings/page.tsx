@@ -1,6 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
+import { authHeaders } from "@/lib/auth-token";
 import {
   Tabs,
   TabsList,
@@ -113,16 +114,20 @@ export default function AdminSettingsPage() {
         logoUrl = res.data.secure_url;
       }
       const backendUrl = getBackendUrl();
-      await axios.post(`${backendUrl}/api/business-settings`, {
-        name: data.name,
-        phone: data.phone,
-        address: data.address,
-        city: data.city,
-        state: data.state,
-        country: data.country,
-        currency: data.currency || "GHS",
-        logoUrl,
-      });
+      await axios.post(
+        `${backendUrl}/api/business-settings`,
+        {
+          name: data.name,
+          phone: data.phone,
+          address: data.address,
+          city: data.city,
+          state: data.state,
+          country: data.country,
+          currency: data.currency || "GHS",
+          logoUrl,
+        },
+        { headers: authHeaders() }
+      );
 
       toast.success("Business settings updated!");
       reset();

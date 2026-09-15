@@ -1,6 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
+import { authHeaders } from "@/lib/auth-token";
 import { useState } from "react"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -61,9 +62,9 @@ export function AddProductForm() {
       const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/products`, {
         method: "POST",
-        headers: {
+        headers: authHeaders({
           "Content-Type": "application/json",
-        },
+        }),
         credentials: "include",
         body: JSON.stringify({
           ...data,

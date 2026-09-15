@@ -1,6 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
+import { authHeaders } from "@/lib/auth-token";
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -72,6 +73,7 @@ export function MetricsDashboard() {
       const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/admin/metrics`, {
         credentials: "include",
+        headers: authHeaders(),
       });
       if (!res.ok) {
         throw new Error(`Failed to fetch metrics: ${res.statusText}`);

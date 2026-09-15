@@ -1,6 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
+import { authHeaders } from "@/lib/auth-token";
 import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -60,9 +61,9 @@ export function ProductForm({ product }: ProductFormProps) {
       const response = await fetch(`${getBackendUrl()}/api/products/${product.slug}`, {
         method: "PUT",
           credentials: "include" as RequestCredentials,
-        headers: {
+        headers: authHeaders({
           "Content-Type": "application/json",
-        },
+        }),
         body: JSON.stringify(data),
       });
 

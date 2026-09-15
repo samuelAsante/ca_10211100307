@@ -1,6 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
+import { authHeaders } from "@/lib/auth-token";
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -84,6 +85,7 @@ export function BatchList() {
       const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/admin/batches`, {
         credentials: "include",
+        headers: authHeaders(),
       });
       if (!res.ok) {
         throw new Error(`Failed to fetch batches: ${res.statusText}`);
@@ -106,6 +108,7 @@ export function BatchList() {
       const res = await fetch(`${backendUrl}/api/admin/batches/${batchId}/analyze`, {
         method: "POST",
         credentials: "include",
+        headers: authHeaders(),
       });
 
       if (res.status === 409) {

@@ -1,42 +1,22 @@
-import { getBackendUrl } from "@/lib/backend-url";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
 
-const BACKEND_URL = getBackendUrl();
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
-export const dynamic = "force-dynamic";
+export default function AuthRedirect() {
+  const router = useRouter();
 
+  useEffect(() => {
+    authClient.getSession().then(({ data: session }) => {
+      if (!session?.user) {
+        router.replace("/login");
+        return;
+      }
+      const role = (session.user as { role?: string }).role;
+      router.replace(role === "admin" ? "/admin" : "/cart");
+    });
+  }, [router]);
 
-export default async function AuthRedirect() {
-  const currentHeaders = await headers();
-  const cookie = currentHeaders.get("cookie") ?? "";
-
-  // Get session from backend
-  const sessionRes = await fetch(`${BACKEND_URL}/api/auth/get-session`, {
-    headers: { cookie },
-  });
-  const session = await sessionRes.json();
-  if (!session) return redirect("/login");
-
-  // Check permissions from backend
-  const permissionRes = await fetch(`${BACKEND_URL}/api/auth/user-has-permission`, {
-    method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      cookie 
-    },
-    body: JSON.stringify({
-      userId: session.user.id,
-      permission: { Dashboard: ["create"] },
-    }),
-  });
-  const { success } = await permissionRes.json();
-
-  if (success) {
-    // Admin user
-    return redirect("/admin");
-  } else {
-    // Standard user
-    return redirect("/cart");
-  }
+  return null;
 }

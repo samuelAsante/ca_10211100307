@@ -1,6 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
+import { authHeaders } from "@/lib/auth-token";
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -110,8 +111,8 @@ export function JobMonitor() {
     try {
       const backendUrl = getBackendUrl();
       const [jobsRes, dlqRes] = await Promise.all([
-        fetch(`${backendUrl}/api/admin/jobs`, { credentials: "include" }),
-        fetch(`${backendUrl}/api/admin/dead-letter-queue`, { credentials: "include" }),
+        fetch(`${backendUrl}/api/admin/jobs`, { credentials: "include", headers: authHeaders() }),
+        fetch(`${backendUrl}/api/admin/dead-letter-queue`, { credentials: "include", headers: authHeaders() }),
       ]);
 
       if (!jobsRes.ok || !dlqRes.ok) {

@@ -1,35 +1,6 @@
-import { getBackendUrl } from "@/lib/backend-url";
 import { UsersTable } from "@/components/admin/users/users";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
-const BACKEND_URL = getBackendUrl();
-
-export const dynamic = "force-dynamic";
-
-function safeJsonParse<T>(raw: string): T | null {
-  if (!raw || !raw.trim()) return null;
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
-    return null;
-  }
-}
-
-export default async function AllUsersPage() {
-  const currentHeaders = await headers();
-  const cookie = currentHeaders.get("cookie") ?? "";
-
-  const sessionRes = await fetch(`${BACKEND_URL}/api/auth/get-session`, {
-    headers: { cookie },
-    cache: "no-store",
-  });
-  const sessionText = await sessionRes.text();
-  const session = safeJsonParse<{ user?: { role?: string } }>(sessionText);
-
-  if (!session?.user) return redirect("/login");
-  if (session.user.role !== "admin") return redirect("/");
-
+export default function AllUsersPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <UsersTable />

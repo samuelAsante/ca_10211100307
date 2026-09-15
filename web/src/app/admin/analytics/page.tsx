@@ -1,6 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
+import { authHeaders } from "@/lib/auth-token";
 import { useEffect, useMemo, useState } from "react";
 import { LiveEventFeed } from "@/components/analytics/live-event-feed";
 import { InsightsTimeline } from "@/components/analytics/insights-timeline";
@@ -38,8 +39,8 @@ export default function AnalyticsDashboard() {
       try {
         setLoadingCommerce(true);
         const [productsRes, ordersRes] = await Promise.all([
-          fetch(`${backendUrl}/api/products`, { credentials: "include" }),
-          fetch(`${backendUrl}/api/orders`, { credentials: "include" }),
+          fetch(`${backendUrl}/api/products`, { credentials: "include", headers: authHeaders() }),
+          fetch(`${backendUrl}/api/orders`, { credentials: "include", headers: authHeaders() }),
         ]);
 
         if (!productsRes.ok || !ordersRes.ok) {

@@ -2,6 +2,7 @@ import { getBackendUrl } from "@/lib/backend-url";
 import { createAuthClient } from "better-auth/react";
 import { adminClient } from "better-auth/client/plugins";
 import { ac, admin } from "@/lib/permissions";
+import { getStoredToken, setStoredToken, clearStoredToken } from "@/lib/auth-token";
 
 export const authClient = createAuthClient({
   plugins: [
@@ -13,6 +14,16 @@ export const authClient = createAuthClient({
     }),
   ],
   baseURL: getBackendUrl(),
+  fetchOptions: {
+    auth: {
+      type: "Bearer",
+      token: () => getStoredToken() ?? "",
+    },
+    onSuccess: (ctx) => {
+      const token = ctx.response.headers.get("set-auth-token");
+      if (token) setStoredToken(token);
+    },
+  },
 });
 
 export const googlesignIn = async () => {
@@ -22,6 +33,15 @@ export const googlesignIn = async () => {
     errorCallbackURL: "/login?error=1",
   });
 };
-export const { signIn, signUp, signOut, useSession } = authClient;
+
+const { signOut: baseSignOut, ...rest } = authClient;
+
+export async function signOut(...args: Parameters<typeof baseSignOut>) {
+  const result = await baseSignOut(...args);
+  clearStoredToken();
+  return result;
+}
+
+export const { signIn, signUp, useSession } = rest;
 
 export type Session = typeof authClient.$Infer.Session.user;

@@ -1,6 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
+import { authHeaders } from "@/lib/auth-token";
 import { useEffect, useState } from "react";
 import { Insight } from "@/interface/analytics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +22,7 @@ export function InsightsTimeline() {
       const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/insights?limit=20`, {
         credentials: "include",
+        headers: authHeaders(),
       });
       const data = await res.json();
       setInsights(data.insights || []);

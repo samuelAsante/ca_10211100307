@@ -1,6 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
+import { authHeaders } from "@/lib/auth-token";
 import {
   Table,
   TableBody,
@@ -21,7 +22,7 @@ export function AdminProductsTable({ products }: { products: any[] }) {
         const backendUrl = getBackendUrl();
         const res = await fetch(`${backendUrl}/api/products`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ id: productId }),
         });
 
