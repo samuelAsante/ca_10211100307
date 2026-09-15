@@ -1,8 +1,10 @@
+import "./lib/dns";
 import dotenv from "dotenv";
 import { startServer } from "./server";
 import { startWorker } from "./worker/worker";
 import { startBatchProcessor } from "./worker/batch-processor";
 import { startRecoveryLoop } from "./worker/recovery";
+import { validateRuntimeEnv } from "./lib/env";
 
 // Load environment variables
 dotenv.config();
@@ -17,6 +19,8 @@ async function bootstrap() {
   console.log("-----------------------------------------");
 
   try {
+    await validateRuntimeEnv();
+
     // 1. Start API Server
     startServer();
 

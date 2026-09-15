@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -68,7 +69,7 @@ export function MetricsDashboard() {
 
   const fetchMetrics = async () => {
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+      const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/admin/metrics`, {
         credentials: "include",
       });
@@ -120,7 +121,8 @@ export function MetricsDashboard() {
         ? "bg-red-500"
         : "bg-yellow-500";
 
-  const hasDLQIssues = metrics.dead_letter_queue?.total > 0 || false;
+  const hasRecentDLQIssues = metrics.dead_letter_queue.last_24_hours > 0;
+  const hasHistoricalDLQ = metrics.dead_letter_queue.total > 0;
 
   return (
     <div className="space-y-4">
@@ -137,7 +139,7 @@ export function MetricsDashboard() {
             </Badge>
           )}
         </div>
-        {hasDLQIssues && (
+        {hasHistoricalDLQ && (
           <Badge variant="destructive">
             {metrics.dead_letter_queue.total} jobs in DLQ
           </Badge>
@@ -145,14 +147,12 @@ export function MetricsDashboard() {
       </div>
 
       {/* DLQ Alert */}
-      {hasDLQIssues && (
+      {hasRecentDLQIssues && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {metrics.dead_letter_queue.total} jobs have failed permanently and
-            moved to Dead Letter Queue.
-            {metrics.dead_letter_queue.last_24_hours > 0 &&
-              ` ${metrics.dead_letter_queue.last_24_hours} in the last 24 hours.`}
+            {metrics.dead_letter_queue.last_24_hours} jobs have failed permanently
+            and moved to Dead Letter Queue in the last 24 hours.
           </AlertDescription>
         </Alert>
       )}

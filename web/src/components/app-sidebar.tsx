@@ -1,6 +1,7 @@
 //@ts-nocheck
 "use client"
 
+import Link from "next/link";
 import * as React from "react"
 import { useEffect } from "react"
 import {
@@ -8,7 +9,8 @@ import {
   IconListDetails,
   IconSettings,
   IconPlus,
-  IconChartArea
+  IconChartArea,
+  IconShoppingCart
 } from "@tabler/icons-react"
 import { FaDollarSign } from "react-icons/fa6";
 
@@ -50,6 +52,11 @@ const data = {
       title: "Discounts",
       url: "/admin/products/discounts",
       icon: FaDollarSign,
+    },
+    {
+      title: "Orders",
+      url: "/admin/orders",
+      icon: IconShoppingCart,
     },
     {
       title: "Analytics",
@@ -107,10 +114,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="/">
+              <Link href="/">
               {/* Use a ternary operator to display logo or business name  */}
-                <span className="text-base font-semibold logo">J'S Ashantis</span>
-              </a>
+                <span className="text-base font-semibold logo">J&apos;S Ashantis</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

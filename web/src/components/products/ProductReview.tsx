@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Loader2, Star } from "lucide-react";
@@ -37,7 +38,7 @@ export function ProductReviews({ productSlug }: { productSlug: string }) {
 
   const fetchReviews = async () => {
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+      const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/reviews/${productSlug}`);
       const data = await res.json();
       setReviews(data);
@@ -55,7 +56,7 @@ export function ProductReviews({ productSlug }: { productSlug: string }) {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setIsSubmitting(true);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+      const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -97,7 +98,7 @@ export function ProductReviews({ productSlug }: { productSlug: string }) {
         <div>
           <div className="mt-4">
             <p className="text-md font-medium">Share your thoughts</p>
-            <p className="text-md text-muted-foreground mb-2">If you've used this product, share your thoughts with other customers</p>
+            <p className="text-md text-muted-foreground mb-2">If you&apos;ve used this product, share your thoughts with other customers</p>
             <button
               onClick={() => setShowForm(true)}
               className="px-4 py-2 border rounded hover:bg-gray-100 text-md"

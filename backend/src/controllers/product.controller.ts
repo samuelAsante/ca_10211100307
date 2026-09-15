@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { auth } from '../lib/auth';
 import { fromNodeHeaders } from 'better-auth/node';
+import { trackSystemEvent } from '../websocket/ws';
 
 export class ProductController {
     static async createProduct(req: Request, res: Response) {
@@ -12,7 +13,7 @@ export class ProductController {
                 return res.status(401).json({ error: "Unauthorized" });
             }
 
-            const hasPermission = await auth.api.userHasPermission({
+            const hasPermission = await (auth.api as any).userHasPermission({
                 headers: fromNodeHeaders(req.headers),
                 body: {
                     userId: session.user.id,
@@ -129,7 +130,7 @@ export class ProductController {
                 return res.status(401).json({ error: "Unauthorized" });
             }
 
-            const hasPermission = await auth.api.userHasPermission({
+            const hasPermission = await (auth.api as any).userHasPermission({
                 headers: fromNodeHeaders(req.headers),
                 body: {
                     userId: session.user.id,
@@ -164,6 +165,37 @@ export class ProductController {
                 }
             });
 
+            const hasDiscountUpdate = typeof data.discount === "number";
+            const hasStockUpdate = typeof data.stock === "number";
+
+            if (hasDiscountUpdate) {
+                await trackSystemEvent({
+                    eventType: "INVENTORY_UPDATED",
+                    userId: session.user.id,
+                    sessionId: "admin",
+                    metadata: {
+                        productId: product.id,
+                        slug: product.slug,
+                        updateType: "discount",
+                        discount: data.discount,
+                    },
+                });
+            }
+
+            if (hasStockUpdate) {
+                await trackSystemEvent({
+                    eventType: "INVENTORY_UPDATED",
+                    userId: session.user.id,
+                    sessionId: "admin",
+                    metadata: {
+                        productId: product.id,
+                        slug: product.slug,
+                        updateType: "stock",
+                        stock: data.stock,
+                    },
+                });
+            }
+
             return res.json(product);
         } catch (error) {
             console.error("Failed to update product:", error);
@@ -179,7 +211,7 @@ export class ProductController {
                 return res.status(401).json({ error: "Unauthorized" });
             }
 
-            const hasPermission = await auth.api.userHasPermission({
+            const hasPermission = await (auth.api as any).userHasPermission({
                 headers: fromNodeHeaders(req.headers),
                 body: {
                     userId: session.user.id,

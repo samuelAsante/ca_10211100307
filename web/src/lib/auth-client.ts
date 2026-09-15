@@ -1,3 +1,4 @@
+import { getBackendUrl } from "@/lib/backend-url";
 import { createAuthClient } from "better-auth/react";
 import { adminClient } from "better-auth/client/plugins";
 import { ac, admin } from "@/lib/permissions";
@@ -11,7 +12,7 @@ export const authClient = createAuthClient({
       },
     }),
   ],
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001",
+  baseURL: getBackendUrl(),
 });
 
 export const googlesignIn = async () => {

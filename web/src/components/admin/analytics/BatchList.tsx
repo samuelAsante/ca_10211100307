@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -80,7 +81,7 @@ export function BatchList() {
 
   const fetchBatches = async () => {
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+      const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/admin/batches`, {
         credentials: "include",
       });
@@ -101,7 +102,7 @@ export function BatchList() {
   const triggerAnalysis = async (batchId: string) => {
     setTriggering(batchId);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+      const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/admin/batches/${batchId}/analyze`, {
         method: "POST",
         credentials: "include",

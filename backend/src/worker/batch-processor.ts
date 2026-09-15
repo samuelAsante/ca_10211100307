@@ -89,7 +89,7 @@ async function sealExpiredBatches(
  * Creates PENDING analysis jobs for newly SEALED batches
  */
 async function createJobsForSealedBatches(): Promise<number> {
-  // Find SEALED batches without a PENDING or RUNNING job
+  // Find SEALED batches without a PENDING, RUNNING, or SUCCESS job
   const sealedBatches = await prisma.batch.findMany({
     where: {
       status: "SEALED",
@@ -100,18 +100,16 @@ async function createJobsForSealedBatches(): Promise<number> {
 
   for (const batch of sealedBatches) {
     try {
-      // Check if job already exists for this batch
+      // Skip if this batch already has an active or successful job
       const existingJob = await prisma.analysisJob.findFirst({
         where: {
           batch_id: batch.batch_id,
-          status: {
-            in: ["PENDING", "RUNNING", "SUCCESS"],
-          },
+          status: { in: ["PENDING", "RUNNING", "SUCCESS"] },
         },
+        orderBy: { created_at: "desc" },
       });
 
       if (existingJob) {
-        // Job already exists, skip
         continue;
       }
 

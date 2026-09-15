@@ -1,3 +1,4 @@
+import { getBackendUrl } from "@/lib/backend-url";
 import { Lato } from "next/font/google";
 import {
   SidebarInset,
@@ -15,7 +16,7 @@ const lato = Lato({
   weight: ["400", "700"],
 });
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+const BACKEND_URL = getBackendUrl();
 
 export default async function AdminLayout({
     children,
@@ -26,12 +27,19 @@ export default async function AdminLayout({
   const headersList = await headers();
   const cookie = headersList.get("cookie") ?? "";
 
-  // Get session from backend
-  const sessionRes = await fetch(`${BACKEND_URL}/api/auth/get-session`, {
-    headers: { cookie },
-  });
-  const session = await sessionRes.json();
-  if (!session) return redirect("/login");
+  let session: { user?: { role?: string } } | null = null;
+  try {
+    const sessionRes = await fetch(`${BACKEND_URL}/api/auth/get-session`, {
+      headers: { cookie },
+      cache: "no-store",
+    });
+    if (sessionRes.ok) {
+      session = await sessionRes.json();
+    }
+  } catch (error) {
+    console.error("Failed to load admin session:", error);
+  }
+  if (!session?.user) return redirect("/login");
 
   // Check if user is admin
   if (session.user.role !== "admin") return redirect("/");

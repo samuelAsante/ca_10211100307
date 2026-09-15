@@ -13,7 +13,7 @@ export class SettingsController {
                 return res.status(401).json({ error: "Unauthorized" });
             }
 
-            const hasPermission = await auth.api.userHasPermission({
+            const hasPermission = await (auth.api as any).userHasPermission({
                 headers: fromNodeHeaders(req.headers),
                 body: {
                     userId: session.user.id,
@@ -29,9 +29,16 @@ export class SettingsController {
 
             const data = req.body;
 
-            const settings = await prisma.businessSettings.create({
-                data,
-            });
+            const existing = await prisma.businessSettings.findFirst();
+            let settings;
+            if (existing) {
+                settings = await prisma.businessSettings.update({
+                    where: { id: existing.id },
+                    data,
+                });
+            } else {
+                settings = await prisma.businessSettings.create({ data });
+            }
 
             return res.json(settings);
         } catch (error) {

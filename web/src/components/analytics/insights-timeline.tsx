@@ -1,5 +1,6 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import { useEffect, useState } from "react";
 import { Insight } from "@/interface/analytics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +18,7 @@ export function InsightsTimeline() {
 
   const fetchInsights = async () => {
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+      const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/insights?limit=20`, {
         credentials: "include",
       });

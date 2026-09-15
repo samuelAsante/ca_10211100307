@@ -1,11 +1,13 @@
 "use client";
 
+import { getBackendUrl } from "@/lib/backend-url";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { ProductsCardDetails } from "./productsCard";
 import { TiArrowRight } from "react-icons/ti";
 import { motion, useInView } from "framer-motion";
 import { ProductCardSkeleton } from "./ProductCardSkeleton";
-import { getRandomProducts } from "@/lib/utils";
+import { pickFeaturedProducts } from "@/lib/utils";
 
 export function ProductsList({ products: initialProducts }: { products: any[] }) {
   const [products, setProducts] = useState(initialProducts || []);
@@ -13,10 +15,10 @@ export function ProductsList({ products: initialProducts }: { products: any[] })
 
   useEffect(() => {
     if (!initialProducts?.length) {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001"}/api/products`)
+      fetch(`${getBackendUrl()}/api/products`)
         .then((res) => res.json())
         .then((data) => {
-          setProducts(getRandomProducts(data, 16));
+          setProducts(pickFeaturedProducts(data, 16));
           setIsLoading(false);
         })
         .catch(() => setIsLoading(false));
@@ -27,12 +29,12 @@ export function ProductsList({ products: initialProducts }: { products: any[] })
     <>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-lg lg:text-2xl font-bold">Featured Products</h1>
-        <a href="/products" className="flex text-[12px] text-blue-600 hover:underline gap-2">
+        <Link href="/products" className="flex text-[12px] text-blue-600 hover:underline gap-2">
           View All Products
           <span>
             <TiArrowRight className="text-2xl animate-pulse transition" />
           </span>
-        </a>
+        </Link>
       </div>
 
       <motion.div

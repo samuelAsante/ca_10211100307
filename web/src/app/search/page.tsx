@@ -1,17 +1,23 @@
+import { getBackendUrl } from "@/lib/backend-url";
 import { ProductsCardDetails } from "@/components/products/productsCard";
 import Fuse from 'fuse.js';
 
 export const dynamic = "force-dynamic";
 
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4001";
+const BACKEND_URL = getBackendUrl();
 
 async function getAllProducts() {
-  const res = await fetch(`${BACKEND_URL}/api/products`, {
-    next: { revalidate: 600 } // Cache for 10 minutes
-  });
-  if (!res.ok) return [];
-  return res.json();
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/products`, {
+      next: { revalidate: 600 } // Cache for 10 minutes
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return [];
+  }
 }
 
 interface SearchPageProps {
@@ -68,7 +74,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           ))}
         </div>
       ) : query ? (
-        <p className="text-gray-500">No products found for "{query}".</p>
+        <p className="text-gray-500">No products found for &quot;{query}&quot;.</p>
       ) : (
         <p className="text-gray-500">Start by searching for products above.</p>
       )}

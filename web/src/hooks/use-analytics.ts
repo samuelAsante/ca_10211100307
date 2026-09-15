@@ -1,38 +1,55 @@
 "use client";
 
-import { useEffect } from "react";
+import { useRef } from "react";
 import { useSocket } from "@/components/analytics/socket-provider";
 import { EventType } from "@/interface/analytics";
 import { usePathname } from "next/navigation";
 
 /**
- * Hook for tracking user events
+ * Manual event helpers. Page views are owned by GlobalPageTracker so
+ * calling this hook (e.g. on a product card) does not emit a duplicate PAGE_VIEW.
  */
 export function useAnalytics() {
   const { emitEvent } = useSocket();
   const pathname = usePathname();
+  const lastEventAtRef = useRef<Map<string, number>>(new Map());
 
-  // Track page views automatically
-  useEffect(() => {
-    if (!pathname) return; // Skip if pathname is null
+  const toStableString = (value: unknown): string => {
+    if (value === null || typeof value !== "object") {
+      return String(value);
+    }
+    if (Array.isArray(value)) {
+      return `[${value.map((item) => toStableString(item)).join(",")}]`;
+    }
+    const obj = value as Record<string, unknown>;
+    const keys = Object.keys(obj).sort();
+    return `{${keys.map((key) => `${key}:${toStableString(obj[key])}`).join(",")}}`;
+  };
 
-    const userId = getUserId();
-    const sessionId = getSessionId();
+  const shouldThrottle = (eventKey: string, throttleMs: number): boolean => {
+    if (throttleMs <= 0) return false;
+    const now = Date.now();
+    const previous = lastEventAtRef.current.get(eventKey);
+    if (previous && now - previous < throttleMs) {
+      return true;
+    }
+    lastEventAtRef.current.set(eventKey, now);
+    return false;
+  };
 
-    emitEvent({
-      eventType: EventType.PAGE_VIEW,
-      userId,
-      sessionId,
-      page: pathname,
-      metadata: {
-        referrer: document.referrer,
-        userAgent: navigator.userAgent,
-      },
-    });
-  }, [pathname, emitEvent]);
+  const trackEvent = (
+    eventType: string,
+    metadata?: Record<any, any>,
+    options?: { throttleMs?: number; dedupeKey?: string }
+  ) => {
+    const eventKey =
+      options?.dedupeKey ||
+      `${eventType}|${pathname || ""}|${toStableString(metadata || {})}`;
+    const throttleMs = options?.throttleMs ?? 0;
+    if (shouldThrottle(eventKey, throttleMs)) {
+      return;
+    }
 
-  // Manual tracking methods
-  const trackEvent = (eventType: string, metadata?: Record<any, any>) => {
     emitEvent({
       eventType,
       userId: getUserId(),
@@ -43,21 +60,34 @@ export function useAnalytics() {
   };
 
   const trackProductView = (productId: string, productName: string) => {
-    trackEvent(EventType.PRODUCT_VIEW, { productId, productName });
+    trackEvent(
+      EventType.PRODUCT_VIEW,
+      { productId, productName },
+      { throttleMs: 1500, dedupeKey: `${EventType.PRODUCT_VIEW}:${productId}` }
+    );
   };
 
   const trackAddToCart = (productId: string, quantity: number) => {
-    trackEvent(EventType.ADD_TO_CART, { productId, quantity });
+    trackEvent(
+      EventType.ADD_TO_CART,
+      { productId, quantity },
+      { throttleMs: 1000, dedupeKey: `${EventType.ADD_TO_CART}:${productId}` }
+    );
   };
 
   const trackRemoveFromCart = (productId: string) => {
-    trackEvent(EventType.REMOVE_FROM_CART, { productId });
+    trackEvent(
+      EventType.REMOVE_FROM_CART,
+      { productId },
+      { throttleMs: 1000, dedupeKey: `${EventType.REMOVE_FROM_CART}:${productId}` }
+    );
   };
 
   const trackCheckout = (step: "start" | "complete", orderValue?: number) => {
     trackEvent(
       step === "start" ? EventType.CHECKOUT_START : EventType.CHECKOUT_COMPLETE,
-      { orderValue }
+      { orderValue },
+      { throttleMs: 2000, dedupeKey: `checkout:${step}` }
     );
   };
 

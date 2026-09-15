@@ -28,11 +28,11 @@ export function getRedisClient(): Redis | null {
   try {
     redis = new Redis(redisUrl, {
       maxRetriesPerRequest: 3,
-      retryStrategy(times) {
+      retryStrategy(times: number) {
         const delay = Math.min(times * 50, 2000);
         return delay;
       },
-      reconnectOnError(err) {
+      reconnectOnError(err: Error) {
         const targetError = "READONLY";
         if (err.message.includes(targetError)) {
           return true;
@@ -45,7 +45,7 @@ export function getRedisClient(): Redis | null {
       console.log("[Redis] Connected successfully");
     });
 
-    redis.on("error", (err) => {
+    redis.on("error", (err: Error) => {
       console.error("[Redis] Error:", err.message);
     });
 

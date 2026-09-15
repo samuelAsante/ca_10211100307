@@ -10,20 +10,28 @@ export function LiveEventFeed() {
   const { socket, isConnected } = useSocket();
   const [events, setEvents] = useState<UserEvent[]>([]);
 
+  const [authError, setAuthError] = useState<string | null>(null);
+
   useEffect(() => {
     if (!socket) return;
 
-    // Join admin room to receive events
     socket.emit("admin:join");
 
-    // Listen for incoming events
     socket.on("admin:event", (event: UserEvent) => {
-      setEvents((prev) => [event, ...prev].slice(0, 50)); // Keep last 50
+      setAuthError(null);
+      setEvents((prev) => [event, ...prev].slice(0, 50));
+    });
+
+    socket.on("event:error", (data: any) => {
+      if (data?.code === "FORBIDDEN" || data?.code === "AUTH_FAILED") {
+        setAuthError(data.error || "Admin authentication required");
+      }
     });
 
     return () => {
       socket.emit("admin:leave");
       socket.off("admin:event");
+      socket.off("event:error");
     };
   }, [socket]);
 
@@ -52,7 +60,11 @@ export function LiveEventFeed() {
       </CardHeader>
       <CardContent>
         <div className="h-[500px] overflow-y-auto">
-          {events.length === 0 ? (
+          {authError ? (
+            <p className="text-destructive text-center py-8">
+              {authError}
+            </p>
+          ) : events.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">
               Waiting for events...
             </p>
@@ -73,7 +85,8 @@ export function LiveEventFeed() {
                   </div>
                   <div className="text-xs space-y-1">
                     <p>
-                      <strong>User:</strong> {event.userId}
+                      <strong>User:</strong>{" "}
+                      <span title={event.userId}>{shortenId(event.userId)}</span>
                     </p>
                     {event.page && (
                       <p>
@@ -82,10 +95,7 @@ export function LiveEventFeed() {
                     )}
                     {event.metadata &&
                       Object.keys(event.metadata).length > 0 && (
-                        <p>
-                          <strong>Data:</strong>{" "}
-                          {JSON.stringify(event.metadata, null, 2)}
-                        </p>
+                        <EventMetadata metadata={event.metadata} />
                       )}
                   </div>
                 </div>
@@ -95,5 +105,61 @@ export function LiveEventFeed() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function shortenId(id: string): string {
+  if (id.length <= 18) return id;
+  return `${id.slice(0, 8)}…${id.slice(-6)}`;
+}
+
+function summarizeUserAgent(ua: string): string {
+  const os = /Mac OS X/i.test(ua)
+    ? "macOS"
+    : /Windows/i.test(ua)
+      ? "Windows"
+      : /Android/i.test(ua)
+        ? "Android"
+        : /iPhone|iPad/i.test(ua)
+          ? "iOS"
+          : /Linux/i.test(ua)
+            ? "Linux"
+            : "Unknown OS";
+  const browser = /Edg\//.test(ua)
+    ? "Edge"
+    : /Chrome\//.test(ua)
+      ? "Chrome"
+      : /Firefox\//.test(ua)
+        ? "Firefox"
+        : /Safari\//.test(ua)
+          ? "Safari"
+          : "Browser";
+  return `${browser} on ${os}`;
+}
+
+function formatMetaValue(key: string, value: unknown): string {
+  if (value == null) return "";
+  if (key === "userAgent" && typeof value === "string") {
+    return summarizeUserAgent(value);
+  }
+  const text = typeof value === "string" ? value : JSON.stringify(value);
+  if (text.length > 72) return `${text.slice(0, 69)}…`;
+  return text;
+}
+
+function EventMetadata({ metadata }: { metadata: Record<string, unknown> }) {
+  const entries = Object.entries(metadata).filter(
+    ([, value]) => value !== undefined && value !== null && value !== ""
+  );
+  if (entries.length === 0) return null;
+
+  return (
+    <div className="space-y-0.5">
+      {entries.map(([key, value]) => (
+        <p key={key} className="break-words">
+          <strong className="capitalize">{key}:</strong> {formatMetaValue(key, value)}
+        </p>
+      ))}
+    </div>
   );
 }
