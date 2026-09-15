@@ -11,6 +11,7 @@ export default async function Products() {
       {
         next: { revalidate: 3600 }, // Cache for 1 hour
         cache: "force-cache",
+        signal: AbortSignal.timeout(8000),
       },
     );
 
