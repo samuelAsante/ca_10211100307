@@ -34,14 +34,14 @@ export const googlesignIn = async () => {
   });
 };
 
-const { signOut: baseSignOut, ...rest } = authClient;
-
-export async function signOut(...args: Parameters<typeof baseSignOut>) {
-  const result = await baseSignOut(...args);
+export async function signOut(...args: Parameters<typeof authClient.signOut>) {
+  const result = await authClient.signOut(...args);
   clearStoredToken();
   return result;
 }
 
-export const { signIn, signUp, useSession } = rest;
+export const signIn = authClient.signIn;
+export const signUp = authClient.signUp;
+export const useSession = authClient.useSession;
 
 export type Session = typeof authClient.$Infer.Session.user;
