@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn, googlesignIn, authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useAnalytics } from "@/hooks/use-analytics";
 
@@ -43,9 +44,8 @@ export function LoginForm({
     setIsLogging(true);
     setError(null);
 
-    // Track login attempt
+    // Track login attempt (no PII — only the method).
     trackEvent("login_attempt", {
-      email: data.email,
       method: "email_password",
     });
 
@@ -152,6 +152,7 @@ export function LoginForm({
                   <Input
                     id="email"
                     type="email"
+                    autoComplete="email"
                     placeholder="m@example.com"
                     {...register("email", {
                       required: "Email is required",
@@ -179,6 +180,7 @@ export function LoginForm({
                   <Input
                     id="password"
                     type="password"
+                    autoComplete="current-password"
                     {...register("password", {
                       required: "Password is required",
                       minLength: {
@@ -205,8 +207,9 @@ export function LoginForm({
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our{" "}
+        <Link href="/terms">Terms &amp; Conditions</Link> and{" "}
+        <Link href="/privacy-policy">Privacy Policy</Link>.
       </div>
     </div>
   );

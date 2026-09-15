@@ -47,7 +47,7 @@ export const ProductCardCategories = ({
     {imageUrl && (
       <Image
         src={imageUrl}
-        alt="Category Image"
+        alt={categories[0] ? `${categories[0]} category` : "Product category"}
         width={100}
         height={100}
         className="w-24 h-24 rounded-2xl object-cover"
@@ -73,7 +73,6 @@ export const ProductsCardDetails = ({
   title,
   description,
   rating,
-  reviewCount,
   price,
   discount = 0,
   badgeColor = "bg-red-500",
@@ -130,8 +129,7 @@ export const ProductsCardDetails = ({
             <div className="flex justify-between items-center gap-1 text-yellow-500 text-sm mb-1">
               <CustomerRatings rating={rating} />
               <div className="flex items-center gap-1">
-                <span>{rating}</span>
-                <span className="text-gray-500 hidden lg:block">({reviewCount} reviews)</span>
+                <span aria-label={`Product rating ${rating} out of 5`}>{rating}</span>
               </div>
             </div>
           )

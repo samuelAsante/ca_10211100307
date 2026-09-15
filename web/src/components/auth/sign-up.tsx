@@ -242,6 +242,7 @@ type Inputs = {
   name: string;
   email: string;
   password: string;
+  acceptTerms: boolean;
 };
 
 export function SignupForm() {
@@ -259,11 +260,8 @@ export function SignupForm() {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setError(null);
 
-    // Track signup attempt
-    trackEvent("signup_attempt", {
-      email: data.email,
-      name: data.name,
-    });
+    // Track signup attempt (no PII — we only need the event, not who).
+    trackEvent("signup_attempt");
 
     try {
       const res = await signUp.email({
@@ -280,10 +278,8 @@ export function SignupForm() {
 
         setError(res.error.message || "Something went wrong.");
       } else {
-        // Track successful signup
-        trackEvent("signup_success", {
-          email: data.email,
-        });
+        // Track successful signup (no PII).
+        trackEvent("signup_success");
 
         router.push("/login");
       }
@@ -323,6 +319,7 @@ export function SignupForm() {
                 <input
                   id="name"
                   placeholder="Full Name"
+                  autoComplete="name"
                   className="w-full rounded-md border border-neutral-700 px-3 py-2"
                   {...register("name", { required: "Full name is required" })}
                 />
@@ -336,6 +333,8 @@ export function SignupForm() {
                 <input
                   id="email"
                   placeholder="Email"
+                  type="email"
+                  autoComplete="email"
                   className="w-full rounded-md border border-neutral-700 px-3 py-2"
                   {...register("email", {
                     required: "Email is required",
@@ -357,6 +356,7 @@ export function SignupForm() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
+                    autoComplete="new-password"
                     className="w-full rounded-md border border-neutral-700 px-3 py-2"
                     {...register("password", {
                       required: "Password is required",
@@ -372,6 +372,7 @@ export function SignupForm() {
                     size="icon"
                     className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -387,22 +388,42 @@ export function SignupForm() {
                 )}
               </div>
 
-              {/* Terms */}
-              <div className="flex items-center space-x-2">
-                <Checkbox id="terms" />
-                <label
-                  htmlFor="terms"
-                  className="text-sm text-muted-foreground"
-                >
-                  I agree to the{" "}
-                  <a href="#" className="text-primary hover:underline">
-                    Terms
-                  </a>{" "}
-                  and{" "}
-                  <a href="#" className="text-primary hover:underline">
-                    Conditions
-                  </a>
-                </label>
+              {/* Terms & privacy consent */}
+              <div>
+                <div className="flex items-start space-x-2">
+                  <input
+                    id="terms"
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 rounded border-neutral-500 text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    aria-invalid={errors.acceptTerms ? "true" : "false"}
+                    {...register("acceptTerms", {
+                      required:
+                        "You must agree to the Terms and Privacy Policy to create an account",
+                    })}
+                  />
+                  <label
+                    htmlFor="terms"
+                    className="text-sm text-muted-foreground"
+                  >
+                    I agree to the{" "}
+                    <Link href="/terms" className="text-primary hover:underline">
+                      Terms &amp; Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      href="/privacy-policy"
+                      className="text-primary hover:underline"
+                    >
+                      Privacy Policy
+                    </Link>
+                    .
+                  </label>
+                </div>
+                {errors.acceptTerms && (
+                  <span className="text-red-500 text-sm">
+                    {errors.acceptTerms.message}
+                  </span>
+                )}
               </div>
 
               {/* Submit Button */}

@@ -20,7 +20,7 @@ export const CartIcon = ({ className, noLink }: Props & { noLink?: boolean }) =>
 
   const Content = () => (
     <>
-      <FaShoppingCart className="text-xl" />
+      <FaShoppingCart className="text-xl" aria-hidden="true" />
       {mounted && itemCount > 0 && (
         <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
           {itemCount}
@@ -38,7 +38,11 @@ export const CartIcon = ({ className, noLink }: Props & { noLink?: boolean }) =>
   }
 
   return (
-    <Link href="/cart" className={cn("relative", className)}>
+    <Link
+      href="/cart"
+      aria-label={`View cart${mounted && itemCount > 0 ? `, ${itemCount} item${itemCount > 1 ? "s" : ""}` : ""}`}
+      className={cn("relative", className)}
+    >
       <Content />
     </Link>
   );

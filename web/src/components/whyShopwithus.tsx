@@ -5,18 +5,18 @@ import { IoShieldCheckmarkOutline } from "react-icons/io5";
 const shopwithUs = [
     {
         icons: <TbTruckDelivery className="w-8 h-8" />,
-        title: "Free Delivery",
-        text: "Professional installation on major appliances with white-glove service"
+        title: "Delivery in Ghana",
+        text: "We deliver across Ghana. Delivery options are confirmed at checkout."
     },
     {
         icons: <FaArrowRotateLeft className="w-8 h-8" />,
-        title: "Easy Returns",
-        text: "30-day hassle-free returns on all major appliances and furniture"
+        title: "7-Day Returns",
+        text: "Return eligible items within 7 days. See our Refund & Return Policy."
     },
     {
         icons: <IoShieldCheckmarkOutline className="w-8 h-8" />,
-        title: "Extended Warranty",
-        text: "Up to 5-year protection plans available on all major appliances"
+        title: "Warranty Support",
+        text: "Where a manufacturer's warranty applies, we help you make a claim."
     }
 ]
 

@@ -39,7 +39,14 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
+// Capture the raw request body so we can verify Paystack webhook signatures.
+app.use(
+  express.json({
+    verify: (req, _res, buf) => {
+      (req as any).rawBody = buf;
+    },
+  })
+);
 
 // Initialize WebSocket
 initializeWebSocket(httpServer);

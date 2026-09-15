@@ -18,7 +18,7 @@ export default function LayoutWrapper({
   return (
     <>
       {!isAdminRoute && !loginRoute && <Header />}
-      <main>{children}</main>
+      <main id="main-content">{children}</main>
       {!isAdminRoute && !loginRoute && <Footer />}
     </>
   );

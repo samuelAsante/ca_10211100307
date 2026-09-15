@@ -3,6 +3,7 @@
 import { getBackendUrl } from "@/lib/backend-url";
 import { useCartStore } from "@/lib/store/cartStore";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -90,7 +91,15 @@ export default function CheckoutPage() {
     try {
       setPayment(prev => prev ? { ...prev, status: "INITIATED" } : null);
       const res = await axios.post(`${backendUrl}/api/payments/${payment.paymentRef}/retry`);
-      const newRef = res.data.paymentRef;
+      const { paymentRef: newRef, authorizationUrl } = res.data;
+
+      // Paystack: redirect to a fresh hosted checkout.
+      if (authorizationUrl) {
+        toast("Redirecting to secure payment...");
+        window.location.href = authorizationUrl;
+        return;
+      }
+
       setPayment({ paymentRef: newRef, orderId: payment.orderId, status: "INITIATED" });
       toast("Retrying payment...");
       pollPaymentStatus(newRef, payment.orderId);
@@ -112,7 +121,16 @@ export default function CheckoutPage() {
 
       trackCheckout("complete", finalTotal);
 
-      const { orderId, paymentRef } = response.data;
+      const { orderId, paymentRef, authorizationUrl } = response.data;
+
+      // Paystack: redirect to the hosted checkout (Mobile Money / cards).
+      if (authorizationUrl) {
+        toast("Redirecting to secure payment...");
+        window.location.href = authorizationUrl;
+        return;
+      }
+
+      // Simulation: show the in-page status and poll for the result.
       setPayment({ paymentRef, orderId, status: "INITIATED" });
       toast("Processing payment...");
 
@@ -210,26 +228,56 @@ export default function CheckoutPage() {
         </div>
       ) : (
         <>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
             <h2 className="text-2xl font-semibold">Shipping Information</h2>
             <div>
-              <label className="block text-sm font-medium">Full Name</label>
-              <input {...register("fullName", { required: true })} className="w-full border p-2 rounded mt-1" />
+              <label htmlFor="fullName" className="block text-sm font-medium">Full Name</label>
+              <input
+                id="fullName"
+                autoComplete="name"
+                aria-required="true"
+                aria-invalid={errors.fullName ? "true" : "false"}
+                {...register("fullName", { required: true })}
+                className="w-full border p-2 rounded mt-1"
+              />
               {errors.fullName && <p className="text-red-500 text-sm">Name is required</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium">Email</label>
-              <input {...register("email", { required: true })} type="email" className="w-full border p-2 rounded mt-1" />
+              <label htmlFor="email" className="block text-sm font-medium">Email</label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                aria-required="true"
+                aria-invalid={errors.email ? "true" : "false"}
+                {...register("email", { required: true })}
+                className="w-full border p-2 rounded mt-1"
+              />
               {errors.email && <p className="text-red-500 text-sm">Email is required</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium">Phone Number</label>
-              <input {...register("phone", { required: true })} className="w-full border p-2 rounded mt-1" />
+              <label htmlFor="phone" className="block text-sm font-medium">Phone Number</label>
+              <input
+                id="phone"
+                type="tel"
+                autoComplete="tel"
+                aria-required="true"
+                aria-invalid={errors.phone ? "true" : "false"}
+                {...register("phone", { required: true })}
+                className="w-full border p-2 rounded mt-1"
+              />
               {errors.phone && <p className="text-red-500 text-sm">Phone number is required</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium">Address</label>
-              <textarea {...register("address", { required: true })} className="w-full border p-2 rounded mt-1" />
+              <label htmlFor="address" className="block text-sm font-medium">Address</label>
+              <textarea
+                id="address"
+                autoComplete="street-address"
+                aria-required="true"
+                aria-invalid={errors.address ? "true" : "false"}
+                {...register("address", { required: true })}
+                className="w-full border p-2 rounded mt-1"
+              />
               {errors.address && <p className="text-red-500 text-sm">Address is required</p>}
             </div>
             <button
@@ -239,7 +287,13 @@ export default function CheckoutPage() {
             >
               {isSubmitting ? "Processing..." : `Pay GH\u20B5${finalTotal.toFixed(2)}`}
             </button>
-            <p className="text-xs text-center text-muted-foreground">Secure payment simulation</p>
+            <p className="text-xs text-center text-muted-foreground">
+              By placing your order you agree to our{" "}
+              <Link href="/terms" className="underline underline-offset-2">Terms &amp; Conditions</Link>{" "}
+              and{" "}
+              <Link href="/privacy-policy" className="underline underline-offset-2">Privacy Policy</Link>.
+              We use your details only to process and deliver this order.
+            </p>
           </form>
 
           <div className="rounded-lg bg-gray-50 dark:bg-gray-900 dark:text-gray-100 p-6 shadow-sm">
