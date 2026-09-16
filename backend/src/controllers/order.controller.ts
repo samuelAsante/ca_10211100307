@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
+import { v4 as uuidv4 } from 'uuid';
 import { trackSystemEvent } from '../websocket/ws';
 import { initiatePayment } from '../services/payment.service';
 
@@ -37,15 +38,15 @@ export class OrderController {
                 return res.status(400).json({ error: "Cart must contain at least one item" });
             }
 
-            const idempotencyKey = (
+            const incomingKey = (
                 (req.headers["idempotency-key"] as string) ||
                 (req.headers["x-idempotency-key"] as string) ||
                 body.idempotencyKey
             )?.trim();
 
-            if (idempotencyKey) {
-                const existingOrder = await prisma.order.findUnique({
-                    where: { idempotencyKey },
+            if (incomingKey) {
+                const existingOrder = await prisma.order.findFirst({
+                    where: { idempotencyKey: incomingKey },
                 });
 
                 if (existingOrder) {
@@ -66,6 +67,8 @@ export class OrderController {
                     });
                 }
             }
+
+            const idempotencyKey = incomingKey || uuidv4();
 
             const computedTotal = expectedCheckoutTotal(cartItems);
 
