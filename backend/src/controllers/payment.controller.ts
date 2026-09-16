@@ -20,11 +20,29 @@ const PAYMENT_PUBLIC_SELECT = {
 } as const;
 
 function getFrontendUrl(req: Request): string {
-  return (
-    process.env.FRONTEND_URL?.replace(/\/$/, "") ||
-    (req.headers.origin as string | undefined)?.replace(/\/$/, "") ||
-    "http://localhost:3000"
-  );
+  const customDomain = "https://www.ashantiskitchenware.com";
+  const origin = (req.headers.origin as string | undefined)?.replace(/\/$/, "");
+
+  if (origin) {
+    if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+      return origin;
+    }
+    if (origin.includes("ashantiskitchenware.com")) {
+      return origin;
+    }
+  }
+
+  const envUrl = process.env.FRONTEND_URL?.replace(/\/$/, "");
+  if (envUrl) {
+    if (envUrl.includes("localhost") || envUrl.includes("127.0.0.1")) {
+      return envUrl;
+    }
+    if (!envUrl.includes("onrender.com")) {
+      return envUrl;
+    }
+  }
+
+  return customDomain;
 }
 
 export class PaymentController {
@@ -63,7 +81,9 @@ export class PaymentController {
         customerName: customerName || order.customerName,
         currency: currency || "GHS",
         metadata: metadata || {},
-        callbackUrl: `${getFrontendUrl(req)}/checkout/callback`,
+        callbackUrl:
+          (req.body?.callbackUrl as string)?.trim()?.replace(/https?:\/\/[^/]*\.onrender\.com/, "https://www.ashantiskitchenware.com") ||
+          `${getFrontendUrl(req)}/checkout/callback`,
         idempotencyKey,
       });
 
@@ -270,7 +290,9 @@ export class PaymentController {
         customerName: payment.customerName,
         currency: payment.currency,
         metadata: { retryOf: ref },
-        callbackUrl: `${getFrontendUrl(req)}/checkout/callback`,
+        callbackUrl:
+          (req.body?.callbackUrl as string)?.trim()?.replace(/https?:\/\/[^/]*\.onrender\.com/, "https://www.ashantiskitchenware.com") ||
+          `${getFrontendUrl(req)}/checkout/callback`,
       });
 
       return res.json({
