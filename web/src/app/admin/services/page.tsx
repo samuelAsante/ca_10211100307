@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { getBackendUrl } from "@/lib/backend-url";
-import { authHeaders } from "@/lib/auth-token";
 import { authClient } from "@/lib/auth-client";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useSocket } from "@/components/analytics/socket-provider";
+import { useServiceDiagnostics, useRunServiceProbe } from "@/hooks/use-service-diagnostics";
+import { ServiceOverview } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,59 +31,6 @@ import {
   XCircle,
 } from "lucide-react";
 
-interface ServiceOverview {
-  timestamp: string;
-  services: {
-    paystack: {
-      configured: boolean;
-      mode: "test" | "live" | "unconfigured";
-      maskedKey: string;
-      currency: string;
-      supportedChannels: string[];
-    };
-    email: {
-      configured: boolean;
-      provider: string;
-      maskedKey: string;
-      sender: string;
-    };
-    ai: {
-      configured: boolean;
-      provider: string;
-      maskedKey: string;
-      model: string;
-      circuitBreaker: {
-        state: string;
-        failures: number;
-        lastChange: string | null;
-      };
-    };
-    database: {
-      configured: boolean;
-      provider: string;
-      status: string;
-      latencyMs: number;
-      counts: {
-        products: number;
-        orders: number;
-        users: number;
-        batches: number;
-        events: number;
-      };
-    };
-    cloudinary: {
-      configured: boolean;
-      cloudName: string;
-      apiKey: string;
-    };
-  };
-  system: {
-    nodeEnv: string;
-    uptimeSeconds: number;
-    memoryUsageMb: number;
-  };
-}
-
 interface TestResult {
   running: boolean;
   status?: "success" | "error";
@@ -98,8 +45,9 @@ export default function ServicesDiagnosticsPage() {
   const { isConnected: isSocketConnected, socket } = useSocket();
   const { data: session } = authClient.useSession();
 
-  const [overview, setOverview] = useState<ServiceOverview | null>(null);
-  const [loadingOverview, setLoadingOverview] = useState(true);
+  const { data: overview = null, isLoading: loadingOverview, refetch: refetchOverview } = useServiceDiagnostics();
+  const probeMutation = useRunServiceProbe();
+
   const [testEmailAddress, setTestEmailAddress] = useState("");
   const [testAIPrompt, setTestAIPrompt] = useState("Explain how resilient batching protects e-commerce analytics in one sentence.");
 
@@ -111,29 +59,13 @@ export default function ServicesDiagnosticsPage() {
     cloudinary: { running: false },
   });
 
-  const backendUrl = getBackendUrl();
-
   const fetchOverview = useCallback(async () => {
-    try {
-      setLoadingOverview(true);
-      const res = await fetch(`${backendUrl}/api/admin/diagnostics/overview`, {
-        credentials: "include",
-        headers: authHeaders(),
-      });
-      if (!res.ok) throw new Error("Failed to load service diagnostics overview");
-      const data = await res.json();
-      setOverview(data);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to load services overview");
-    } finally {
-      setLoadingOverview(false);
-    }
-  }, [backendUrl]);
+    await refetchOverview();
+  }, [refetchOverview]);
 
   useEffect(() => {
     trackTabView("service_diagnostics", { parentPage: "/admin/services", domain: "admin" });
-    fetchOverview();
-  }, [fetchOverview, trackTabView]);
+  }, [trackTabView]);
 
   useEffect(() => {
     if (session?.user?.email && !testEmailAddress) {
@@ -148,44 +80,17 @@ export default function ServicesDiagnosticsPage() {
     }));
     trackAdminAction("diagnostics_run_test", serviceKey, { endpoint });
 
-    const start = Date.now();
     try {
-      const res = await fetch(`${backendUrl}${endpoint}`, {
-        method: "POST",
-        credentials: "include",
-        headers: authHeaders({ "Content-Type": "application/json" }),
-        body: body ? JSON.stringify(body) : undefined,
-      });
+      const result = await probeMutation.mutateAsync({ serviceKey, endpoint, body });
+      setTestResults((prev) => ({
+        ...prev,
+        [serviceKey]: result,
+      }));
 
-      const data = await res.json().catch(() => null);
-      const latencyMs = data?.latencyMs || Date.now() - start;
-
-      if (res.ok && data?.ok !== false) {
-        setTestResults((prev) => ({
-          ...prev,
-          [serviceKey]: {
-            running: false,
-            status: "success",
-            latencyMs,
-            data,
-            timestamp: new Date().toLocaleTimeString(),
-          },
-        }));
-        toast.success(`${serviceKey.toUpperCase()} probe passed (${latencyMs}ms)`);
+      if (result.status === "success") {
+        toast.success(`${serviceKey.toUpperCase()} probe passed (${result.latencyMs}ms)`);
       } else {
-        const errorMsg = data?.error || `Service probe failed (HTTP ${res.status})`;
-        setTestResults((prev) => ({
-          ...prev,
-          [serviceKey]: {
-            running: false,
-            status: "error",
-            latencyMs,
-            error: errorMsg,
-            data,
-            timestamp: new Date().toLocaleTimeString(),
-          },
-        }));
-        toast.error(`${serviceKey.toUpperCase()}: ${errorMsg}`);
+        toast.error(`${serviceKey.toUpperCase()}: ${result.error}`);
       }
     } catch (err: any) {
       setTestResults((prev) => ({
@@ -193,7 +98,6 @@ export default function ServicesDiagnosticsPage() {
         [serviceKey]: {
           running: false,
           status: "error",
-          latencyMs: Date.now() - start,
           error: err.message || "Network error while running probe",
           timestamp: new Date().toLocaleTimeString(),
         },
