@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 type AdminOrder = {
   id: string;
@@ -50,6 +51,7 @@ function getStatusBadgeClass(status: AdminOrder["status"]) {
 }
 
 export default function AdminOrdersPage() {
+  const { trackAdminAction, trackFilter } = useAnalytics();
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
@@ -86,6 +88,7 @@ export default function AdminOrdersPage() {
 
   const transitionOrder = async (orderId: string, action: "fulfill" | "cancel") => {
     setActiveOrderId(orderId);
+    trackAdminAction(action === "fulfill" ? "order_fulfill" : "order_cancel", orderId, { action });
     try {
       const backendUrl = getBackendUrl();
       await axios.post(
@@ -118,7 +121,11 @@ export default function AdminOrdersPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {Object.entries(statusSummary).map(([status, count]) => (
-          <Card key={status}>
+          <Card
+            key={status}
+            className="cursor-pointer transition hover:border-primary/50"
+            onClick={() => trackFilter("order_status_summary", status)}
+          >
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">{status}</CardTitle>
             </CardHeader>
