@@ -112,11 +112,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              size="lg"
+              className="data-[slot=sidebar-menu-button]:!p-2 hover:bg-transparent"
             >
-              <Link href="/">
-              {/* Use a ternary operator to display logo or business name  */}
-                <span className="text-base font-semibold logo">J&apos;S Ashantis</span>
+              <Link href="/admin" className="flex items-center gap-2.5">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-indigo-600 text-white font-bold text-sm shadow-sm">
+                  JS
+                </div>
+                <div className="flex flex-col gap-0.5 leading-none">
+                  <span className="font-semibold text-sm tracking-tight text-gray-900 dark:text-white">
+                    JS Ashanti
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">Admin Portal</span>
+                </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
