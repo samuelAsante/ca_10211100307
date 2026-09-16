@@ -13,6 +13,8 @@ import crypto from "crypto";
 
 const PAYSTACK_BASE_URL = "https://api.paystack.co";
 
+export const PAYSTACK_SUPPORTED_CHANNELS = ["card", "mobile_money"] as const;
+
 export interface PaystackInitParams {
   email: string;
   /** Amount in major currency units (e.g. GHS 25.50), converted to the minor unit for Paystack. */
@@ -21,7 +23,7 @@ export interface PaystackInitParams {
   currency?: string;
   callbackUrl?: string;
   metadata?: Record<string, unknown>;
-  /** Restrict payment channels, e.g. ["card", "mobile_money"]. Omit to allow all. */
+  /** Restrict payment channels, e.g. ["card", "mobile_money"]. Defaults to card & mobile_money. */
   channels?: string[];
 }
 
@@ -58,11 +60,18 @@ export const PaystackService = {
     return Math.round(Number(amountMajor) * 100);
   },
 
+  /** Convert minor units (pesewas) to major units (GHS). */
+  toMajorUnit(amountMinor: number): number {
+    return Number((amountMinor / 100).toFixed(2));
+  },
+
   async initializeTransaction(
     params: PaystackInitParams
   ): Promise<PaystackInitResult> {
     const secret = getSecretKey();
     if (!secret) throw new Error("Paystack is not configured");
+
+    const channels = params.channels || ["card", "mobile_money"];
 
     const res = await fetch(`${PAYSTACK_BASE_URL}/transaction/initialize`, {
       method: "POST",
@@ -77,7 +86,7 @@ export const PaystackService = {
         reference: params.reference,
         callback_url: params.callbackUrl,
         metadata: params.metadata,
-        channels: params.channels,
+        channels,
       }),
     });
 
@@ -126,18 +135,23 @@ export const PaystackService = {
     const secret = getSecretKey();
     if (!secret || !signature || rawBody === undefined) return false;
 
-    const expected = crypto
-      .createHmac("sha512", secret)
-      .update(rawBody)
-      .digest("hex");
-
     try {
-      return crypto.timingSafeEqual(
-        Buffer.from(expected),
-        Buffer.from(signature)
-      );
+      const expected = crypto
+        .createHmac("sha512", secret)
+        .update(rawBody)
+        .digest("hex");
+
+      const expectedBuf = Buffer.from(expected, "utf8");
+      const signatureBuf = Buffer.from(signature.trim(), "utf8");
+
+      if (expectedBuf.length !== signatureBuf.length) {
+        return false;
+      }
+
+      return crypto.timingSafeEqual(expectedBuf, signatureBuf);
     } catch {
       return false;
     }
   },
 };
+
