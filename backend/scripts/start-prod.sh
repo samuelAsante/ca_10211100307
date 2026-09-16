@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-npx prisma db push
+npx prisma migrate deploy
 
 npx ts-node --transpile-only prisma/seed-products.ts
 npx ts-node --transpile-only prisma/seed-admin.ts

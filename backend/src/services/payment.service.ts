@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma";
 import { nanoid } from "nanoid";
+import { v4 as uuidv4 } from "uuid";
 import { trackSystemEvent } from "../websocket/ws";
 import { EmailService } from "./email.service";
 import { orderConfirmationTemplate } from "../mail/order-confirmation-template";
@@ -294,10 +295,11 @@ export async function initiatePayment(
   }
 
   const provider: Provider = PaystackService.isConfigured() ? "PAYSTACK" : "SIMULATION";
+  const idempotencyKey = args.idempotencyKey || uuidv4();
 
   // Check if this explicit idempotency key has already been processed
   if (args.idempotencyKey) {
-    const existingByIdempotency = await prisma.payment.findUnique({
+    const existingByIdempotency = await prisma.payment.findFirst({
       where: { idempotencyKey: args.idempotencyKey },
     });
     if (existingByIdempotency) {
@@ -343,14 +345,14 @@ export async function initiatePayment(
       reference: paymentRef,
       currency,
       callbackUrl: args.callbackUrl,
-      metadata: { ...(args.metadata || {}), orderId, paymentRef, idempotencyKey: args.idempotencyKey },
+      metadata: { ...(args.metadata || {}), orderId, paymentRef, idempotencyKey },
     });
 
     await prisma.payment.create({
       data: {
         paymentRef,
         orderId,
-        idempotencyKey: args.idempotencyKey,
+        idempotencyKey,
         amount: Number(amount),
         currency,
         provider: "PAYSTACK",
@@ -385,7 +387,7 @@ export async function initiatePayment(
     data: {
       paymentRef,
       orderId,
-      idempotencyKey: args.idempotencyKey,
+      idempotencyKey,
       amount: Number(amount),
       currency,
       provider: "SIMULATION",
