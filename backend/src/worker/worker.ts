@@ -228,16 +228,29 @@ async function processJob(job: ClaimedJob): Promise<void> {
       `[Worker] Processing ${events.length} events for batch: ${job.batch_id}`
     );
 
-    const userEvents: UserEvent[] = events.map((e) => ({
-      eventId: e.id,
-      eventType: e.event_type,
-      userId: e.user_id || "anonymous",
-      sessionId: job.batch_id,
-      timestamp: e.timestamp.toISOString(),
-      metadata: e.data as Record<string, unknown>,
-    }));
+    const userEvents: UserEvent[] = events.map((e) => {
+      const dataObj = (e.data && typeof e.data === "object" && !Array.isArray(e.data)) ? (e.data as Record<string, any>) : {};
+      const { _page, _subView, _domain, _sessionId, ...metadata } = dataObj;
+      return {
+        eventId: e.id,
+        eventType: e.event_type,
+        userId: e.user_id || "anonymous",
+        sessionId: _sessionId || job.batch_id,
+        page: _page || dataObj.page,
+        subView: _subView || dataObj.subView,
+        domain: _domain || dataObj.domain,
+        timestamp: e.timestamp.toISOString(),
+        metadata: Object.keys(metadata).length > 0 ? metadata : dataObj,
+      };
+    });
 
-    const insights = await analyzeEventBatch(userEvents);
+    // Isolate customer storefront events for behavioral AI analysis so admin actions do not skew shopping funnel models
+    const storefrontEvents = userEvents.filter(
+      (e) => e.domain !== "admin" && !e.eventType.startsWith("ADMIN_")
+    );
+    const eventsForAI = storefrontEvents.length > 0 ? storefrontEvents : userEvents;
+
+    const insights = await analyzeEventBatch(eventsForAI);
 
     const timeWindowKey = `batch_${job.batch_id}`;
     await prisma.insight.upsert({
