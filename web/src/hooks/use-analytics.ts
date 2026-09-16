@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { useSocket } from "@/components/analytics/socket-provider";
 import { EventType } from "@/interface/analytics";
 import { usePathname } from "next/navigation";
@@ -14,7 +14,7 @@ export function useAnalytics() {
   const pathname = usePathname();
   const lastEventAtRef = useRef<Map<string, number>>(new Map());
 
-  const toStableString = (value: unknown): string => {
+  const toStableString = useCallback((value: unknown): string => {
     if (value === null || typeof value !== "object") {
       return String(value);
     }
@@ -24,9 +24,9 @@ export function useAnalytics() {
     const obj = value as Record<string, unknown>;
     const keys = Object.keys(obj).sort();
     return `{${keys.map((key) => `${key}:${toStableString(obj[key])}`).join(",")}}`;
-  };
+  }, []);
 
-  const shouldThrottle = (eventKey: string, throttleMs: number): boolean => {
+  const shouldThrottle = useCallback((eventKey: string, throttleMs: number): boolean => {
     if (throttleMs <= 0) return false;
     const now = Date.now();
     const previous = lastEventAtRef.current.get(eventKey);
@@ -35,9 +35,9 @@ export function useAnalytics() {
     }
     lastEventAtRef.current.set(eventKey, now);
     return false;
-  };
+  }, []);
 
-  const trackEvent = (
+  const trackEvent = useCallback((
     eventType: string,
     metadata?: Record<any, any>,
     options?: { throttleMs?: number; dedupeKey?: string }
@@ -57,43 +57,43 @@ export function useAnalytics() {
       page: pathname || undefined,
       metadata,
     });
-  };
+  }, [emitEvent, pathname, shouldThrottle, toStableString]);
 
-  const trackProductView = (productId: string, productName: string) => {
+  const trackProductView = useCallback((productId: string, productName: string) => {
     trackEvent(
       EventType.PRODUCT_VIEW,
       { productId, productName },
       { throttleMs: 1500, dedupeKey: `${EventType.PRODUCT_VIEW}:${productId}` }
     );
-  };
+  }, [trackEvent]);
 
-  const trackAddToCart = (productId: string, quantity: number) => {
+  const trackAddToCart = useCallback((productId: string, quantity: number) => {
     trackEvent(
       EventType.ADD_TO_CART,
       { productId, quantity },
       { throttleMs: 1000, dedupeKey: `${EventType.ADD_TO_CART}:${productId}` }
     );
-  };
+  }, [trackEvent]);
 
-  const trackRemoveFromCart = (productId: string) => {
+  const trackRemoveFromCart = useCallback((productId: string) => {
     trackEvent(
       EventType.REMOVE_FROM_CART,
       { productId },
       { throttleMs: 1000, dedupeKey: `${EventType.REMOVE_FROM_CART}:${productId}` }
     );
-  };
+  }, [trackEvent]);
 
-  const trackCheckout = (step: "start" | "complete", orderValue?: number) => {
+  const trackCheckout = useCallback((step: "start" | "complete", orderValue?: number) => {
     trackEvent(
       step === "start" ? EventType.CHECKOUT_START : EventType.CHECKOUT_COMPLETE,
       { orderValue },
       { throttleMs: 2000, dedupeKey: `checkout:${step}` }
     );
-  };
+  }, [trackEvent]);
 
-  const trackSearch = (query: string, resultsCount: number) => {
+  const trackSearch = useCallback((query: string, resultsCount: number) => {
     trackEvent(EventType.SEARCH, { query, resultsCount });
-  };
+  }, [trackEvent]);
 
   return {
     trackEvent,
