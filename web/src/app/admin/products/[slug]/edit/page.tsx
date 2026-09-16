@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
-import { getBackendUrl } from "@/lib/backend-url";
+import { use } from "react";
 import { notFound } from "next/navigation";
 import { ProductForm } from "./ProductForm";
-import axios from "axios";
+import { useProduct } from "@/hooks/use-products";
 import { Loader2 } from "lucide-react";
 
 export default function EditProductPage({
@@ -13,31 +12,7 @@ export default function EditProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
-  const [product, setProduct] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    async function loadProduct() {
-      try {
-        const backendUrl = getBackendUrl();
-        const res = await axios.get(`${backendUrl}/api/products/${slug}`, {
-          withCredentials: true,
-        });
-        if (res.data && res.data.id) {
-          setProduct(res.data);
-        } else {
-          setError(true);
-        }
-      } catch (err) {
-        console.error("Failed to fetch product for editing:", err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadProduct();
-  }, [slug]);
+  const { data: product, isLoading: loading, isError } = useProduct(slug);
 
   if (loading) {
     return (
@@ -47,9 +22,19 @@ export default function EditProductPage({
     );
   }
 
-  if (error || !product) {
+  if (isError || !product) {
     return notFound();
   }
 
-  return <ProductForm product={product} />;
+  return (
+    <ProductForm
+      product={{
+        ...product,
+        description: product.description || "",
+        category: product.category || "",
+        price: Number(product.price) || 0,
+        discount: Number(product.discount) || 0,
+      }}
+    />
+  );
 }

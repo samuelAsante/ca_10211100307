@@ -1,30 +1,18 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ProductsCardDetails } from "./productsCard";
 import { TiArrowRight } from "react-icons/ti";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { ProductCardSkeleton } from "./ProductCardSkeleton";
-import { pickFeaturedProducts } from "@/lib/utils";
+import { Product } from "@/types";
 
-export function ProductsList({ products: initialProducts }: { products: any[] }) {
-  const [products, setProducts] = useState(initialProducts || []);
-  const [isLoading, setIsLoading] = useState(!initialProducts?.length);
+export interface ProductsListProps {
+  products?: Product[] | any[];
+  isLoading?: boolean;
+}
 
-  useEffect(() => {
-    if (!initialProducts?.length) {
-      fetch(`${getBackendUrl()}/api/products`)
-        .then((res) => res.json())
-        .then((data) => {
-          setProducts(pickFeaturedProducts(data, 16));
-          setIsLoading(false);
-        })
-        .catch(() => setIsLoading(false));
-    }
-  }, [initialProducts]);
-
+export function ProductsList({ products = [], isLoading = false }: ProductsListProps) {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
@@ -47,7 +35,7 @@ export function ProductsList({ products: initialProducts }: { products: any[] })
           ? Array.from({ length: 8 }).map((_, idx) => <ProductCardSkeleton key={idx} />)
           : products.map((product, index) => (
               <ProductsCardDetails
-                key={index}
+                key={product.id || index}
                 {...product}
                 mainImage={product.images?.[0]}
                 rating={product.ratingFromManufacturer}

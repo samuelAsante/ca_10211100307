@@ -1,9 +1,6 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
-import { authHeaders } from "@/lib/auth-token";
-import { useCallback, useEffect, useState } from "react";
-import { Insight, InsightsPagination } from "@/interface/analytics";
+import { Insight, InsightsPagination } from "@/types";
 import {
   Card,
   CardContent,
@@ -34,10 +31,22 @@ import {
 } from "lucide-react";
 import { useAnalytics } from "@/hooks/use-analytics";
 
-export function InsightsTimeline() {
-  const { trackUIInteraction } = useAnalytics();
-  const [insights, setInsights] = useState<Insight[]>([]);
-  const [pagination, setPagination] = useState<InsightsPagination>({
+export interface InsightsTimelineProps {
+  insights?: Insight[];
+  pagination?: InsightsPagination;
+  isLoading?: boolean;
+  isRefreshing?: boolean;
+  error?: string | null;
+  page?: number;
+  limit?: number;
+  onPageChange?: (page: number) => void;
+  onLimitChange?: (limit: number) => void;
+  onRefresh?: () => void;
+}
+
+export function InsightsTimeline({
+  insights = [],
+  pagination = {
     total: 0,
     page: 1,
     limit: 10,
@@ -45,69 +54,23 @@ export function InsightsTimeline() {
     offset: 0,
     hasMore: false,
     hasPrev: false,
-  });
-  const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(10);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchInsights = useCallback(
-    async (targetPage = page, targetLimit = limit, showRefreshIndicator = false) => {
-      try {
-        if (showRefreshIndicator) {
-          setIsRefreshing(true);
-        } else {
-          setLoading(true);
-        }
-        setError(null);
-
-        const backendUrl = getBackendUrl();
-        const res = await fetch(
-          `${backendUrl}/api/insights?page=${targetPage}&limit=${targetLimit}`,
-          {
-            credentials: "include",
-            headers: authHeaders(),
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`Failed to load insights (HTTP ${res.status})`);
-        }
-
-        const data = await res.json();
-        setInsights(data.insights || []);
-        if (data.pagination) {
-          setPagination(data.pagination);
-        }
-      } catch (err: any) {
-        console.error("Error fetching insights:", err);
-        setError(err.message || "Failed to fetch AI insights");
-      } finally {
-        setLoading(false);
-        setIsRefreshing(false);
-      }
-    },
-    [page, limit]
-  );
-
-  useEffect(() => {
-    fetchInsights(page, limit);
-  }, [fetchInsights, page, limit]);
-
-  // Auto-refresh every 30s for the active page
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchInsights(page, limit, true);
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [fetchInsights, page, limit]);
+  },
+  isLoading = false,
+  isRefreshing = false,
+  error = null,
+  page = 1,
+  limit = 10,
+  onPageChange,
+  onLimitChange,
+  onRefresh,
+}: InsightsTimelineProps) {
+  const { trackUIInteraction } = useAnalytics();
 
   const handlePageChange = (newPage: number) => {
     if (newPage < 1 || newPage > (pagination?.totalPages || 1) || newPage === page) {
       return;
     }
-    setPage(newPage);
+    onPageChange?.(newPage);
     trackUIInteraction("insights_pagination", "page_change", {
       fromPage: page,
       toPage: newPage,
@@ -118,8 +81,7 @@ export function InsightsTimeline() {
 
   const handleLimitChange = (newLimitStr: string) => {
     const newLimit = parseInt(newLimitStr, 10);
-    setLimit(newLimit);
-    setPage(1);
+    onLimitChange?.(newLimit);
     trackUIInteraction("insights_pagination", "limit_change", {
       limit: newLimit,
       domain: "admin",
@@ -178,15 +140,13 @@ export function InsightsTimeline() {
     <Card className="border shadow-sm">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
         <div>
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-indigo-500/10 text-indigo-600">
-              <Sparkles className="h-4 w-4" />
-            </div>
-            <CardTitle className="text-lg font-semibold">AI Insights Timeline</CardTitle>
-            <Badge variant="secondary" className="font-mono text-xs">
-              {pagination.total} Total
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            <span>AI Insights Timeline</span>
+            <Badge variant="outline" className="text-xs font-normal">
+              Page {page} of {pagination.totalPages || 1}
             </Badge>
-          </div>
+          </CardTitle>
           <CardDescription className="text-xs mt-1">
             Automated behavioral patterns and recommendations synthesized from batch telemetry
           </CardDescription>
@@ -213,12 +173,12 @@ export function InsightsTimeline() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => fetchInsights(page, limit, true)}
-            disabled={loading || isRefreshing}
+            onClick={() => onRefresh?.()}
+            disabled={isLoading || isRefreshing}
             className="h-8 px-2.5 text-xs gap-1.5"
           >
             <RefreshCw
-              className={`h-3.5 w-3.5 ${isRefreshing || loading ? "animate-spin" : ""}`}
+              className={`h-3.5 w-3.5 ${isRefreshing || isLoading ? "animate-spin" : ""}`}
             />
             <span>Refresh</span>
           </Button>
@@ -233,138 +193,136 @@ export function InsightsTimeline() {
           </div>
         )}
 
-        {loading && !isRefreshing ? (
-          <div className="space-y-3 py-6">
-            {[...Array(3)].map((_, i) => (
+        {isLoading ? (
+          <div className="space-y-4 py-6">
+            {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="border rounded-lg p-4 space-y-3 animate-pulse bg-muted/20"
-              >
-                <div className="h-4 bg-muted rounded w-3/4" />
-                <div className="flex gap-2">
-                  <div className="h-5 bg-muted rounded w-20" />
-                  <div className="h-5 bg-muted rounded w-24" />
-                </div>
-                <div className="h-3 bg-muted rounded w-1/3" />
-              </div>
+                className="h-28 rounded-lg bg-muted/40 animate-pulse border"
+              />
             ))}
           </div>
         ) : insights.length === 0 ? (
-          <div className="text-center py-12 space-y-2">
-            <div className="p-3 rounded-full bg-muted/60 text-muted-foreground inline-block">
-              <Activity className="h-6 w-6" />
-            </div>
-            <p className="font-medium text-sm">No insights available</p>
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-              Event batches are automatically analyzed when sealed. Trigger manual analysis in the Batches tab or wait for shopping journeys to complete.
+          <div className="text-center py-12 px-4 border border-dashed rounded-lg">
+            <Sparkles className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+            <p className="text-sm font-medium text-muted-foreground">
+              No insights generated yet
+            </p>
+            <p className="text-xs text-muted-foreground/80 mt-1 max-w-sm mx-auto">
+              Insights will automatically appear as background telemetry batches are processed and analyzed by AI.
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="relative border-l-2 border-primary/20 ml-3 pl-6 space-y-6 py-2">
             {insights.map((insight) => (
-              <div
-                key={insight.id}
-                className="border rounded-lg p-4 space-y-3 bg-card hover:bg-muted/10 transition-colors shadow-none"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <p className="text-sm font-medium text-foreground leading-relaxed">
-                    {insight.summary}
-                  </p>
-                  <div className="shrink-0">{getConfidenceBadge(insight.confidence)}</div>
+              <div key={insight.id} className="relative group">
+                {/* Node icon on the timeline line */}
+                <div className="absolute -left-[31px] top-1.5 h-4 w-4 rounded-full bg-background border-2 border-primary group-hover:scale-125 transition-transform flex items-center justify-center">
+                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
                 </div>
 
-                {insight.patterns && insight.patterns.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {insight.patterns.map((pattern, idx) => (
-                      <Badge
-                        key={`${insight.id}-pattern-${idx}`}
-                        variant="outline"
-                        className="text-[11px] font-normal py-0.5 px-2 bg-background/50 border-muted-foreground/20 text-muted-foreground"
-                      >
-                        {pattern}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t text-[11px] text-muted-foreground">
-                  <div className="flex items-center gap-3">
-                    <span className="flex items-center gap-1">
-                      <Layers className="h-3 w-3" />
-                      {insight.eventCount} events analyzed
-                    </span>
-                    {insight.timeWindow && (
-                      <span className="hidden sm:flex items-center gap-1 font-mono">
+                <div className="p-4 rounded-lg border bg-card/60 hover:bg-card hover:border-primary/40 transition-all space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {getConfidenceBadge(insight.confidence)}
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
                         <Activity className="h-3 w-3" />
-                        {insight.timeWindow}
+                        {insight.eventCount} events analyzed
                       </span>
-                    )}
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3" />
+                      <time dateTime={insight.createdAt}>
+                        {new Date(insight.createdAt).toLocaleString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </time>
+                    </div>
                   </div>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {new Date(insight.createdAt).toLocaleString()}
-                  </span>
+
+                  {/* Summary / Core Finding */}
+                  <p className="text-sm font-medium leading-relaxed text-foreground/90">
+                    {insight.summary}
+                  </p>
+
+                  {/* Patterns / Tags */}
+                  {insight.patterns && insight.patterns.length > 0 && (
+                    <div className="pt-2 border-t flex flex-wrap gap-1.5 items-center">
+                      <span className="text-[11px] font-medium text-muted-foreground mr-1 flex items-center gap-1">
+                        <Layers className="h-3 w-3" />
+                        Patterns:
+                      </span>
+                      {insight.patterns.map((pattern, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center px-2 py-0.5 rounded text-[11px] bg-secondary/80 text-secondary-foreground font-normal border"
+                        >
+                          {pattern}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Pagination Footer Controls */}
-        {pagination.total > 0 && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t">
-            <p className="text-xs text-muted-foreground">
-              Showing <span className="font-medium text-foreground">{fromCount}</span> to{" "}
-              <span className="font-medium text-foreground">{toCount}</span> of{" "}
-              <span className="font-medium text-foreground">{pagination.total}</span> insights
-            </p>
+        {/* Bottom Pagination Bar */}
+        {!isLoading && pagination.total > 0 && (
+          <div className="pt-4 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-muted-foreground">
+            <div>
+              Showing <span className="font-semibold text-foreground">{fromCount}</span> to{" "}
+              <span className="font-semibold text-foreground">{toCount}</span> of{" "}
+              <span className="font-semibold text-foreground">{pagination.total}</span> insights
+            </div>
 
-            <div className="flex items-center gap-1 self-center sm:self-auto">
+            <div className="flex items-center gap-1">
               {/* First Page */}
               <Button
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => handlePageChange(1)}
-                disabled={page <= 1 || loading}
+                disabled={page <= 1 || isLoading}
                 title="First Page"
               >
-                <ChevronsLeft className="h-3.5 w-3.5" />
+                <ChevronsLeft className="h-4 w-4" />
               </Button>
 
-              {/* Previous Page */}
+              {/* Prev Page */}
               <Button
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => handlePageChange(page - 1)}
-                disabled={page <= 1 || loading}
+                disabled={!pagination.hasPrev || isLoading}
                 title="Previous Page"
               >
-                <ChevronLeft className="h-3.5 w-3.5" />
+                <ChevronLeft className="h-4 w-4" />
               </Button>
 
-              {/* Page Number Buttons */}
+              {/* Numbered Page Buttons */}
               <div className="flex items-center gap-1 mx-1">
-                {getPageNumbers().map((num, idx) =>
-                  num === "..." ? (
-                    <span
-                      key={`ellipsis-${idx}`}
-                      className="px-1.5 text-xs text-muted-foreground"
+                {getPageNumbers().map((p, idx) =>
+                  typeof p === "number" ? (
+                    <Button
+                      key={idx}
+                      variant={p === page ? "default" : "outline"}
+                      size="sm"
+                      className="h-8 min-w-8 px-2 text-xs"
+                      onClick={() => handlePageChange(p)}
+                      disabled={isLoading}
                     >
+                      {p}
+                    </Button>
+                  ) : (
+                    <span key={idx} className="px-1 text-muted-foreground">
                       ...
                     </span>
-                  ) : (
-                    <Button
-                      key={`page-${num}`}
-                      variant={page === num ? "default" : "outline"}
-                      size="sm"
-                      className="h-8 min-w-[32px] px-2 text-xs font-mono"
-                      onClick={() => handlePageChange(Number(num))}
-                      disabled={loading}
-                    >
-                      {num}
-                    </Button>
                   )
                 )}
               </div>
@@ -375,10 +333,10 @@ export function InsightsTimeline() {
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => handlePageChange(page + 1)}
-                disabled={page >= pagination.totalPages || loading}
+                disabled={!pagination.hasMore || isLoading}
                 title="Next Page"
               >
-                <ChevronRight className="h-3.5 w-3.5" />
+                <ChevronRight className="h-4 w-4" />
               </Button>
 
               {/* Last Page */}
@@ -387,10 +345,10 @@ export function InsightsTimeline() {
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => handlePageChange(pagination.totalPages)}
-                disabled={page >= pagination.totalPages || loading}
+                disabled={page >= pagination.totalPages || isLoading}
                 title="Last Page"
               >
-                <ChevronsRight className="h-3.5 w-3.5" />
+                <ChevronsRight className="h-4 w-4" />
               </Button>
             </div>
           </div>

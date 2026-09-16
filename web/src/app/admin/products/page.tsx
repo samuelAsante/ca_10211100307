@@ -1,31 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getBackendUrl } from "@/lib/backend-url";
+import { useProducts } from "@/hooks/use-products";
 import { AdminProductsTable } from "./productTable";
-import axios from "axios";
 import { Loader2 } from "lucide-react";
 
 export default function AdminProducts() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadProducts() {
-      try {
-        const backendUrl = getBackendUrl();
-        const res = await axios.get(`${backendUrl}/api/products`, {
-          withCredentials: true,
-        });
-        setProducts(Array.isArray(res.data) ? res.data : []);
-      } catch (err) {
-        console.error("Failed to load admin products:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadProducts();
-  }, []);
+  const { data: products = [], isLoading: loading } = useProducts();
 
   return (
     <div className="md:max-w-7xl px-4 py-10 mb-8 md:mb-24">
