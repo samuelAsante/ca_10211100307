@@ -8,11 +8,27 @@ import { SiteHeader } from "@/components/site-header"
 import { AdminProtected } from "@/components/layout/AdminProtected";
 
 
+import type { Metadata } from "next";
+
 const lato = Lato({
   variable: "--font-lato",
   subsets: ["latin"],
   weight: ["400", "700"],
 });
+
+export const metadata: Metadata = {
+  title: "Admin Portal",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
+  },
+};
 
 export default function AdminLayout({
     children,
