@@ -3,11 +3,6 @@
     "target": "es2016",
     "module": "commonjs",
     "rootDir": "./src",
-    "moduleResolution": "node",
-    "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"]
-    },
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
