@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { PaystackService } from "../services/paystack.service";
+import { getGroqModel } from "../services/ai.service";
 import { Resend } from "resend";
 import Groq from "groq-sdk";
 import { aiCircuitBreaker } from "../lib/circuit-breaker";
@@ -63,9 +64,9 @@ export class DiagnosticsController {
         },
         ai: {
           configured: !!groqKey,
-          provider: "Groq LLaMA 3.3 70B",
+          provider: "Groq AI",
           maskedKey: maskSecret(groqKey),
-          model: "llama-3.3-70b-versatile",
+          model: getGroqModel(),
           circuitBreaker: {
             state: cbMetrics.state,
             failures: cbMetrics.failureCount,
@@ -233,13 +234,14 @@ export class DiagnosticsController {
       });
     }
 
+    const model = getGroqModel();
     const start = Date.now();
     try {
       const groq = new Groq({ apiKey: key, timeout: 20_000 });
       const prompt = req.body.prompt || "Verify connection to JS Ashanti analytics engine in one short sentence.";
 
       const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model,
         messages: [{ role: "user", content: prompt }],
         max_tokens: 60,
       });
@@ -250,7 +252,7 @@ export class DiagnosticsController {
       return res.json({
         ok: true,
         latencyMs,
-        model: "llama-3.3-70b-versatile",
+        model,
         prompt,
         response: text,
         usage: completion.usage,
@@ -259,6 +261,7 @@ export class DiagnosticsController {
       return res.status(500).json({
         ok: false,
         latencyMs: Date.now() - start,
+        model,
         error: err.message || "Groq AI inference failed",
       });
     }
