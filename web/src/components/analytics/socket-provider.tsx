@@ -1,7 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { UserEvent } from "@/interface/analytics";
 import { hasAnalyticsConsent } from "@/lib/consent";
@@ -20,9 +20,12 @@ const SocketContext = createContext<SocketContextType>({
 
 export const useSocket = () => useContext(SocketContext);
 
+const MAX_QUEUE_SIZE = 50;
+
 export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const queueRef = useRef<UserEvent[]>([]);
 
   useEffect(() => {
     const backendUrl = getBackendUrl();
@@ -34,6 +37,17 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     socketInstance.on("connect", () => {
       console.log("Socket connected to:", backendUrl);
       setIsConnected(true);
+
+      // Flush queued events on connect
+      if (queueRef.current.length > 0) {
+        console.log(`[Socket] Flushing ${queueRef.current.length} queued events`);
+        while (queueRef.current.length > 0) {
+          const queued = queueRef.current.shift();
+          if (queued) {
+            socketInstance.emit("user:event", queued);
+          }
+        }
+      }
     });
 
     socketInstance.on("disconnect", () => {
@@ -58,13 +72,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
   const emitEvent = useCallback(
     (event: Omit<UserEvent, "eventId" | "timestamp">) => {
-      // Respect the user's cookie choice: no analytics without consent.
-      if (!hasAnalyticsConsent()) {
-        return;
-      }
-
-      if (!socket || !isConnected) {
-        console.warn("Socket not connected, event not sent");
+      // Respect user's cookie choice: storefront analytics require consent.
+      // Admin operational telemetry bypasses cookie consent.
+      const isAdminDomain = event.domain === "admin" || (event.page && event.page.startsWith("/admin"));
+      if (!isAdminDomain && !hasAnalyticsConsent()) {
         return;
       }
 
@@ -73,6 +84,16 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         eventId: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
         timestamp: new Date().toISOString(),
       };
+
+      if (!socket || !isConnected) {
+        // Buffer event for replay when connected
+        if (queueRef.current.length >= MAX_QUEUE_SIZE) {
+          queueRef.current.shift(); // Drop oldest event if capacity reached
+        }
+        queueRef.current.push(fullEvent);
+        console.warn("[Socket] Socket not connected, event queued (queue size: " + queueRef.current.length + ")");
+        return;
+      }
 
       socket.emit("user:event", fullEvent);
     },
