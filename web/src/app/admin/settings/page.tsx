@@ -28,6 +28,7 @@ import { ModeToggle } from "@/components/layout/toogleMode";
 import { useForm } from "react-hook-form";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useState } from "react";
@@ -165,7 +166,7 @@ export default function AdminSettingsPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit(onAccountSubmit)} className="space-y-6">
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
@@ -173,10 +174,10 @@ export default function AdminSettingsPage() {
                     placeholder="you@example.com"
                     {...register("email", { required: "Email is required" })}
                   />
-                  {errors.email && <span className="text-red-500">{errors.email.message}</span>}
+                  {errors.email && <span className="text-red-500 text-xs font-medium">{errors.email.message}</span>}
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="oldPassword">Enter Old Password</Label>
                   <Input
                     id="oldPassword"
@@ -184,11 +185,11 @@ export default function AdminSettingsPage() {
                     {...register("oldPassword", { required: "Old password is required" })}
                   />
                   {errors.oldPassword && (
-                    <span className="text-red-500">{errors.oldPassword.message}</span>
+                    <span className="text-red-500 text-xs font-medium">{errors.oldPassword.message}</span>
                   )}
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="newPassword">New Password</Label>
                   <Input
                     id="newPassword"
@@ -199,13 +200,14 @@ export default function AdminSettingsPage() {
                     })}
                   />
                   {errors.newPassword && (
-                    <span className="text-red-500">{errors.newPassword.message}</span>
+                    <span className="text-red-500 text-xs font-medium">{errors.newPassword.message}</span>
                   )}
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="avatar">Upload Avatar</Label>
                   <Input
+                    id="avatar"
                     type="file"
                     accept="image/*"
                     {...register("avatar")}
@@ -215,7 +217,16 @@ export default function AdminSettingsPage() {
                     }}
                   />
                   {avatarPreview && (
-                    <img src={avatarPreview} alt="Avatar Preview" className="mt-2 h-16" />
+                    <div className="pt-1">
+                      <Image
+                        src={avatarPreview}
+                        alt="Avatar Preview"
+                        width={64}
+                        height={64}
+                        unoptimized
+                        className="h-16 w-16 rounded-full object-cover border"
+                      />
+                    </div>
                   )}
                 </div>
 
@@ -236,9 +247,10 @@ export default function AdminSettingsPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit(onBusinessSubmit)} className="space-y-6">
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="logo">Upload Logo</Label>
                   <Input
+                    id="logo"
                     type="file"
                     accept="image/*"
                     {...register("logo")}
@@ -247,38 +259,49 @@ export default function AdminSettingsPage() {
                       if (file) setLogoPreview(URL.createObjectURL(file));
                     }}
                   />
-                  {logoPreview && <img src={logoPreview} alt="Logo Preview" className="mt-2 h-16" />}
+                  {logoPreview && (
+                    <div className="pt-1">
+                      <Image
+                        src={logoPreview}
+                        alt="Logo Preview"
+                        width={200}
+                        height={64}
+                        unoptimized
+                        className="h-16 w-auto max-w-[200px] object-contain rounded border p-1"
+                      />
+                    </div>
+                  )}
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="name">Business Name</Label>
                   <Input id="name" {...register("name", { required: "Business name is required" })} />
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
                   <Input id="phone" {...register("phone")} />
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="address">Address</Label>
                   <Input id="address" {...register("address")} />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-2">
                     <Label htmlFor="city">City</Label>
                     <Input id="city" {...register("city")} />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="state">State</Label>
                     <Input id="state" {...register("state")} />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="country">Country</Label>
                     <Input id="country" {...register("country")} />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="currency">Currency</Label>
                     <Input id="currency" defaultValue="GHS" {...register("currency")} />
                   </div>

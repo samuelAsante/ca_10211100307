@@ -9,6 +9,10 @@ const REQUIRED_ENV_KEYS = [
 const PRODUCTION_REQUIRED_ENV_KEYS = ["BETTER_AUTH_SECRET", "FRONTEND_URL"] as const;
 
 function getMissingEnvKeys(): string[] {
+  if (process.env.NODE_ENV !== "production" && !process.env.ADMIN_ID?.trim()) {
+    process.env.ADMIN_ID = "admin_dev_id";
+  }
+
   const required: string[] = [...REQUIRED_ENV_KEYS];
   if (process.env.NODE_ENV === "production") {
     required.push(...PRODUCTION_REQUIRED_ENV_KEYS);

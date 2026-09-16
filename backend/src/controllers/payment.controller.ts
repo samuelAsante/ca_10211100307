@@ -50,6 +50,12 @@ export class PaymentController {
         return res.status(409).json({ error: `Order is already ${order.status}` });
       }
 
+      const idempotencyKey = (
+        (req.headers["idempotency-key"] as string) ||
+        (req.headers["x-idempotency-key"] as string) ||
+        req.body.idempotencyKey
+      )?.trim();
+
       const result = await initiatePayment({
         orderId,
         amount: Number(amount),
@@ -57,7 +63,8 @@ export class PaymentController {
         customerName: customerName || order.customerName,
         currency: currency || "GHS",
         metadata: metadata || {},
-        callbackUrl: `${getFrontendUrl(req)}/checkout/success`,
+        callbackUrl: `${getFrontendUrl(req)}/checkout/callback`,
+        idempotencyKey,
       });
 
       return res.status(201).json({
@@ -82,14 +89,36 @@ export class PaymentController {
       const { ref } = req.params;
       const payment = await prisma.payment.findUnique({
         where: { paymentRef: ref },
-        select: PAYMENT_PUBLIC_SELECT,
+        select: {
+          ...PAYMENT_PUBLIC_SELECT,
+          metadata: true,
+        },
       });
 
       if (!payment) {
         return res.status(404).json({ error: "Payment not found" });
       }
 
-      return res.json(payment);
+      const order = await prisma.order.findUnique({
+        where: { id: payment.orderId },
+        select: {
+          id: true,
+          customerName: true,
+          email: true,
+          phone: true,
+          address: true,
+          status: true,
+          totalAmount: true,
+          items: true,
+          paidAt: true,
+          createdAt: true,
+        },
+      });
+
+      return res.json({
+        ...payment,
+        order,
+      });
     } catch (error) {
       console.error("[Payment] Status fetch error:", error);
       return res.status(500).json({ error: "Failed to fetch payment status" });
@@ -98,7 +127,7 @@ export class PaymentController {
 
   /**
    * Verify a payment with the provider and reconcile our records.
-   * Called by the success page after Paystack redirects back.
+   * Called by the callback page after Paystack redirects back.
    */
   static async verifyPayment(req: Request, res: Response) {
     try {
@@ -119,9 +148,32 @@ export class PaymentController {
 
       const updated = await prisma.payment.findUnique({
         where: { paymentRef: ref },
-        select: PAYMENT_PUBLIC_SELECT,
+        select: {
+          ...PAYMENT_PUBLIC_SELECT,
+          metadata: true,
+        },
       });
-      return res.json(updated);
+
+      const order = await prisma.order.findUnique({
+        where: { id: payment.orderId },
+        select: {
+          id: true,
+          customerName: true,
+          email: true,
+          phone: true,
+          address: true,
+          status: true,
+          totalAmount: true,
+          items: true,
+          paidAt: true,
+          createdAt: true,
+        },
+      });
+
+      return res.json({
+        ...updated,
+        order,
+      });
     } catch (error) {
       console.error("[Payment] Verify error:", error);
       return res.status(500).json({ error: "Failed to verify payment" });
@@ -137,6 +189,7 @@ export class PaymentController {
     const rawBody = (req as any).rawBody as Buffer | undefined;
 
     if (!PaystackService.verifyWebhookSignature(rawBody, signature)) {
+      console.warn("[Payment Webhook] Signature verification failed or missing");
       return res.status(401).send("Invalid signature");
     }
 
@@ -145,8 +198,8 @@ export class PaymentController {
       const reference: string | undefined = event?.data?.reference;
       if (reference) {
         if (event?.event === "charge.success") {
-          // Re-verify with Paystack (also guards the amount) before finalising.
-          await reconcilePaystackPayment(reference).catch((e) =>
+          // Reconcile directly with event.data to avoid redundant HTTP roundtrips
+          await reconcilePaystackPayment(reference, event.data).catch((e) =>
             console.error("[Payment] Webhook reconcile error:", e)
           );
         } else if (event?.event === "charge.failed") {
@@ -160,7 +213,7 @@ export class PaymentController {
       console.error("[Payment] Webhook handling error:", err);
     }
 
-    // Always acknowledge so Paystack doesn't retry unnecessarily.
+    // Always acknowledge with 200 OK so Paystack doesn't re-queue or retry unnecessarily.
     return res.sendStatus(200);
   }
 
@@ -217,7 +270,7 @@ export class PaymentController {
         customerName: payment.customerName,
         currency: payment.currency,
         metadata: { retryOf: ref },
-        callbackUrl: `${getFrontendUrl(req)}/checkout/success`,
+        callbackUrl: `${getFrontendUrl(req)}/checkout/callback`,
       });
 
       return res.json({

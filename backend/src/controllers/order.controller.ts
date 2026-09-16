@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
-import { EmailService } from '../services/email.service';
-import { orderConfirmationTemplate } from '../mail/order-confirmation-template';
 import { trackSystemEvent } from '../websocket/ws';
 import { initiatePayment } from '../services/payment.service';
 
@@ -39,6 +37,36 @@ export class OrderController {
                 return res.status(400).json({ error: "Cart must contain at least one item" });
             }
 
+            const idempotencyKey = (
+                (req.headers["idempotency-key"] as string) ||
+                (req.headers["x-idempotency-key"] as string) ||
+                body.idempotencyKey
+            )?.trim();
+
+            if (idempotencyKey) {
+                const existingOrder = await prisma.order.findUnique({
+                    where: { idempotencyKey },
+                });
+
+                if (existingOrder) {
+                    const payment = await prisma.payment.findFirst({
+                        where: { orderId: existingOrder.id },
+                        orderBy: { createdAt: "desc" },
+                    });
+                    const meta = payment?.metadata as Record<string, any> | null;
+
+                    return res.json({
+                        success: true,
+                        orderId: existingOrder.id,
+                        paymentRef: payment?.paymentRef,
+                        paymentStatus: payment?.status,
+                        provider: payment?.provider,
+                        authorizationUrl: meta?.authorizationUrl,
+                        isIdempotentReplay: true,
+                    });
+                }
+            }
+
             const computedTotal = expectedCheckoutTotal(cartItems);
 
             if (Math.abs(computedTotal - Number(total)) > 1) {
@@ -58,6 +86,7 @@ export class OrderController {
                     status: "PENDING",
                     totalAmount: total,
                     items: cartItems,
+                    idempotencyKey: idempotencyKey || undefined,
                 },
                 select: {
                     id: true,
@@ -65,7 +94,7 @@ export class OrderController {
             });
 
             await trackSystemEvent({
-                eventType: "PURCHASE_COMPLETED",
+                eventType: "CHECKOUT_INITIATED",
                 userId: email,
                 sessionId: "checkout",
                 metadata: {
@@ -74,29 +103,6 @@ export class OrderController {
                     itemCount: Array.isArray(cartItems) ? cartItems.length : 0,
                 },
             });
-
-            // Send confirmation email
-            try {
-                const emailHtml = orderConfirmationTemplate({
-                    name: fullName,
-                    orderId: order.id,
-                    total,
-                    items: cartItems.map((item: any) => ({
-                        name: item.name,
-                        quantity: item.quantity,
-                        price: item.price,
-                    })),
-                });
-
-                await EmailService.sendEmail(
-                    email,
-                    `Order Confirmation – ${order.id}`,
-                    emailHtml
-                );
-            } catch (emailError) {
-                console.error("Failed to send order confirmation email:", emailError);
-                // We don't fail the request if email fails, but maybe log it
-            }
 
             // Initiate payment (Paystack when configured, otherwise simulation)
             try {
@@ -107,7 +113,8 @@ export class OrderController {
                     customerName: fullName,
                     currency: "GHS",
                     metadata: { itemCount: cartItems.length },
-                    callbackUrl: `${getFrontendUrl(req)}/checkout/success`,
+                    callbackUrl: `${getFrontendUrl(req)}/checkout/callback`,
+                    idempotencyKey: idempotencyKey || undefined,
                 });
 
                 return res.json({

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useAnalytics } from "@/hooks/use-analytics";
 
 type ShippingForm = {
@@ -29,8 +29,14 @@ export default function CheckoutPage() {
   const { trackCheckout, trackEvent } = useAnalytics();
   const [mounted, setMounted] = useState(false);
   const [payment, setPayment] = useState<PaymentState | null>(null);
+  const idempotencyKeyRef = useRef<string | null>(null);
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+    if (!idempotencyKeyRef.current) {
+      idempotencyKeyRef.current = `idem_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+    }
+  }, []);
 
   const safeItems = mounted ? items : [];
   const subtotal = mounted ? (getSubtotal ? getSubtotal() : getTotalPrice()) : 0;
@@ -89,6 +95,8 @@ export default function CheckoutPage() {
     if (!payment) return;
     const backendUrl = getBackendUrl();
     try {
+      // Refresh idempotency key for explicit retry attempt
+      idempotencyKeyRef.current = `idem_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
       setPayment(prev => prev ? { ...prev, status: "INITIATED" } : null);
       const res = await axios.post(`${backendUrl}/api/payments/${payment.paymentRef}/retry`);
       const { paymentRef: newRef, authorizationUrl } = res.data;
@@ -113,10 +121,15 @@ export default function CheckoutPage() {
       const backendUrl = getBackendUrl();
       trackCheckout("start", finalTotal);
 
+      const headers: Record<string, string> = {};
+      if (idempotencyKeyRef.current) {
+        headers["Idempotency-Key"] = idempotencyKeyRef.current;
+      }
+
       const response = await axios.post(
         `${backendUrl}/api/orders/checkout`,
         { ...data, cartItems: safeItems, total: finalTotal },
-        { withCredentials: true }
+        { withCredentials: true, headers }
       );
 
       trackCheckout("complete", finalTotal);
@@ -221,7 +234,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Amount</span>
-                <span className="font-semibold">GH\u20B5{finalTotal.toFixed(2)}</span>
+                <span className="font-semibold">GH₵{finalTotal.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -280,12 +293,27 @@ export default function CheckoutPage() {
               />
               {errors.address && <p className="text-red-500 text-sm">Address is required</p>}
             </div>
+            <div className="rounded-xl border border-indigo-100 dark:border-indigo-950 bg-indigo-50/50 dark:bg-indigo-950/20 p-3.5 space-y-2">
+              <div className="flex items-center justify-between text-xs text-indigo-950 dark:text-indigo-200">
+                <span className="font-semibold flex items-center gap-1.5">
+                  <span>🔒</span> Secured via Paystack
+                </span>
+                <span className="text-muted-foreground text-[11px]">Mobile Money &amp; Cards</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
+                <span className="px-2 py-0.5 rounded bg-white dark:bg-gray-800 border font-medium text-gray-700 dark:text-gray-300">MTN MoMo</span>
+                <span className="px-2 py-0.5 rounded bg-white dark:bg-gray-800 border font-medium text-gray-700 dark:text-gray-300">Telecel Cash</span>
+                <span className="px-2 py-0.5 rounded bg-white dark:bg-gray-800 border font-medium text-gray-700 dark:text-gray-300">AirtelTigo</span>
+                <span className="px-2 py-0.5 rounded bg-white dark:bg-gray-800 border font-medium text-gray-700 dark:text-gray-300">Visa / Mastercard</span>
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={isSubmitting || !mounted || safeItems.length === 0}
-              className="w-full bg-indigo-600 text-white py-3 rounded-full hover:bg-indigo-700 disabled:opacity-50"
+              className="w-full bg-indigo-600 text-white py-3.5 rounded-full hover:bg-indigo-700 font-medium disabled:opacity-50 transition shadow-sm flex items-center justify-center gap-2"
             >
-              {isSubmitting ? "Processing..." : `Pay GH\u20B5${finalTotal.toFixed(2)}`}
+              {isSubmitting ? "Initiating Secure Checkout..." : `Pay GH₵${finalTotal.toFixed(2)}`}
             </button>
             <p className="text-xs text-center text-muted-foreground">
               By placing your order you agree to our{" "}
@@ -302,24 +330,24 @@ export default function CheckoutPage() {
               {safeItems.map((item) => (
                 <li key={item.id} className="py-3 flex justify-between">
                   <span>{item.name} x {item.quantity}</span>
-                  <span>GH\u20B5{(item.price * item.quantity).toFixed(2)}</span>
+                  <span>GH₵{(item.price * item.quantity).toFixed(2)}</span>
                 </li>
               ))}
             </ul>
             <div className="mt-4 border-t pt-4 text-sm space-y-2">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>GH\u20B5{subtotal.toFixed(2)}</span>
+                <span>GH₵{subtotal.toFixed(2)}</span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span>Discount (10%)</span>
-                  <span>-GH\u20B5{discount.toFixed(2)}</span>
+                  <span>-GH₵{discount.toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between font-semibold text-lg pt-2">
                 <span>Total</span>
-                <span>GH\u20B5{finalTotal.toFixed(2)}</span>
+                <span>GH₵{finalTotal.toFixed(2)}</span>
               </div>
             </div>
           </div>

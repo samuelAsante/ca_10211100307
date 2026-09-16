@@ -23,13 +23,13 @@ export default function AdminLayout({
         <div className={`${lato.variable} antialiased`}>
           <AdminProtected>
           <SidebarProvider
-          style={
-            {
-              "--sidebar-width": "calc(var(--spacing) * 72)",
-              "--header-height": "calc(var(--spacing) * 12)",
-            } as React.CSSProperties
-          }
-        >
+            style={
+              {
+                "--sidebar-width": "16.5rem",
+                "--header-height": "3.5rem",
+              } as React.CSSProperties
+            }
+          >
           <AppSidebar variant="inset" />
           <SidebarInset>
           <SiteHeader />

@@ -138,6 +138,7 @@ model Order {
   items           Json
   paymentRef      String?       @db.VarChar(255)
   paymentProvider String?       @db.VarChar(50)
+  idempotencyKey  String?       @unique @db.VarChar(255)
   paidAt          DateTime?
   createdAt       DateTime      @default(now())
 }
@@ -159,6 +160,7 @@ model Payment {
   id              String         @id @default(cuid())
   paymentRef      String         @unique @db.VarChar(255)
   orderId         String         @db.VarChar(255)
+  idempotencyKey  String?        @unique @db.VarChar(255)
   amount          Float
   currency        String         @default("GHS")
   provider        PaymentProvider @default(SIMULATION)
