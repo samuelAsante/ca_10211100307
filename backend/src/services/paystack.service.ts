@@ -73,6 +73,11 @@ export const PaystackService = {
 
     const channels = params.channels || ["card", "mobile_money"];
 
+    // Ensure callback_url always uses the custom domain and never an onrender.com URL
+    const callbackUrl = params.callbackUrl
+      ? params.callbackUrl.replace(/https?:\/\/[^/]*\.onrender\.com/, "https://www.ashantiskitchenware.com")
+      : (process.env.NODE_ENV === "production" ? "https://www.ashantiskitchenware.com/checkout/callback" : undefined);
+
     const res = await fetch(`${PAYSTACK_BASE_URL}/transaction/initialize`, {
       method: "POST",
       headers: {
@@ -84,7 +89,7 @@ export const PaystackService = {
         amount: PaystackService.toMinorUnit(params.amountMajor),
         currency: params.currency || "GHS",
         reference: params.reference,
-        callback_url: params.callbackUrl,
+        callback_url: callbackUrl,
         metadata: params.metadata,
         channels,
       }),
