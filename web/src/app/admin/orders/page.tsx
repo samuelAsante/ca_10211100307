@@ -1,9 +1,8 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useOrders, useFulfillOrder, useCancelOrder } from "@/hooks/use-orders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,37 +51,20 @@ function getStatusBadgeClass(status: AdminOrder["status"]) {
 
 export default function AdminOrdersPage() {
   const { trackAdminAction, trackFilter } = useAnalytics();
-  const [orders, setOrders] = useState<AdminOrder[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: orders = [], isLoading: loading } = useOrders();
+  const fulfillMutation = useFulfillOrder();
+  const cancelMutation = useCancelOrder();
   const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
 
-  const fetchOrders = useCallback(async () => {
-    setLoading(true);
-    try {
-      const backendUrl = getBackendUrl();
-      const response = await axios.get<AdminOrder[]>(`${backendUrl}/api/orders`, {
-        withCredentials: true,
-      });
-      setOrders(response.data);
-    } catch (error) {
-      console.error("Failed to fetch orders:", error);
-      toast.error("Failed to load orders");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
-
   const statusSummary = useMemo(() => {
-    return orders.reduce(
+    return (orders as any[]).reduce(
       (acc, order) => {
-        acc[order.status] += 1;
+        if (acc[order.status] !== undefined) {
+          acc[order.status] += 1;
+        }
         return acc;
       },
-      { PENDING: 0, PAID: 0, FULFILLED: 0, CANCELLED: 0 }
+      { PENDING: 0, PAID: 0, FULFILLED: 0, CANCELLED: 0 } as Record<string, number>
     );
   }, [orders]);
 
@@ -90,21 +72,15 @@ export default function AdminOrdersPage() {
     setActiveOrderId(orderId);
     trackAdminAction(action === "fulfill" ? "order_fulfill" : "order_cancel", orderId, { action });
     try {
-      const backendUrl = getBackendUrl();
-      await axios.post(
-        `${backendUrl}/api/orders/${encodeURIComponent(orderId)}/${action}`,
-        {},
-        { withCredentials: true }
-      );
-      toast.success(
-        action === "fulfill" ? "Order marked as fulfilled" : "Order cancelled"
-      );
-      await fetchOrders();
+      if (action === "fulfill") {
+        await fulfillMutation.mutateAsync(orderId);
+        toast.success("Order marked as fulfilled");
+      } else {
+        await cancelMutation.mutateAsync(orderId);
+        toast.success("Order cancelled");
+      }
     } catch (error: any) {
-      const message =
-        error?.response?.data?.error ||
-        (action === "fulfill" ? "Failed to fulfill order" : "Failed to cancel order");
-      toast.error(message);
+      toast.error(error?.message || `Failed to ${action} order`);
     } finally {
       setActiveOrderId(null);
     }
@@ -130,7 +106,7 @@ export default function AdminOrdersPage() {
               <CardTitle className="text-sm">{status}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-semibold">{count}</p>
+              <p className="text-2xl font-semibold">{String(count)}</p>
             </CardContent>
           </Card>
         ))}
