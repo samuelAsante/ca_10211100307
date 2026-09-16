@@ -9,15 +9,17 @@ mkdir -p "$LOG_DIR"
 RUN_IOS=0
 RUN_EXPO_WEB=0
 SKIP_INSTALL=0
+NO_MOBILE=0
 
 for arg in "$@"; do
   case "$arg" in
     --ios) RUN_IOS=1 ;;
     --expo-web) RUN_EXPO_WEB=1 ;;
     --skip-install) SKIP_INSTALL=1 ;;
+    --no-mobile|--web-only) NO_MOBILE=1 ;;
     *)
       echo "Unknown option: $arg"
-      echo "Usage: ./scripts/start-all.sh [--ios] [--expo-web] [--skip-install]"
+      echo "Usage: ./scripts/start-all.sh [--ios] [--expo-web] [--skip-install] [--no-mobile]"
       exit 1
       ;;
   esac
@@ -61,6 +63,7 @@ def replace_or_append(key: str, value: str) -> None:
 
 replace_or_append("DATABASE_URL", "postgresql://user:password@localhost:55432/js_ashanti_db")
 replace_or_append("BETTER_AUTH_URL", "http://localhost:4001")
+replace_or_append("ADMIN_ID", "admin_dev_id")
 
 path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 PY
@@ -94,7 +97,9 @@ wait_for_http() {
 echo "[setup] Preparing environment files"
 ensure_env_file "$ROOT_DIR/backend/.env" "$ROOT_DIR/backend/.env.example" "backend"
 ensure_env_file "$ROOT_DIR/web/.env" "$ROOT_DIR/web/.env.example" "web"
-ensure_env_file "$ROOT_DIR/mobile/.env" "$ROOT_DIR/mobile/.env.example" "mobile"
+if [[ "$NO_MOBILE" -eq 0 ]]; then
+  ensure_env_file "$ROOT_DIR/mobile/.env" "$ROOT_DIR/mobile/.env.example" "mobile"
+fi
 apply_default_backend_env
 
 echo "[setup] Starting Docker database"
@@ -118,15 +123,20 @@ if ! docker exec js_ashanti_db pg_isready -U user -d js_ashanti_db >/dev/null 2>
 fi
 
 if [[ "$SKIP_INSTALL" -eq 0 ]]; then
-  echo "[setup] Installing dependencies (backend, web, mobile)"
+  echo "[setup] Installing dependencies (backend, web)"
   (cd "$ROOT_DIR/backend" && npm install >/dev/null)
   (cd "$ROOT_DIR/web" && npm install >/dev/null)
-  (cd "$ROOT_DIR/mobile" && npm install >/dev/null)
+  if [[ "$NO_MOBILE" -eq 0 ]]; then
+    echo "[setup] Installing dependencies (mobile)"
+    (cd "$ROOT_DIR/mobile" && npm install --legacy-peer-deps >/dev/null)
+  fi
 fi
 
 kill_port_listener 4001
 kill_port_listener 3000
-kill_port_listener 8081
+if [[ "$NO_MOBILE" -eq 0 ]]; then
+  kill_port_listener 8081
+fi
 
 echo "[setup] Starting backend"
 (cd "$ROOT_DIR/backend" && nohup npm run dev >"$LOG_DIR/backend.log" 2>&1 & echo $! >"$LOG_DIR/backend.pid")
@@ -134,17 +144,19 @@ echo "[setup] Starting backend"
 echo "[setup] Starting web"
 (cd "$ROOT_DIR/web" && nohup npm run dev >"$LOG_DIR/web.log" 2>&1 & echo $! >"$LOG_DIR/web.pid")
 
-echo "[setup] Starting Metro bundler for Mobile App"
-(cd "$ROOT_DIR/mobile" && nohup npm start >"$LOG_DIR/expo.log" 2>&1 & echo $! >"$LOG_DIR/expo.pid")
+if [[ "$NO_MOBILE" -eq 0 ]]; then
+  echo "[setup] Starting Metro bundler for Mobile App"
+  (cd "$ROOT_DIR/mobile" && nohup npm start >"$LOG_DIR/expo.log" 2>&1 & echo $! >"$LOG_DIR/expo.pid")
 
-if [[ "$RUN_EXPO_WEB" -eq 1 ]]; then
-  echo "[setup] Starting Expo web"
-  (cd "$ROOT_DIR/mobile" && nohup npm run web >"$LOG_DIR/expo-web.log" 2>&1 & echo $! >"$LOG_DIR/expo-web.pid")
-fi
+  if [[ "$RUN_EXPO_WEB" -eq 1 ]]; then
+    echo "[setup] Starting Expo web"
+    (cd "$ROOT_DIR/mobile" && nohup npm run web >"$LOG_DIR/expo-web.log" 2>&1 & echo $! >"$LOG_DIR/expo-web.pid")
+  fi
 
-if [[ "$RUN_IOS" -eq 1 ]]; then
-  echo "[setup] Starting Expo iOS (first run may take several minutes)"
-  (cd "$ROOT_DIR/mobile" && nohup npm run ios >"$LOG_DIR/ios.log" 2>&1 & echo $! >"$LOG_DIR/ios.pid")
+  if [[ "$RUN_IOS" -eq 1 ]]; then
+    echo "[setup] Starting Expo iOS (first run may take several minutes)"
+    (cd "$ROOT_DIR/mobile" && nohup npm run ios >"$LOG_DIR/ios.log" 2>&1 & echo $! >"$LOG_DIR/ios.pid")
+  fi
 fi
 
 echo "[setup] Waiting for backend/web health checks"
