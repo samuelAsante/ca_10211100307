@@ -6,11 +6,29 @@ import { initiatePayment } from '../services/payment.service';
 
 /** Frontend base URL used for the Paystack post-payment redirect. */
 function getFrontendUrl(req: Request): string {
-    return (
-        process.env.FRONTEND_URL?.replace(/\/$/, "") ||
-        (req.headers.origin as string | undefined)?.replace(/\/$/, "") ||
-        "http://localhost:3000"
-    );
+    const customDomain = "https://www.ashantiskitchenware.com";
+    const origin = (req.headers.origin as string | undefined)?.replace(/\/$/, "");
+
+    if (origin) {
+        if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+            return origin;
+        }
+        if (origin.includes("ashantiskitchenware.com")) {
+            return origin;
+        }
+    }
+
+    const envUrl = process.env.FRONTEND_URL?.replace(/\/$/, "");
+    if (envUrl) {
+        if (envUrl.includes("localhost") || envUrl.includes("127.0.0.1")) {
+            return envUrl;
+        }
+        if (!envUrl.includes("onrender.com")) {
+            return envUrl;
+        }
+    }
+
+    return customDomain;
 }
 
 /** Must match `getTotalPrice()` in web/src/lib/store/cartStore.ts */
@@ -116,7 +134,9 @@ export class OrderController {
                     customerName: fullName,
                     currency: "GHS",
                     metadata: { itemCount: cartItems.length },
-                    callbackUrl: `${getFrontendUrl(req)}/checkout/callback`,
+                    callbackUrl:
+                        (body.callbackUrl as string)?.trim()?.replace(/https?:\/\/[^/]*\.onrender\.com/, "https://www.ashantiskitchenware.com") ||
+                        `${getFrontendUrl(req)}/checkout/callback`,
                     idempotencyKey: idempotencyKey || undefined,
                 });
 
