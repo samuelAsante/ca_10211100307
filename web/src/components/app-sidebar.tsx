@@ -123,11 +123,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <Link href="/admin" className="flex items-center gap-2.5">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-indigo-600 text-white font-bold text-sm shadow-sm">
-                  JS
+                  AK
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-semibold text-sm tracking-tight text-gray-900 dark:text-white">
-                    JS Ashanti
+                    Ashanti&apos;s Kitchenware
                   </span>
                   <span className="text-[11px] text-muted-foreground">Admin Portal</span>
                 </div>
