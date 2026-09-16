@@ -28,6 +28,8 @@ type AnalyticsEventInput = {
     userId: string;
     sessionId: string;
     page?: string;
+    subView?: string;
+    domain?: "storefront" | "admin" | "checkout";
     metadata?: Record<string, unknown>;
     timestamp: string;
 };
@@ -62,7 +64,7 @@ function getDedupeKey(event: any): string {
         .update(stableStringify(event.metadata || {}))
         .digest("hex")
         .slice(0, 16);
-    return `${event.userId}|${event.eventType}|${event.page || ""}|${metadataHash}`;
+    return `${event.userId}|${event.eventType}|${event.page || ""}|${event.subView || ""}|${metadataHash}`;
 }
 
 function cleanupMaps(now: number) {
@@ -102,12 +104,22 @@ async function getOrCreateOpenBatch() {
 async function persistAnalyticsEvent(event: AnalyticsEventInput) {
     const batch = await getOrCreateOpenBatch();
     const parsedTimestamp = new Date(event.timestamp);
+
+    // Embed core context directly into data JSON to prevent data loss without requiring breaking schema migration
+    const enrichedData = {
+        ...(event.metadata ?? {}),
+        _page: event.page,
+        _subView: event.subView,
+        _domain: event.domain,
+        _sessionId: event.sessionId,
+    };
+
     await prisma.event.create({
         data: {
             batch_id: batch.batch_id,
             event_type: event.eventType,
             user_id: event.userId,
-            data: (event.metadata ?? {}) as unknown as Prisma.InputJsonValue,
+            data: enrichedData as unknown as Prisma.InputJsonValue,
             timestamp: Number.isNaN(parsedTimestamp.getTime()) ? new Date() : parsedTimestamp,
         },
     });
@@ -259,6 +271,10 @@ export const initializeWebSocket = (httpServer: HttpServer) => {
                     userId: String(event.userId),
                     sessionId: String(event.sessionId || "unknown"),
                     page: event.page ? String(event.page) : undefined,
+                    subView: event.subView ? String(event.subView) : undefined,
+                    domain: (event.domain && ["storefront", "admin", "checkout"].includes(event.domain)
+                        ? event.domain
+                        : undefined) as "storefront" | "admin" | "checkout" | undefined,
                     metadata: event.metadata || {},
                     timestamp: parsedTimestamp.toISOString(),
                 });
