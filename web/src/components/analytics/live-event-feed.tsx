@@ -38,12 +38,23 @@ export function LiveEventFeed() {
   const getEventColor = (eventType: string) => {
     const colors: Record<string, string> = {
       USER_LOGIN: "bg-green-500",
+      USER_LOGOUT: "bg-gray-500",
       PAGE_VIEW: "bg-blue-500",
       PRODUCT_VIEW: "bg-purple-500",
       ADD_TO_CART: "bg-orange-500",
       REMOVE_FROM_CART: "bg-red-500",
       CHECKOUT_START: "bg-yellow-500",
       CHECKOUT_COMPLETE: "bg-green-600",
+      SEARCH: "bg-cyan-600",
+      TAB_VIEW: "bg-indigo-500",
+      ADMIN_TAB_VIEW: "bg-indigo-600",
+      ADMIN_ACTION: "bg-purple-600",
+      MODAL_OPEN: "bg-amber-600",
+      MODAL_CLOSE: "bg-amber-700",
+      DRAWER_TOGGLE: "bg-sky-600",
+      FILTER_APPLIED: "bg-teal-600",
+      FORM_SUBMIT: "bg-emerald-600",
+      UI_INTERACTION: "bg-blue-600",
     };
     return colors[eventType] || "bg-gray-500";
   };
@@ -76,9 +87,16 @@ export function LiveEventFeed() {
                   className="border rounded-lg p-3 text-sm"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <Badge className={getEventColor(event.eventType)}>
-                      {event.eventType}
-                    </Badge>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Badge className={getEventColor(event.eventType)}>
+                        {event.eventType}
+                      </Badge>
+                      {event.domain && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground uppercase font-mono">
+                          {event.domain}
+                        </span>
+                      )}
+                    </div>
                     <span className="text-xs text-muted-foreground">
                       {new Date(event.timestamp).toLocaleTimeString()}
                     </span>
@@ -91,6 +109,12 @@ export function LiveEventFeed() {
                     {event.page && (
                       <p>
                         <strong>Page:</strong> {event.page}
+                      </p>
+                    )}
+                    {event.subView && (
+                      <p>
+                        <strong>View / Tab:</strong>{" "}
+                        <span className="font-semibold text-primary">{event.subView}</span>
                       </p>
                     )}
                     {event.metadata &&

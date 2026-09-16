@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table";
 import { PlayCircle, AlertCircle, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 interface Batch {
   batch_id: string;
@@ -75,6 +76,7 @@ function getJobStatusBadge(status: string) {
 }
 
 export function BatchList() {
+  const { trackAdminAction } = useAnalytics();
   const [batches, setBatches] = useState<Batch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -103,6 +105,7 @@ export function BatchList() {
 
   const triggerAnalysis = async (batchId: string) => {
     setTriggering(batchId);
+    trackAdminAction("trigger_batch_analysis", batchId);
     try {
       const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/admin/batches/${batchId}/analyze`, {

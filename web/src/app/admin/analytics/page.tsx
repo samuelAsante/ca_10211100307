@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, TrendingUp } from "lucide-react";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 type Product = {
   id: string;
@@ -27,6 +28,7 @@ type Order = {
 };
 
 export default function AnalyticsDashboard() {
+  const { trackTabView } = useAnalytics();
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingCommerce, setLoadingCommerce] = useState(true);
@@ -163,7 +165,11 @@ export default function AnalyticsDashboard() {
         </Card>
       )}
 
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs
+        defaultValue="overview"
+        className="space-y-6"
+        onValueChange={(tab) => trackTabView(tab, { parentPage: "/admin/analytics", domain: "admin" })}
+      >
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="batches">Batches</TabsTrigger>

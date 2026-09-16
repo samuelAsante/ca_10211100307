@@ -14,9 +14,12 @@ import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit3 } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export function AdminProductsTable({ products }: { products: any[] }) {
     const router = useRouter();
+    const { trackAdminAction } = useAnalytics();
+
     const deleteProduct = async (productId: string) => {
       try {
         const backendUrl = getBackendUrl();
@@ -28,6 +31,7 @@ export function AdminProductsTable({ products }: { products: any[] }) {
 
         if (!res.ok) throw new Error("Failed to delete");
 
+        trackAdminAction("delete_product", productId);
         toast.success("Product deleted");
         router.refresh();
       } catch (err) {
@@ -36,6 +40,7 @@ export function AdminProductsTable({ products }: { products: any[] }) {
       }
     };
     const editProduct = async (slug: string) => {
+      trackAdminAction("edit_product_navigate", slug);
       router.push(`/admin/products/${slug}/edit`)
     }
 

@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { AiOutlineDelete } from "react-icons/ai";
 import { LoaderOne } from "@/components/ui/loader";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 type User = {
   id: string;
@@ -37,6 +38,7 @@ export enum AdminRole {
 }
 
 export function UsersTable() {
+  const { trackAdminAction, trackModal } = useAnalytics();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,6 +68,7 @@ export function UsersTable() {
         role: AdminRole.ADMIN,
       });
       if (error) throw new Error(error.message);
+      trackAdminAction("promote_admin", userId);
       toast.success(`User ${userId} promoted to admin`);
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, role: AdminRole.ADMIN } : u))
@@ -81,6 +84,7 @@ export function UsersTable() {
     try {
       const { error } = await authClient.admin.removeUser({ userId: selectedUserId });
       if (error) throw new Error(error.message);
+      trackAdminAction("remove_user", selectedUserId);
       setUsers((prev) => prev.filter((u) => u.id !== selectedUserId));
       toast.success("User deleted");
     } catch (err: any) {
@@ -136,6 +140,7 @@ export function UsersTable() {
                           <button
                             onClick={() => {
                               setSelectedUserId(user.id);
+                              trackModal("remove_user_dialog", "open", { targetUserId: user.id });
                               setOpen(true);
                             }}
                             className="text-sm text-red-600 hover:underline flex items-center"
@@ -152,7 +157,13 @@ export function UsersTable() {
       </div>
 
       {/* Confirmation Dialog */}
-      <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialog
+        open={open}
+        onOpenChange={(isOpen) => {
+          setOpen(isOpen);
+          trackModal("remove_user_dialog", isOpen ? "open" : "close");
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>

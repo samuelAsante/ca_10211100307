@@ -10,7 +10,8 @@ import {
   IconSettings,
   IconPlus,
   IconChartArea,
-  IconShoppingCart
+  IconShoppingCart,
+  IconActivity
 } from "@tabler/icons-react"
 import { FaDollarSign } from "react-icons/fa6";
 
@@ -62,6 +63,11 @@ const data = {
       title: "Analytics",
       url: "/admin/analytics",
       icon: IconChartArea,  
+    },
+    {
+      title: "Service Health",
+      url: "/admin/services",
+      icon: IconActivity,
     }
  
   ],

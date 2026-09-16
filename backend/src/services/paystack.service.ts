@@ -158,5 +158,141 @@ export const PaystackService = {
       return false;
     }
   },
+
+  /**
+   * Get Paystack operating mode based on secret key prefix.
+   */
+  getMode(): "test" | "live" | "unconfigured" {
+    const secret = getSecretKey();
+    if (!secret) return "unconfigured";
+    return secret.startsWith("sk_live") ? "live" : "test";
+  },
+
+  /**
+   * Return masked version of secret key for safe diagnostic reporting.
+   */
+  getMaskedKey(): string {
+    const secret = getSecretKey();
+    if (!secret) return "Not configured";
+    if (secret.length <= 8) return "********";
+    return `${secret.slice(0, 4)}...${secret.slice(-4)}`;
+  },
+
+  /**
+   * Return metadata and diagnostic configuration for Paystack.
+   */
+  getDiagnosticInfo() {
+    return {
+      configured: this.isConfigured(),
+      mode: this.getMode(),
+      maskedKey: this.getMaskedKey(),
+      currency: "GHS",
+      supportedChannels: Array.from(PAYSTACK_SUPPORTED_CHANNELS),
+    };
+  },
+
+  /**
+   * Diagnostic connectivity probe for health checks.
+   */
+  async checkConnectivity(adminEmail?: string): Promise<{
+    ok: boolean;
+    status: "CONNECTED" | "FAILED";
+    latencyMs: number;
+    mode: "test" | "live" | "unconfigured";
+    message: string;
+    balances?: any[];
+    details?: any;
+    error?: string;
+  }> {
+    const secret = getSecretKey();
+    if (!secret) {
+      return {
+        ok: false,
+        status: "FAILED",
+        latencyMs: 0,
+        mode: "unconfigured",
+        message: "Paystack is not configured",
+        error: "PAYSTACK_SECRET_KEY is not configured in backend environment",
+      };
+    }
+
+    const mode = secret.startsWith("sk_live") ? "live" : "test";
+    const start = Date.now();
+
+    try {
+      // 1. Try balance inquiry endpoint
+      const balanceRes = await fetch(`${PAYSTACK_BASE_URL}/balance`, {
+        headers: {
+          Authorization: `Bearer ${secret}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const latencyMs = Date.now() - start;
+      const data = await balanceRes.json().catch(() => null);
+
+      if (balanceRes.ok && data?.status) {
+        return {
+          ok: true,
+          status: "CONNECTED",
+          latencyMs,
+          mode,
+          message: data.message || "Successfully connected to Paystack API",
+          balances: data.data || [],
+        };
+      }
+
+      // 2. If balance check is restricted by test key permissions, test transaction initialize probe
+      const testRef = `diag_test_${Date.now()}`;
+      const initStart = Date.now();
+      const initRes = await fetch(`${PAYSTACK_BASE_URL}/transaction/initialize`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${secret}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: adminEmail || "diagnostic@jsashanti.com",
+          amount: 100, // 1 GHS
+          reference: testRef,
+        }),
+      });
+
+      const initLatency = Date.now() - initStart;
+      const initData = await initRes.json().catch(() => null);
+
+      if (initRes.ok && initData?.status) {
+        return {
+          ok: true,
+          status: "CONNECTED",
+          latencyMs: initLatency,
+          mode,
+          message: "Successfully initialized Paystack transaction probe",
+          details: {
+            reference: testRef,
+            accessCode: initData.data?.access_code,
+          },
+        };
+      }
+
+      return {
+        ok: false,
+        status: "FAILED",
+        latencyMs,
+        mode,
+        message: "Paystack API probe failed",
+        error: initData?.message || data?.message || `Paystack responded with HTTP ${balanceRes.status}`,
+      };
+    } catch (err: any) {
+      return {
+        ok: false,
+        status: "FAILED",
+        latencyMs: Date.now() - start,
+        mode,
+        message: "Paystack connection error",
+        error: err.message || "Failed to reach Paystack API",
+      };
+    }
+  },
 };
 

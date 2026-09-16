@@ -9,6 +9,8 @@ export interface UserEvent {
   userId: string;
   sessionId: string;
   page?: string;
+  subView?: string;
+  domain?: "storefront" | "admin" | "checkout";
   metadata?: Record<string, any>;
   timestamp: string; // ISO string
 }
@@ -28,6 +30,16 @@ export enum EventType {
   SEARCH = "SEARCH",
   SCROLL = "SCROLL",
   FILTER_APPLIED = "FILTER_APPLIED",
+
+  // In-page and virtual view event types
+  TAB_VIEW = "TAB_VIEW",
+  ADMIN_TAB_VIEW = "ADMIN_TAB_VIEW",
+  MODAL_OPEN = "MODAL_OPEN",
+  MODAL_CLOSE = "MODAL_CLOSE",
+  DRAWER_TOGGLE = "DRAWER_TOGGLE",
+  ADMIN_ACTION = "ADMIN_ACTION",
+  FORM_SUBMIT = "FORM_SUBMIT",
+  UI_INTERACTION = "UI_INTERACTION",
 }
 
 /**
