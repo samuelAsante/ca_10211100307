@@ -79,7 +79,7 @@ export function Header() {
 
               {/* Logo */}
               <Link href="/" className="flex items-center gap-2">
-                <h1 className={`text-[10px] md:text-md lg:text-2xl font-bold logo`}>J&apos;S Ashantis</h1>
+                <h1 className={`text-xs sm:text-base md:text-lg lg:text-2xl font-bold logo`}>Ashanti&apos;s Kitchenware</h1>
               </Link>
             </div>
 
