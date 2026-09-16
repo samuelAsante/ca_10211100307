@@ -4,6 +4,10 @@ import { aiCircuitBreaker } from "../lib/circuit-breaker";
 
 let groqClient: Groq | null = null;
 
+export function getGroqModel(): string {
+  return process.env.GROQ_MODEL?.trim() || "openai/gpt-oss-20b";
+}
+
 function getGroqClient(): Groq {
   if (!process.env.GROQ_API_KEY?.trim()) {
     throw new Error("GROQ_API_KEY not configured");
@@ -99,7 +103,7 @@ You MUST respond with ONLY valid JSON, no markdown, no backticks, no additional 
 
   try {
     const completion = await groq.chat.completions.create({
-      model: process.env.GROQ_MODEL || "openai/gpt-oss-20b",
+      model: getGroqModel(),
       messages: [
         {
           role: "system",
