@@ -21,43 +21,32 @@ import {
 } from "@/components/ui/tabs";
 import { MotionEffect } from '@/components/animate-ui/effects/motion-effect';
 import { ProductCardSkeleton } from './ProductCardSkeleton';
-import { getBackendUrl } from "@/lib/backend-url";
 import { prioritizeDiscountedProducts } from "@/lib/utils";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 const headerInfo = {
   name: "Store.",
   description: "The best way to buy the products you love.",
 };
 
-const categoryMap: Record<string, string> = {
-  "kitchen-appliances": "KITCHEN APPLIANCES",
-  "cooking-ware": "COOKING WARES & SETS",
+const categoryMap: { [key: string]: string } = {
+  "cookware-sets": "Cookware Sets",
+  "frying-pans": "Frying Pans",
+  "appliances": "KITCHEN APPLIANCES",
+  "cooking-wares": "COOKING WARES & SETS",
   "insulations": "STORAGE & INSULATIONS",
   "home-essentials": "HOME ESSENTIALS",
 };
 
-export function ProductsClient({ products: initialProducts, searchParams }: { products: any[]; searchParams: { [key: string]: string | undefined } }) {
-  const [products, setProducts] = useState(initialProducts || []);
-  const [selectedTab, setSelectedTab] = useState("all-Products");
-  const [isLoading, setIsLoading] = useState(!initialProducts?.length);
+interface ProductsClientProps {
+  products: any[];
+  searchParams: { [key: string]: string | undefined };
+  isLoading?: boolean;
+}
 
-  useEffect(() => {
-    if (initialProducts && initialProducts.length > 0) {
-      setProducts(initialProducts);
-      setIsLoading(false);
-    } else {
-      const backendUrl = getBackendUrl();
-      fetch(`${backendUrl}/api/products`)
-        .then((res) => (res.ok ? res.json() : []))
-        .then((data) => {
-          if (Array.isArray(data) && data.length > 0) {
-            setProducts(prioritizeDiscountedProducts(data));
-          }
-        })
-        .catch(console.error)
-        .finally(() => setIsLoading(false));
-    }
-  }, [initialProducts]);
+export function ProductsClient({ products: rawProducts = [], searchParams, isLoading = false }: ProductsClientProps) {
+  const [selectedTab, setSelectedTab] = useState("all-Products");
+  const products = prioritizeDiscountedProducts(rawProducts);
 
   useEffect(() => {
     if (typeof window !== "undefined") {

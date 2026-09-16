@@ -1,8 +1,6 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
-import { authHeaders } from "@/lib/auth-token";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -108,45 +106,22 @@ function ErrorContextViewer({ context }: { context: any }) {
   );
 }
 
-export function JobMonitor() {
+export interface JobMonitorProps {
+  jobs?: Job[];
+  deadLetterJobs?: DeadLetterJob[];
+  loading?: boolean;
+  error?: string | null;
+  onRefresh?: () => void;
+}
+
+export function JobMonitor({
+  jobs: activeJobs = [],
+  deadLetterJobs = [],
+  loading = false,
+  error = null,
+}: JobMonitorProps) {
   const { trackFilter } = useAnalytics();
-  const [activeJobs, setActiveJobs] = useState<Job[]>([]);
-  const [deadLetterJobs, setDeadLetterJobs] = useState<DeadLetterJob[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("ALL");
-
-  const fetchJobs = async () => {
-    try {
-      const backendUrl = getBackendUrl();
-      const [jobsRes, dlqRes] = await Promise.all([
-        fetch(`${backendUrl}/api/admin/jobs`, { credentials: "include", headers: authHeaders() }),
-        fetch(`${backendUrl}/api/admin/dead-letter-queue`, { credentials: "include", headers: authHeaders() }),
-      ]);
-
-      if (!jobsRes.ok || !dlqRes.ok) {
-        throw new Error("Failed to fetch job data");
-      }
-
-      const jobsData = await jobsRes.json();
-      const dlqData = await dlqRes.json();
-
-      setActiveJobs(jobsData.jobs || []);
-      setDeadLetterJobs(dlqData.jobs || []);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
-      console.error("[JobMonitor] Fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchJobs();
-    const interval = setInterval(fetchJobs, 10000); // Refresh every 10s
-    return () => clearInterval(interval);
-  }, []);
 
   if (loading) {
     return (

@@ -1,8 +1,6 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
-import { authHeaders } from "@/lib/auth-token";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -75,70 +73,42 @@ function getJobStatusBadge(status: string) {
   return <Badge variant={variants[status] || "outline"}>{status}</Badge>;
 }
 
-export function BatchList() {
-  const { trackAdminAction } = useAnalytics();
-  const [batches, setBatches] = useState<Batch[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [triggering, setTriggering] = useState<string | null>(null);
+export interface BatchListProps {
+  batches?: Batch[];
+  loading?: boolean;
+  error?: string | null;
+  onTriggerAnalysis?: (batchId: string) => Promise<void>;
+  triggeringId?: string | null;
+}
 
-  const fetchBatches = async () => {
-    try {
-      const backendUrl = getBackendUrl();
-      const res = await fetch(`${backendUrl}/api/admin/batches`, {
-        credentials: "include",
-        headers: authHeaders(),
-      });
-      if (!res.ok) {
-        throw new Error(`Failed to fetch batches: ${res.statusText}`);
-      }
-      const data = await res.json();
-      setBatches(data.batches || []);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
-      console.error("[BatchList] Fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+export function BatchList({
+  batches = [],
+  loading = false,
+  error = null,
+  onTriggerAnalysis,
+  triggeringId = null,
+}: BatchListProps) {
+  const { trackAdminAction } = useAnalytics();
+  const [internalTriggering, setInternalTriggering] = useState<string | null>(null);
+
+  const triggering = triggeringId || internalTriggering;
 
   const triggerAnalysis = async (batchId: string) => {
-    setTriggering(batchId);
-    trackAdminAction("trigger_batch_analysis", batchId);
-    try {
-      const backendUrl = getBackendUrl();
-      const res = await fetch(`${backendUrl}/api/admin/batches/${batchId}/analyze`, {
-        method: "POST",
-        credentials: "include",
-        headers: authHeaders(),
-      });
-
-      if (res.status === 409) {
-        toast("Analysis already in progress for this batch", {
-          icon: "ℹ️",
-        });
-      } else if (res.ok) {
+    if (onTriggerAnalysis) {
+      setInternalTriggering(batchId);
+      trackAdminAction("trigger_batch_analysis", batchId);
+      try {
+        await onTriggerAnalysis(batchId);
         toast.success("Analysis triggered successfully");
-        await fetchBatches(); // Refresh list
-      } else {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to trigger analysis");
+      } catch (err) {
+        toast.error(
+          err instanceof Error ? err.message : "Failed to trigger analysis"
+        );
+      } finally {
+        setInternalTriggering(null);
       }
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to trigger analysis"
-      );
-    } finally {
-      setTriggering(null);
     }
   };
-
-  useEffect(() => {
-    fetchBatches();
-    const interval = setInterval(fetchBatches, 15000); // Refresh every 15s
-    return () => clearInterval(interval);
-  }, []);
 
   if (loading) {
     return (

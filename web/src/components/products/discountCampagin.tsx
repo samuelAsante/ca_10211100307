@@ -1,6 +1,5 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
 import { useEffect, useState } from "react";
 import {
   Table,
@@ -11,42 +10,30 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { toast } from "react-hot-toast";
-import axios from "axios";
+import { Product } from "@/types";
 
-type Product = {
-  id: string;
-  name: string;
-  slug: string;
-  category: string;
-  price: number;
-  discount?: number;
-};
+export interface DiscountCampaignProps {
+  products?: Product[];
+  isLoading?: boolean;
+  onUpdateDiscount?: (slug: string, productId: string, discount: number) => Promise<void>;
+}
 
-export default function DiscountCampaign() {
-  const [products, setProducts] = useState<Product[]>([]);
+export default function DiscountCampaign({
+  products = [],
+  isLoading = false,
+  onUpdateDiscount,
+}: DiscountCampaignProps) {
   const [discounts, setDiscounts] = useState<{ [productId: string]: number }>({});
   const [loadingSlug, setLoadingSlug] = useState<string | null>(null);
-  const backendUrl = getBackendUrl();
 
-  // Fetch products
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.get(`${backendUrl}/api/products`, {
-          withCredentials: true,
-        });
-        setProducts(res.data);
-        const initialDiscounts = Object.fromEntries(
-          res.data.map((p: Product) => [p.id, p.discount ?? 0])
-        );
-        setDiscounts(initialDiscounts);
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to load products");
-      }
-    };
-    fetchProducts();
-  }, []);
+    if (products && products.length > 0) {
+      const initialDiscounts = Object.fromEntries(
+        products.map((p) => [p.id, p.discount ?? 0])
+      );
+      setDiscounts(initialDiscounts);
+    }
+  }, [products]);
 
   const handleDiscountChange = (productId: string, value: number) => {
     setDiscounts((prev) => ({
@@ -56,33 +43,29 @@ export default function DiscountCampaign() {
   };
 
   const handleDiscountSubmit = async (slug: string, productId: string) => {
-    try {
-      setLoadingSlug(slug);
-      const discount = discounts[productId];
+    const discount = discounts[productId];
 
-      if (discount < 0 || discount > 100) {
-        toast.error("Discount must be between 0 and 100");
-        return;
+    if (discount < 0 || discount > 100) {
+      toast.error("Discount must be between 0 and 100");
+      return;
+    }
+
+    if (onUpdateDiscount) {
+      try {
+        setLoadingSlug(slug);
+        await onUpdateDiscount(slug, productId, discount);
+        toast.success("Discount updated");
+      } catch (err) {
+        toast.error("Failed to update discount");
+      } finally {
+        setLoadingSlug(null);
       }
-
-      await axios.put(
-        `${backendUrl}/api/products/${slug}`,
-        { discount },
-        { withCredentials: true }
-      );
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === productId ? { ...product, discount } : product
-        )
-      );
-      toast.success("Discount updated");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to update discount");
-    } finally {
-      setLoadingSlug(null);
     }
   };
+
+  if (isLoading) {
+    return <p className="text-sm text-neutral-500 py-8">Loading products...</p>;
+  }
 
   return (
     <Table>
@@ -92,7 +75,7 @@ export default function DiscountCampaign() {
           <TableHead>Name</TableHead>
           <TableHead>Category</TableHead>
           <TableHead>Price</TableHead>
-          <TableHead>Discount</TableHead>
+          <TableHead>Discount %</TableHead>
           <TableHead>Action</TableHead>
         </TableRow>
       </TableHeader>
@@ -106,7 +89,7 @@ export default function DiscountCampaign() {
             <TableCell>
               <input
                 type="number"
-                className="border p-1 w-20 rounded"
+                className="border dark:border-neutral-700 bg-transparent p-1 w-20 rounded"
                 value={discounts[product.id] ?? 0}
                 min={0}
                 max={100}
@@ -117,7 +100,7 @@ export default function DiscountCampaign() {
             </TableCell>
             <TableCell>
               <button
-                className="text-sm bg-blue-600 text-white px-3 py-1 rounded"
+                className="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition disabled:opacity-50"
                 onClick={() => handleDiscountSubmit(product.slug, product.id)}
                 disabled={loadingSlug === product.slug}
               >

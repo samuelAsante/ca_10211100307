@@ -10,18 +10,21 @@ import { ModeToggle } from "@/components/layout/toogleMode";
 import Link from "next/link";
 import { categories } from "@/data/data";
 import { SearchModal } from "@/components/products/SearchModal";
-import { CartIcon } from "@/components/cart/cartIcon"
+import { CartIcon } from "@/components/cart/cartIcon";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { FloatingDock } from "@/components/ui/floating-dock";
 import {
   IconHome,
+  IconTruck,
 } from "@tabler/icons-react";
 import { FaStore } from "react-icons/fa6";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
+  const [openCart, setOpenCart] = useState(false);
   const pathname = usePathname();
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -63,19 +66,20 @@ export function Header() {
         <div className="mx-auto w-full max-w-7xl px-4">
           <div className="flex justify-between items-center h-16">
             <div className="flex gap-4">
-              {/* Hamburger Icon - only mobile */}
-
-              {/*    <button
-                className="block lg:hidden landscape:hidden text-xl focus:outline-none transition-all duration-300"
+              {/* Mobile Menu Button */}
+              <button
+                type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                aria-label="Toggle menu"
+                aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={isOpen}
+                className="md:hidden landscape:hidden cursor-pointer"
               >
-                {
-                  isOpen ? ( <IoClose /> ) : (
-                    <CiMenuFries />
-                  )
-                }
-              </button> */}
+                {isOpen ? (
+                  <IoClose className="text-2xl" aria-hidden="true" />
+                ) : (
+                  <CiMenuFries className="text-2xl" aria-hidden="true" />
+                )}
+              </button>
 
               {/* Logo */}
               <Link href="/" className="flex items-center gap-2">
@@ -86,7 +90,7 @@ export function Header() {
 
             {/* Desktop Navigation */}
             <div className="flex gap-4">
-              <nav className="hidden md:flex landscape:flex landscape:space-x-6 space-x-4 font-medium">
+              <nav className="hidden md:flex landscape:flex landscape:space-x-6 space-x-4 font-medium items-center">
                 {
                   categories.map((category, index) => (
                     <Link
@@ -98,6 +102,12 @@ export function Header() {
                     </Link>
                   ))
                 }
+                <Link
+                  href="/track-order"
+                  className="hover:text-red-700 transition text-[12px] landscape:text-[12px] font-semibold text-red-600 dark:text-red-400"
+                >
+                  Track Order
+                </Link>
               </nav>
             </div>
 
@@ -110,7 +120,7 @@ export function Header() {
               >
                 <CiSearch className="text-2xl" aria-hidden="true" />
               </button>
-              <CartIcon className="hidden md:block landscape:block cursor-pointer" />
+              <CartIcon onClick={() => setOpenCart(true)} className="hidden md:block landscape:block cursor-pointer" />
               <ModeToggle />
 
 
@@ -137,17 +147,24 @@ export function Header() {
                 </Link>
               ))
             }
+            <Link
+              href="/track-order"
+              className="hover:text-red-700 transition font-semibold text-red-600"
+            >
+              Track Order
+            </Link>
           </nav>
         </div>
-        <MobileHeader />
+        <MobileHeader onOpenCart={() => setOpenCart(true)} />
       </header>
       <SearchModal isOpen={openSearch} onClose={() => setOpenSearch(false)} />
+      <CartDrawer isOpen={openCart} onClose={() => setOpenCart(false)} />
     </>
   );
 }
 
 
-export function MobileHeader() {
+export function MobileHeader({ onOpenCart }: { onOpenCart?: () => void }) {
   const [openSearch, setOpenSearch] = useState(false);
   const links = [
     {
@@ -176,19 +193,29 @@ export function MobileHeader() {
       href: "/search",
     },
     {
+      title: "Track",
+      icon: (
+        <IconTruck className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      href: "/track-order",
+    },
+    {
       title: "Cart",
       icon: (
-        <CartIcon noLink />
+        <CartIcon noLink onClick={onOpenCart} />
       ),
-      href: "/cart",
+      href: "#",
     },
 
   ];
   return (
-    <div className="flex items-center justify-center w-full">
-      <FloatingDock
-        items={links}
-      />
-    </div>
+    <>
+      <div className="flex items-center justify-center w-full">
+        <FloatingDock
+          items={links}
+        />
+      </div>
+      <SearchModal isOpen={openSearch} onClose={() => setOpenSearch(false)} />
+    </>
   );
 }

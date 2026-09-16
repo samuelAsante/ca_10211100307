@@ -8,9 +8,11 @@ import { useEffect, useState } from "react";
 
 interface Props {
   className?: string;
+  onClick?: () => void;
+  noLink?: boolean;
 }
 
-export const CartIcon = ({ className, noLink }: Props & { noLink?: boolean }) => {
+export const CartIcon = ({ className, noLink, onClick }: Props) => {
   const itemCount = useCartStore((state) => state.getItemCount());
   const [mounted, setMounted] = useState(false);
 
@@ -28,6 +30,19 @@ export const CartIcon = ({ className, noLink }: Props & { noLink?: boolean }) =>
       )}
     </>
   );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={`View cart${mounted && itemCount > 0 ? `, ${itemCount} item${itemCount > 1 ? "s" : ""}` : ""}`}
+        className={cn("relative bg-transparent border-0 cursor-pointer p-0", className)}
+      >
+        <Content />
+      </button>
+    );
+  }
 
   if (noLink) {
     return (

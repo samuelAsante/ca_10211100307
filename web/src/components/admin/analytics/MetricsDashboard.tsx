@@ -1,8 +1,5 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
-import { authHeaders } from "@/lib/auth-token";
-import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -63,37 +60,18 @@ function formatMs(ms: number | null): string {
   return `${(ms / 1000).toFixed(2)}s`;
 }
 
-export function MetricsDashboard() {
-  const [metrics, setMetrics] = useState<MetricsData | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+export interface MetricsDashboardProps {
+  metrics?: MetricsData | null;
+  loading?: boolean;
+  error?: string | null;
+  onRefresh?: () => void;
+}
 
-  const fetchMetrics = async () => {
-    try {
-      const backendUrl = getBackendUrl();
-      const res = await fetch(`${backendUrl}/api/admin/metrics`, {
-        credentials: "include",
-        headers: authHeaders(),
-      });
-      if (!res.ok) {
-        throw new Error(`Failed to fetch metrics: ${res.statusText}`);
-      }
-      const data = await res.json();
-      setMetrics(data);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
-      console.error("[MetricsDashboard] Fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMetrics();
-    const interval = setInterval(fetchMetrics, 10000); // Refresh every 10s
-    return () => clearInterval(interval);
-  }, []);
+export function MetricsDashboard({
+  metrics,
+  loading = false,
+  error = null,
+}: MetricsDashboardProps) {
 
   if (loading) {
     return (

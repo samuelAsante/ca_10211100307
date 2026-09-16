@@ -11,7 +11,8 @@ import {
   IconPlus,
   IconChartArea,
   IconShoppingCart,
-  IconActivity
+  IconActivity,
+  IconTicket,
 } from "@tabler/icons-react"
 import { FaDollarSign } from "react-icons/fa6";
 
@@ -53,6 +54,11 @@ const data = {
       title: "Discounts",
       url: "/admin/products/discounts",
       icon: FaDollarSign,
+    },
+    {
+      title: "Coupons",
+      url: "/admin/coupons",
+      icon: IconTicket,
     },
     {
       title: "Orders",

@@ -1,6 +1,5 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
 import * as React from "react";
 import {
   Carousel,
@@ -10,82 +9,63 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import { HeroCard } from "./HeroCard";
 import HeroSkeleton from "./HeroSkeleton";
-import axios from "axios";
+import { Product } from "@/types";
 
-type Product = {
-  id: string;
-  name: string;
-  description: string;
-  images: string[];
-  discount?: number;
-  slug: string;
-};
+export interface HeroProps {
+  products?: Product[];
+  loading?: boolean;
+}
 
-export function Hero() {
-  const [displayProducts, setDisplayProducts] = React.useState<Product[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const backendUrl = getBackendUrl();
-
+export function Hero({ products = [], loading = false }: HeroProps) {
   const autoplayPlugin = React.useRef(
     Autoplay({ delay: 7000, stopOnInteraction: false })
   );
 
-  React.useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.get(`${backendUrl}/api/products`, {
-          withCredentials: true,
-        });
-        const allProducts: Product[] = res.data;
+  const displayProducts = React.useMemo(() => {
+    if (!products || products.length === 0) return [];
 
-        const discounted = allProducts.filter(
-          (p) => p.discount && p.discount > 0
-        );
+    const discounted = products.filter(
+      (p) => p.discount && Number(p.discount) > 0
+    );
 
-        if (discounted.length > 0) {
-          setDisplayProducts(discounted);
-        } else {
-          const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
-          setDisplayProducts(shuffled.slice(0, 5));
-        }
-      } catch (error) {
-        console.error("Failed to load hero products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (discounted.length > 0) {
+      return discounted.slice(0, 5);
+    }
 
-    fetchProducts();
-  }, []);
+    return products.slice(0, 5);
+  }, [products]);
+
+  if (loading) {
+    return <HeroSkeleton />;
+  }
+
+  if (displayProducts.length === 0) {
+    return null;
+  }
 
   return (
-    <Carousel
-      opts={{ align: "start" }}
-      plugins={[autoplayPlugin.current]}
-      className="w-full mt-24"
-    >
-      <CarouselContent>
-        {loading
-          ? Array.from({ length: 3 }).map((_, idx) => (
-              <CarouselItem key={idx} className="md:basis-full">
-                <div className="p-1">
-                  <HeroSkeleton />
-                </div>
-              </CarouselItem>
-            ))
-          : displayProducts.map((item) => (
-              <CarouselItem key={item.id} className="md:basis-full">
-                <HeroCard
-                  id={item.id}
-                  title={item.name}
-                  description={item.description}
-                  imageUrl={item.images[0]}
-                  slug={item.slug}
-                  discount={item.discount || 0}
-                />
-              </CarouselItem>
-            ))}
-      </CarouselContent>
-    </Carousel>
+    <div className="relative w-full max-w-7xl mx-auto md:px-4 mb-4 md:mb-12">
+      <Carousel
+        plugins={[autoplayPlugin.current]}
+        className="w-full"
+        onMouseEnter={autoplayPlugin.current.stop}
+        onMouseLeave={autoplayPlugin.current.reset}
+      >
+        <CarouselContent>
+          {displayProducts.map((product) => (
+            <CarouselItem key={product.id || product.slug}>
+              <HeroCard
+                id={product.id}
+                title={product.title || product.name || ""}
+                description={product.description || ""}
+                imageUrl={product.images?.[0] || "/kitchenbackground.webp"}
+                discount={product.discount ?? 0}
+                slug={product.slug}
+              />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+    </div>
   );
 }
