@@ -29,8 +29,6 @@ type Order = {
   createdAt: string;
 };
 
-const BACKEND_URL = getBackendUrl();
-
 export function AdminDashboard() {
   const [user, setUser] = useState<any>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -58,9 +56,10 @@ export function AdminDashboard() {
     async function fetchDashboardData() {
       try {
         setLoadingMetrics(true);
+        const backendUrl = getBackendUrl();
         const [productsRes, ordersRes] = await Promise.all([
-          axios.get<Product[]>(`${BACKEND_URL}/api/products`, { withCredentials: true }),
-          axios.get<Order[]>(`${BACKEND_URL}/api/orders`, { withCredentials: true }),
+          axios.get<Product[]>(`${backendUrl}/api/products`, { withCredentials: true }),
+          axios.get<Order[]>(`${backendUrl}/api/orders`, { withCredentials: true }),
         ]);
         setProducts(productsRes.data || []);
         setOrders(ordersRes.data || []);
