@@ -9,6 +9,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { v4 as uuidv4 } from "uuid";
 
 type ShippingForm = {
   fullName: string;
@@ -34,7 +35,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     setMounted(true);
     if (!idempotencyKeyRef.current) {
-      idempotencyKeyRef.current = `idem_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+      idempotencyKeyRef.current = uuidv4();
     }
   }, []);
 
@@ -96,7 +97,7 @@ export default function CheckoutPage() {
     const backendUrl = getBackendUrl();
     try {
       // Refresh idempotency key for explicit retry attempt
-      idempotencyKeyRef.current = `idem_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+      idempotencyKeyRef.current = uuidv4();
       setPayment(prev => prev ? { ...prev, status: "INITIATED" } : null);
       const res = await axios.post(`${backendUrl}/api/payments/${payment.paymentRef}/retry`);
       const { paymentRef: newRef, authorizationUrl } = res.data;
