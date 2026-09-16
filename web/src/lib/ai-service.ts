@@ -61,8 +61,7 @@ You MUST respond with ONLY valid JSON, no markdown, no backticks, no additional 
 
   try {
     const completion = await groq.chat.completions.create({
-      // Groq production model (see https://console.groq.com/docs/deprecations)
-      model: "llama-3.3-70b-versatile",
+      model: process.env.GROQ_MODEL || "openai/gpt-oss-20b",
       messages: [
         {
           role: "system",
