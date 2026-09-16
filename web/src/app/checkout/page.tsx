@@ -1,35 +1,26 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
-import { useCartStore } from "@/lib/store/cartStore";
-import { useForm } from "react-hook-form";
-import Link from "next/link";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useEffect, useState, useCallback, useRef } from "react";
-import { useAnalytics } from "@/hooks/use-analytics";
 import { v4 as uuidv4 } from "uuid";
 
-type ShippingForm = {
-  fullName: string;
-  email: string;
-  phone: string;
-  address: string;
-};
-
-type PaymentState = {
-  paymentRef: string;
-  orderId: string;
-  status: "INITIATED" | "PROCESSING" | "SUCCESS" | "FAILED";
-  failureReason?: string;
-};
+import { useCheckoutMutation, useRetryPaymentMutation, usePaymentStatus } from "@/hooks/use-payments";
+import { useAnalytics } from "@/hooks/use-analytics";
+import { useCartStore } from "@/lib/store/cartStore";
+import { ShippingForm, OrderSummary, PaymentStatusCard } from "@/components/checkout";
+import type { ShippingFormData, PaymentState } from "@/types";
 
 export default function CheckoutPage() {
-  const { items, getTotalPrice, getSubtotal, getDiscount, clearCart } = useCartStore();
+  const router = useRouter();
+  const { items, getTotalPrice, getSubtotal, getDiscount, clearCart, coupon } = useCartStore();
   const { trackCheckout, trackEvent } = useAnalytics();
+
   const [mounted, setMounted] = useState(false);
   const [payment, setPayment] = useState<PaymentState | null>(null);
+  const [activePaymentRef, setActivePaymentRef] = useState<string | null>(null);
+  const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
   const idempotencyKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -44,65 +35,60 @@ export default function CheckoutPage() {
   const discount = mounted && getDiscount ? getDiscount() : 0;
   const total = mounted ? getTotalPrice() : 0;
   const shipping = 0;
-  const tax = 0;
-  const finalTotal = total + shipping + tax;
+  const finalTotal = total + shipping;
 
-  const router = useRouter();
+  const checkoutMutation = useCheckoutMutation();
+  const retryPaymentMutation = useRetryPaymentMutation();
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<ShippingForm>();
+    formState: { errors },
+  } = useForm<ShippingFormData>();
 
-  const pollPaymentStatus = useCallback(async (ref: string, orderId: string) => {
-    const backendUrl = getBackendUrl();
-    let attempts = 0;
-    const maxAttempts = 20;
+  // Module-based query hook for polling payment status
+  const isPollingEnabled = Boolean(
+    activePaymentRef && payment?.status !== "SUCCESS" && payment?.status !== "FAILED"
+  );
+  const { data: polledStatus } = usePaymentStatus(activePaymentRef, {
+    enabled: isPollingEnabled,
+    refetchInterval: isPollingEnabled ? 1500 : false,
+  });
 
-    const poll = async () => {
-      try {
-        const res = await axios.get(`${backendUrl}/api/payments/${ref}/status`);
-        const data = res.data;
-        setPayment({ paymentRef: ref, orderId, status: data.status, failureReason: data.failureReason });
+  useEffect(() => {
+    if (!polledStatus || !activePaymentRef) return;
 
-        if (data.status === "SUCCESS") {
-          trackEvent("payment_success", { paymentRef: ref, orderId });
-          toast.success("Payment successful!");
-          clearCart();
-          setTimeout(() => router.push("/checkout/success"), 1500);
-          return;
-        }
+    setPayment({
+      paymentRef: activePaymentRef,
+      orderId: activeOrderId || "",
+      status: polledStatus.status,
+      failureReason: polledStatus.failureReason,
+    });
 
-        if (data.status === "FAILED") {
-          trackEvent("payment_failed", { paymentRef: ref, orderId, reason: data.failureReason });
-          toast.error(`Payment failed: ${data.failureReason || "Unknown error"}`);
-          return;
-        }
-
-        attempts++;
-        if (attempts < maxAttempts) {
-          setTimeout(poll, 1500);
-        }
-      } catch {
-        attempts++;
-        if (attempts < maxAttempts) setTimeout(poll, 2000);
-      }
-    };
-
-    poll();
-  }, [trackEvent, clearCart, router]);
+    if (polledStatus.status === "SUCCESS") {
+      trackEvent("payment_success", { paymentRef: activePaymentRef, orderId: activeOrderId });
+      toast.success("Payment successful!");
+      clearCart();
+      setTimeout(() => router.push("/checkout/success"), 1500);
+    } else if (polledStatus.status === "FAILED") {
+      trackEvent("payment_failed", {
+        paymentRef: activePaymentRef,
+        orderId: activeOrderId,
+        reason: polledStatus.failureReason,
+      });
+      toast.error(`Payment failed: ${polledStatus.failureReason || "Transaction declined"}`);
+    }
+  }, [polledStatus, activePaymentRef, activeOrderId, trackEvent, clearCart, router]);
 
   const handleRetry = async () => {
     if (!payment) return;
-    const backendUrl = getBackendUrl();
     try {
-      // Refresh idempotency key for explicit retry attempt
       idempotencyKeyRef.current = uuidv4();
-      setPayment(prev => prev ? { ...prev, status: "INITIATED" } : null);
-      const res = await axios.post(`${backendUrl}/api/payments/${payment.paymentRef}/retry`);
-      const { paymentRef: newRef, authorizationUrl } = res.data;
+      setPayment((prev) => (prev ? { ...prev, status: "INITIATED" } : null));
 
-      // Paystack: redirect to a fresh hosted checkout.
+      const resData = await retryPaymentMutation.mutateAsync(payment.paymentRef);
+      const { paymentRef: newRef, authorizationUrl } = resData;
+
       if (authorizationUrl) {
         toast("Redirecting to secure payment...");
         window.location.href = authorizationUrl;
@@ -110,16 +96,16 @@ export default function CheckoutPage() {
       }
 
       setPayment({ paymentRef: newRef, orderId: payment.orderId, status: "INITIATED" });
+      setActivePaymentRef(newRef);
+      setActiveOrderId(payment.orderId);
       toast("Retrying payment...");
-      pollPaymentStatus(newRef, payment.orderId);
     } catch {
       toast.error("Failed to retry payment");
     }
   };
 
-  const onSubmit = async (data: ShippingForm) => {
+  const onSubmit = async (data: ShippingFormData) => {
     try {
-      const backendUrl = getBackendUrl();
       trackCheckout("start", finalTotal);
 
       const headers: Record<string, string> = {};
@@ -130,233 +116,72 @@ export default function CheckoutPage() {
       const clientOrigin = typeof window !== "undefined" ? window.location.origin : "";
       const callbackUrl = clientOrigin ? `${clientOrigin}/checkout/callback` : undefined;
 
-      const response = await axios.post(
-        `${backendUrl}/api/orders/checkout`,
-        { ...data, cartItems: safeItems, total: finalTotal, callbackUrl },
-        { withCredentials: true, headers }
-      );
+      const responseData = await checkoutMutation.mutateAsync({
+        payload: {
+          ...data,
+          cartItems: safeItems,
+          total: finalTotal,
+          callbackUrl,
+          couponCode: coupon?.code,
+        },
+        headers,
+      });
 
       trackCheckout("complete", finalTotal);
 
-      const { orderId, paymentRef, authorizationUrl } = response.data;
+      const { orderId, paymentRef, authorizationUrl } = responseData;
 
-      // Paystack: redirect to the hosted checkout (Mobile Money / cards).
       if (authorizationUrl) {
         toast("Redirecting to secure payment...");
         window.location.href = authorizationUrl;
         return;
       }
 
-      // Simulation: show the in-page status and poll for the result.
       setPayment({ paymentRef, orderId, status: "INITIATED" });
+      setActivePaymentRef(paymentRef);
+      setActiveOrderId(orderId);
       toast("Processing payment...");
-
-      pollPaymentStatus(paymentRef, orderId);
     } catch (err) {
       console.error(err);
       trackEvent("checkout_failed", { itemCount: safeItems.length, total: finalTotal });
-      const apiError = axios.isAxiosError(err)
-        ? (err.response?.data as { error?: string } | undefined)?.error
-        : undefined;
-      toast.error(apiError ?? "Failed to place order");
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "INITIATED": return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-      case "PROCESSING": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
-      case "SUCCESS": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "FAILED": return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
-      default: return "bg-gray-100 text-gray-800";
+      const apiError = err instanceof Error ? err.message : "Failed to place order";
+      toast.error(apiError);
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {payment ? (
-        <div className="md:col-span-2 max-w-lg mx-auto w-full">
-          <div className="rounded-xl border p-8 shadow-sm space-y-6">
-            <div className="text-center">
-              {payment.status === "INITIATED" && (
-                <div className="animate-pulse">
-                  <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-2xl">💳</span>
-                  </div>
-                  <h2 className="text-xl font-semibold">Initiating Payment...</h2>
-                </div>
-              )}
-              {payment.status === "PROCESSING" && (
-                <div className="animate-pulse">
-                  <div className="w-16 h-16 rounded-full bg-yellow-100 dark:bg-yellow-900 mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-2xl">⏳</span>
-                  </div>
-                  <h2 className="text-xl font-semibold">Processing Payment...</h2>
-                  <p className="text-muted-foreground mt-2">Please wait while we verify your payment</p>
-                </div>
-              )}
-              {payment.status === "SUCCESS" && (
-                <div>
-                  <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-2xl">✅</span>
-                  </div>
-                  <h2 className="text-xl font-semibold text-green-700 dark:text-green-400">Payment Successful!</h2>
-                  <p className="text-muted-foreground mt-2">Redirecting to confirmation...</p>
-                </div>
-              )}
-              {payment.status === "FAILED" && (
-                <div>
-                  <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900 mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-2xl">❌</span>
-                  </div>
-                  <h2 className="text-xl font-semibold text-red-700 dark:text-red-400">Payment Failed</h2>
-                  <p className="text-muted-foreground mt-2">{payment.failureReason || "An error occurred"}</p>
-                  <button
-                    onClick={handleRetry}
-                    className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700"
-                  >
-                    Retry Payment
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="border-t pt-4 space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Payment Reference</span>
-                <span className="font-mono text-xs">{payment.paymentRef}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Order ID</span>
-                <span className="font-mono text-xs">{payment.orderId}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Status</span>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(payment.status)}`}>
-                  {payment.status}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Amount</span>
-                <span className="font-semibold">GH₵{finalTotal.toFixed(2)}</span>
-              </div>
-            </div>
+        <PaymentStatusCard
+          payment={payment}
+          total={finalTotal}
+          onRetry={handleRetry}
+          isRetrying={retryPaymentMutation.isPending}
+        />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-7">
+            <ShippingForm
+              register={register}
+              errors={errors}
+              onSubmit={handleSubmit(onSubmit)}
+              isSubmitting={checkoutMutation.isPending}
+              mounted={mounted}
+              hasItems={safeItems.length > 0}
+              total={finalTotal}
+            />
+          </div>
+          <div className="lg:col-span-5">
+            <OrderSummary
+              items={safeItems}
+              subtotal={subtotal}
+              discount={discount}
+              total={finalTotal}
+              couponCode={coupon?.code}
+            />
           </div>
         </div>
-      ) : (
-        <>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
-            <h2 className="text-2xl font-semibold">Shipping Information</h2>
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium">Full Name</label>
-              <input
-                id="fullName"
-                autoComplete="name"
-                aria-required="true"
-                aria-invalid={errors.fullName ? "true" : "false"}
-                {...register("fullName", { required: true })}
-                className="w-full border p-2 rounded mt-1"
-              />
-              {errors.fullName && <p className="text-red-500 text-sm">Name is required</p>}
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium">Email</label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                aria-required="true"
-                aria-invalid={errors.email ? "true" : "false"}
-                {...register("email", { required: true })}
-                className="w-full border p-2 rounded mt-1"
-              />
-              {errors.email && <p className="text-red-500 text-sm">Email is required</p>}
-            </div>
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium">Phone Number</label>
-              <input
-                id="phone"
-                type="tel"
-                autoComplete="tel"
-                aria-required="true"
-                aria-invalid={errors.phone ? "true" : "false"}
-                {...register("phone", { required: true })}
-                className="w-full border p-2 rounded mt-1"
-              />
-              {errors.phone && <p className="text-red-500 text-sm">Phone number is required</p>}
-            </div>
-            <div>
-              <label htmlFor="address" className="block text-sm font-medium">Address</label>
-              <textarea
-                id="address"
-                autoComplete="street-address"
-                aria-required="true"
-                aria-invalid={errors.address ? "true" : "false"}
-                {...register("address", { required: true })}
-                className="w-full border p-2 rounded mt-1"
-              />
-              {errors.address && <p className="text-red-500 text-sm">Address is required</p>}
-            </div>
-            <div className="rounded-xl border border-indigo-100 dark:border-indigo-950 bg-indigo-50/50 dark:bg-indigo-950/20 p-3.5 space-y-2">
-              <div className="flex items-center justify-between text-xs text-indigo-950 dark:text-indigo-200">
-                <span className="font-semibold flex items-center gap-1.5">
-                  <span>🔒</span> Secured via Paystack
-                </span>
-                <span className="text-muted-foreground text-[11px]">Mobile Money &amp; Cards</span>
-              </div>
-              <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
-                <span className="px-2 py-0.5 rounded bg-white dark:bg-gray-800 border font-medium text-gray-700 dark:text-gray-300">MTN MoMo</span>
-                <span className="px-2 py-0.5 rounded bg-white dark:bg-gray-800 border font-medium text-gray-700 dark:text-gray-300">Telecel Cash</span>
-                <span className="px-2 py-0.5 rounded bg-white dark:bg-gray-800 border font-medium text-gray-700 dark:text-gray-300">AirtelTigo</span>
-                <span className="px-2 py-0.5 rounded bg-white dark:bg-gray-800 border font-medium text-gray-700 dark:text-gray-300">Visa / Mastercard</span>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting || !mounted || safeItems.length === 0}
-              className="w-full bg-indigo-600 text-white py-3.5 rounded-full hover:bg-indigo-700 font-medium disabled:opacity-50 transition shadow-sm flex items-center justify-center gap-2"
-            >
-              {isSubmitting ? "Initiating Secure Checkout..." : `Pay GH₵${finalTotal.toFixed(2)}`}
-            </button>
-            <p className="text-xs text-center text-muted-foreground">
-              By placing your order you agree to our{" "}
-              <Link href="/terms" className="underline underline-offset-2">Terms &amp; Conditions</Link>{" "}
-              and{" "}
-              <Link href="/privacy-policy" className="underline underline-offset-2">Privacy Policy</Link>.
-              We use your details only to process and deliver this order.
-            </p>
-          </form>
-
-          <div className="rounded-lg bg-gray-50 dark:bg-gray-900 dark:text-gray-100 p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
-            <ul className="divide-y">
-              {safeItems.map((item) => (
-                <li key={item.id} className="py-3 flex justify-between">
-                  <span>{item.name} x {item.quantity}</span>
-                  <span>GH₵{(item.price * item.quantity).toFixed(2)}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4 border-t pt-4 text-sm space-y-2">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span>GH₵{subtotal.toFixed(2)}</span>
-              </div>
-              {discount > 0 && (
-                <div className="flex justify-between text-green-600">
-                  <span>Discount (10%)</span>
-                  <span>-GH₵{discount.toFixed(2)}</span>
-                </div>
-              )}
-              <div className="flex justify-between font-semibold text-lg pt-2">
-                <span>Total</span>
-                <span>GH₵{finalTotal.toFixed(2)}</span>
-              </div>
-            </div>
-          </div>
-        </>
       )}
-    </div>
+    </main>
   );
 }

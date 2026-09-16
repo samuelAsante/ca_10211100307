@@ -3,7 +3,13 @@
 import { useMemo, useState } from "react";
 import { LiveEventFeed } from "@/components/analytics/live-event-feed";
 import { InsightsTimeline } from "@/components/analytics/insights-timeline";
-import { useInsightsTimeline } from "@/hooks/use-analytics-insights";
+import {
+  useInsightsTimeline,
+  useAdminMetrics,
+  useAdminBatches,
+  useAdminJobs,
+  useTriggerBatchAnalysis,
+} from "@/hooks/use-analytics-insights";
 import { useProducts } from "@/hooks/use-products";
 import { useOrders } from "@/hooks/use-orders";
 import { MetricsDashboard } from "@/components/admin/analytics/MetricsDashboard";
@@ -42,6 +48,32 @@ export default function AnalyticsDashboard() {
     error: insightsError,
     refetch: refetchInsights,
   } = useInsightsTimeline({ page: insightsPage, limit: insightsLimit });
+
+  const {
+    data: metricsData,
+    isLoading: isMetricsLoading,
+    error: metricsError,
+    refetch: refetchMetrics,
+  } = useAdminMetrics();
+
+  const {
+    data: batchesData = [],
+    isLoading: isBatchesLoading,
+    error: batchesError,
+  } = useAdminBatches();
+
+  const {
+    data: jobsData,
+    isLoading: isJobsLoading,
+    error: jobsError,
+    refetch: refetchJobs,
+  } = useAdminJobs();
+
+  const triggerBatchMutation = useTriggerBatchAnalysis();
+
+  const handleTriggerAnalysis = async (batchId: string) => {
+    await triggerBatchMutation.mutateAsync(batchId);
+  };
 
   const { data: products = [], isLoading: loadingProducts, error: productsError } = useProducts();
   const { data: orders = [], isLoading: loadingOrders, error: ordersError } = useOrders();
@@ -161,7 +193,12 @@ export default function AnalyticsDashboard() {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
-          <MetricsDashboard />
+          <MetricsDashboard
+            metrics={metricsData}
+            loading={isMetricsLoading}
+            error={metricsError ? (metricsError as Error).message : null}
+            onRefresh={() => refetchMetrics()}
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <LiveEventFeed />
@@ -185,12 +222,24 @@ export default function AnalyticsDashboard() {
 
         {/* Batches Tab */}
         <TabsContent value="batches">
-          <BatchList />
+          <BatchList
+            batches={batchesData}
+            loading={isBatchesLoading}
+            error={batchesError ? (batchesError as Error).message : null}
+            onTriggerAnalysis={handleTriggerAnalysis}
+            triggeringId={triggerBatchMutation.isPending ? (triggerBatchMutation.variables as string) : null}
+          />
         </TabsContent>
 
         {/* Jobs Tab */}
         <TabsContent value="jobs">
-          <JobMonitor />
+          <JobMonitor
+            jobs={jobsData?.jobs}
+            deadLetterJobs={jobsData?.deadLetterJobs}
+            loading={isJobsLoading}
+            error={jobsError ? (jobsError as Error).message : null}
+            onRefresh={() => refetchJobs()}
+          />
         </TabsContent>
 
         {/* Insights Tab */}

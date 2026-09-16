@@ -3,8 +3,11 @@
 import { Suspense, useEffect, useState, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import axios from "axios";
-import { getBackendUrl } from "@/lib/backend-url";
+import {
+  useVerifyPaymentMutation,
+  usePaymentStatusMutation,
+  useRetryPaymentMutation,
+} from "@/hooks/use-payments";
 import { useCartStore } from "@/lib/store/cartStore";
 import { useAnalytics } from "@/hooks/use-analytics";
 import {
@@ -50,6 +53,10 @@ function CallbackInner() {
   const [, setData] = useState<PaymentVerifyResponse | null>(null);
   const [isRetrying, setIsRetrying] = useState(false);
   const [pollAttempt, setPollAttempt] = useState(0);
+
+  const verifyMutation = useVerifyPaymentMutation();
+  const statusMutation = usePaymentStatusMutation();
+  const retryMutation = useRetryPaymentMutation();
 
   // Guard refs to prevent duplicate calls, race conditions, or infinite render loops
   const verifiedRef = useRef<string | null>(null);
@@ -97,13 +104,8 @@ function CallbackInner() {
       setErrorMessage(null);
 
       try {
-        const backendUrl = getBackendUrl();
-        const res = await axios.get<PaymentVerifyResponse>(
-          `${backendUrl}/api/payments/${encodeURIComponent(reference)}/verify`
-        );
-
-        const result = res.data;
-        setData(result);
+        const result = await verifyMutation.mutateAsync(reference);
+        setData(result as PaymentVerifyResponse);
 
         if (result.status === "SUCCESS") {
           clearCartRef.current();
@@ -147,11 +149,7 @@ function CallbackInner() {
         console.error("[Paystack Callback] Primary verification error:", err);
         // Fallback check against status endpoint
         try {
-          const backendUrl = getBackendUrl();
-          const fallbackRes = await axios.get<PaymentVerifyResponse>(
-            `${backendUrl}/api/payments/${encodeURIComponent(reference)}/status`
-          );
-          const fallback = fallbackRes.data;
+          const fallback = (await statusMutation.mutateAsync(reference)) as PaymentVerifyResponse;
           setData(fallback);
 
           if (fallback.status === "SUCCESS") {
@@ -229,11 +227,8 @@ function CallbackInner() {
     clearAllTimeouts();
 
     try {
-      const backendUrl = getBackendUrl();
-      const res = await axios.post(
-        `${backendUrl}/api/payments/${encodeURIComponent(reference)}/retry`
-      );
-      const { authorizationUrl } = res.data;
+      const resData = await retryMutation.mutateAsync(reference);
+      const { authorizationUrl } = resData;
 
       if (authorizationUrl) {
         window.location.href = authorizationUrl;
