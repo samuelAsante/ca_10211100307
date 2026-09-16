@@ -3,6 +3,8 @@
   "private": true,
   "scripts": {
     "start:all": "bash ./scripts/start-all.sh",
+    "start:all:web": "bash ./scripts/start-all.sh --no-mobile",
+    "start:web": "bash ./scripts/start-all.sh --no-mobile",
     "start:all:ios": "bash ./scripts/start-all.sh --ios",
     "start:all:expo-web": "bash ./scripts/start-all.sh --expo-web",
     "stop:all": "bash ./scripts/stop-all.sh"
