@@ -33,7 +33,6 @@ type AdminOrder = {
   createdAt: string;
 };
 
-const BACKEND_URL = getBackendUrl();
 
 function getStatusBadgeClass(status: AdminOrder["status"]) {
   switch (status) {
@@ -58,7 +57,8 @@ export default function AdminOrdersPage() {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get<AdminOrder[]>(`${BACKEND_URL}/api/orders`, {
+      const backendUrl = getBackendUrl();
+      const response = await axios.get<AdminOrder[]>(`${backendUrl}/api/orders`, {
         withCredentials: true,
       });
       setOrders(response.data);
@@ -87,8 +87,9 @@ export default function AdminOrdersPage() {
   const transitionOrder = async (orderId: string, action: "fulfill" | "cancel") => {
     setActiveOrderId(orderId);
     try {
+      const backendUrl = getBackendUrl();
       await axios.post(
-        `${BACKEND_URL}/api/orders/${encodeURIComponent(orderId)}/${action}`,
+        `${backendUrl}/api/orders/${encodeURIComponent(orderId)}/${action}`,
         {},
         { withCredentials: true }
       );
