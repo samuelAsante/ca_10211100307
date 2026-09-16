@@ -1,8 +1,22 @@
 import { fetchBackend } from "@/lib/fetch-backend";
 import { ProductsCardDetails } from "@/components/products/productsCard";
 import Fuse from 'fuse.js';
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Search Products",
+  description:
+    "Search across our collection of cookware sets, frying pans, blenders, and kitchen appliances in Ghana.",
+  alternates: {
+    canonical: "/search",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 async function getAllProducts() {
   try {

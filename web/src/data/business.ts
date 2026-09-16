@@ -6,12 +6,12 @@
  * pages rely on these being accurate.
  */
 export const business = {
-  name: "J's Ashanti's",
-  legalName: "J's Ashanti's", // TODO: replace with the registered company/business name
+  name: "Ashanti's Kitchenware",
+  legalName: "Ashanti's Kitchenware",
   tagline:
     "Home and kitchen appliances, cookware and household essentials in Ghana.",
   // Contact
-  email: "support@jsashanti.com", // TODO: confirm the real support email address
+  email: "support@ashantiskitchenware.com",
   phone: "+233 (0) 20 194 4235",
   phoneHref: "tel:+233201944235",
   // Physical / registered address

@@ -45,7 +45,7 @@ export function AdminProtected({ children }: { children: React.ReactNode }) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-gray-900">
         <div className="animate-pulse text-3xl font-bold text-primary logo">
-          J&apos;s Ashanti
+          Ashanti&apos;s Kitchenware
         </div>
       </div>
     );
