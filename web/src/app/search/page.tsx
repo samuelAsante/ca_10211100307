@@ -1,23 +1,28 @@
-import { getBackendUrl } from "@/lib/backend-url";
+import { fetchBackend } from "@/lib/fetch-backend";
 import { ProductsCardDetails } from "@/components/products/productsCard";
 import Fuse from 'fuse.js';
 
 export const dynamic = "force-dynamic";
 
-
-const BACKEND_URL = getBackendUrl();
-
 async function getAllProducts() {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/products`, {
-      next: { revalidate: 600 } // Cache for 10 minutes
+    const res = await fetchBackend("/api/products", {
+      next: { revalidate: 60 }
     });
-    if (!res.ok) return [];
-    return res.json();
+    if (res && res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data.map((p: any) => ({
+          ...p,
+          name: p.name || p.title,
+          images: Array.isArray(p.images) && p.images.length > 0 ? p.images : ["/a.jpg"],
+        }));
+      }
+    }
   } catch (error) {
-    console.error("Error fetching products:", error);
-    return [];
+    console.error("Error fetching products for search:", error);
   }
+  return [];
 }
 
 interface SearchPageProps {
