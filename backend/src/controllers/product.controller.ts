@@ -96,11 +96,98 @@ export class ProductController {
 
     static async getProducts(req: Request, res: Response) {
         try {
-            const products = await prisma.product.findMany();
+            const { search, category, minPrice, maxPrice, sort, page, limit } = req.query;
+
+            const where: any = {};
+
+            if (search && typeof search === 'string' && search.trim().length > 0) {
+                const query = search.trim();
+                where.OR = [
+                    { name: { contains: query, mode: 'insensitive' } },
+                    { description: { contains: query, mode: 'insensitive' } },
+                    { category: { contains: query, mode: 'insensitive' } },
+                ];
+            }
+
+            if (category && typeof category === 'string' && category.trim().length > 0 && category.toLowerCase() !== 'all') {
+                where.category = { equals: category.trim(), mode: 'insensitive' };
+            }
+
+            if (minPrice || maxPrice) {
+                where.price = {};
+                if (minPrice) where.price.gte = Number(minPrice);
+                if (maxPrice) where.price.lte = Number(maxPrice);
+            }
+
+            let orderBy: any = { createdAt: 'desc' };
+            if (sort === 'price-asc') {
+                orderBy = { price: 'asc' };
+            } else if (sort === 'price-desc') {
+                orderBy = { price: 'desc' };
+            } else if (sort === 'newest') {
+                orderBy = { createdAt: 'desc' };
+            } else if (sort === 'rating') {
+                orderBy = { customerRating: 'desc' };
+            }
+
+            const isPaginated = page !== undefined || limit !== undefined;
+
+            if (isPaginated) {
+                const pageNum = Math.max(1, Number(page) || 1);
+                const takeLimit = Math.max(1, Math.min(100, Number(limit) || 12));
+                const skip = (pageNum - 1) * takeLimit;
+
+                const [products, total] = await Promise.all([
+                    prisma.product.findMany({
+                        where,
+                        orderBy,
+                        skip,
+                        take: takeLimit,
+                    }),
+                    prisma.product.count({ where }),
+                ]);
+
+                return res.json({
+                    data: products,
+                    pagination: {
+                        page: pageNum,
+                        limit: takeLimit,
+                        total,
+                        totalPages: Math.ceil(total / takeLimit),
+                        hasMore: skip + products.length < total,
+                    },
+                });
+            }
+
+            const products = await prisma.product.findMany({
+                where,
+                orderBy,
+            });
             return res.json(products);
         } catch (error) {
             console.error("Failed to fetch products:", error);
             return res.status(500).json({ error: "Failed to fetch products" });
+        }
+    }
+
+    static async getLowStockProducts(req: Request, res: Response) {
+        try {
+            const threshold = Math.max(0, Number(req.query.threshold) || 5);
+            const lowStockProducts = await prisma.product.findMany({
+                where: {
+                    stock: { lte: threshold },
+                },
+                orderBy: { stock: 'asc' },
+            });
+
+            return res.json({
+                threshold,
+                count: lowStockProducts.length,
+                products: lowStockProducts,
+            });
+        } catch (error) {
+            console.error("Failed to fetch low stock products:", error);
+            return res.status(500).json({ error: "Failed to fetch low stock products" });
         }
     }
 

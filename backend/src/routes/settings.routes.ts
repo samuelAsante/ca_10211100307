@@ -7,6 +7,8 @@ const router = Router();
 router.use(getSession);
 
 router.post('/', SettingsController.updateSettings);
+router.put('/', SettingsController.updateSettings);
 router.get('/', SettingsController.getSettings);
 
 export default router;
+

@@ -17,6 +17,7 @@ import mobileRoutes from "./routes/mobile.routes";
 import orderRoutes from "./routes/order.routes";
 import userRoutes from "./routes/user.routes";
 import paymentRoutes from "./routes/payment.routes";
+import couponRoutes from "./routes/coupon.routes";
 
 dotenv.config();
 
@@ -67,9 +68,11 @@ app.use('/api/products', productRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/business-settings', settingsRoutes);
+app.use('/api/business', settingsRoutes);
 app.use('/api/mobile', mobileRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/coupons', couponRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api', analysisRoutes); // Analytics/admin at /api root
 

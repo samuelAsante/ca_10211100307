@@ -8,6 +8,7 @@ const router = Router();
 router.use(getSession);
 
 router.post('/', ProductController.createProduct);
+router.get('/low-stock', ProductController.getLowStockProducts);
 router.get('/', ProductController.getProducts);
 router.get('/:slug', ProductController.getProductBySlug);
 router.put('/:slug', ProductController.updateProduct);

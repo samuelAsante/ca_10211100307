@@ -1,8 +1,3 @@
-"use client";
-import { getBackendUrl } from "@/lib/backend-url";
-import { useEffect, useState } from "react";
-import { authClient } from "@/lib/auth-client";
-import { toast } from "react-hot-toast";
 import { ChartBarLabel } from "@/components/chart/BarChart";
 import { ChartRadialText } from "@/components/chart/radialChart";
 import { LoaderOne } from "@/components/ui/loader";
@@ -10,72 +5,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import axios from "axios";
 import { useAnalytics } from "@/hooks/use-analytics";
+import type { Product, Order } from "@/types";
 
-type Product = {
-  id: string;
-  name: string;
-  stock: number;
-  discount?: number;
-  category?: string;
-};
+export interface AdminDashboardProps {
+  user?: any;
+  products?: Product[];
+  orders?: Order[];
+  isLoading?: boolean;
+}
 
-type Order = {
-  id: string;
-  status: "PENDING" | "PAID" | "FULFILLED" | "CANCELLED";
-  totalAmount: number;
-  customerName: string;
-  email?: string;
-  createdAt: string;
-};
-
-export function AdminDashboard() {
+export function AdminDashboard({
+  user,
+  products = [],
+  orders = [],
+  isLoading = false,
+}: AdminDashboardProps) {
   const { trackAdminAction } = useAnalytics();
-  const [user, setUser] = useState<any>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loadingMetrics, setLoadingMetrics] = useState(true);
 
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const { data: session, error } = await authClient.getSession();
-        if (error || !session) {
-          toast.error("Failed to fetch session");
-          return;
-        }
-        setUser(session.user);
-      } catch (err) {
-        toast.error("Unexpected error occurred");
-      }
-    }
-
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
-    async function fetchDashboardData() {
-      try {
-        setLoadingMetrics(true);
-        const backendUrl = getBackendUrl();
-        const [productsRes, ordersRes] = await Promise.all([
-          axios.get<Product[]>(`${backendUrl}/api/products`, { withCredentials: true }),
-          axios.get<Order[]>(`${backendUrl}/api/orders`, { withCredentials: true }),
-        ]);
-        setProducts(productsRes.data || []);
-        setOrders(ordersRes.data || []);
-      } catch (err) {
-        toast.error("Failed to load dashboard metrics");
-      } finally {
-        setLoadingMetrics(false);
-      }
-    }
-
-    fetchDashboardData();
-  }, []);
-
-  if (!user) {
+  if (isLoading || !user) {
     return (
       <div className="h-dvh flex justify-center items-center">
         <LoaderOne />
@@ -83,8 +31,8 @@ export function AdminDashboard() {
     );
   }
 
-  const lowStockProducts = products.filter((product) => product.stock > 0 && product.stock <= 10);
-  const outOfStockProducts = products.filter((product) => product.stock === 0);
+  const lowStockProducts = products.filter((product) => (product.stock ?? 0) > 0 && (product.stock ?? 0) <= 10);
+  const outOfStockProducts = products.filter((product) => (product.stock ?? 0) === 0);
   const discountedProducts = products.filter((product) => (Number(product.discount) || 0) > 0);
   const pendingOrders = orders.filter((order) => order.status === "PENDING");
   const paidOrders = orders.filter((order) => order.status === "PAID");
@@ -125,7 +73,7 @@ export function AdminDashboard() {
             <CardTitle className="text-sm">Total Products</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{loadingMetrics ? "..." : products.length}</p>
+            <p className="text-2xl font-semibold">{isLoading ? "..." : products.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -133,7 +81,7 @@ export function AdminDashboard() {
             <CardTitle className="text-sm">On Discount</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{loadingMetrics ? "..." : discountedProducts.length}</p>
+            <p className="text-2xl font-semibold">{isLoading ? "..." : discountedProducts.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -141,7 +89,7 @@ export function AdminDashboard() {
             <CardTitle className="text-sm">Pending Orders</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{loadingMetrics ? "..." : pendingOrders.length}</p>
+            <p className="text-2xl font-semibold">{isLoading ? "..." : pendingOrders.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -149,7 +97,7 @@ export function AdminDashboard() {
             <CardTitle className="text-sm">Revenue (Paid)</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">GH₵{loadingMetrics ? "..." : grossRevenue.toFixed(2)}</p>
+            <p className="text-2xl font-semibold">GH₵{isLoading ? "..." : grossRevenue.toFixed(2)}</p>
           </CardContent>
         </Card>
       </section>
@@ -160,7 +108,7 @@ export function AdminDashboard() {
             <CardTitle className="text-sm">Today Orders</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{loadingMetrics ? "..." : todayOrders.length}</p>
+            <p className="text-2xl font-semibold">{isLoading ? "..." : todayOrders.length}</p>
           </CardContent>
         </Card>
         <Card className="border-dashed">
@@ -168,7 +116,7 @@ export function AdminDashboard() {
             <CardTitle className="text-sm">Today Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">GH₵{loadingMetrics ? "..." : todayRevenue.toFixed(2)}</p>
+            <p className="text-2xl font-semibold">GH₵{isLoading ? "..." : todayRevenue.toFixed(2)}</p>
           </CardContent>
         </Card>
         <Card className="border-dashed">
@@ -176,7 +124,7 @@ export function AdminDashboard() {
             <CardTitle className="text-sm">Fulfilled Today</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{loadingMetrics ? "..." : todayFulfilledCount}</p>
+            <p className="text-2xl font-semibold">{isLoading ? "..." : todayFulfilledCount}</p>
           </CardContent>
         </Card>
         <Card className="border-dashed">
@@ -184,7 +132,7 @@ export function AdminDashboard() {
             <CardTitle className="text-sm">New Customers Today</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{loadingMetrics ? "..." : todayUniqueCustomers}</p>
+            <p className="text-2xl font-semibold">{isLoading ? "..." : todayUniqueCustomers}</p>
           </CardContent>
         </Card>
       </section>

@@ -1,7 +1,7 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
-import { authHeaders } from "@/lib/auth-token";
+import { useBusinessSettings, useUpdateBusinessSettings } from "@/hooks/use-settings";
+import { useUpload } from "@/hooks/use-upload";
 import {
   Tabs,
   TabsList,
@@ -30,8 +30,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
-import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAnalytics } from "@/hooks/use-analytics";
 
 type Input = {
@@ -60,8 +59,25 @@ export default function AdminSettingsPage() {
   } = useForm<Input>();
   const router = useRouter();
 
+  const { data: businessSettings } = useBusinessSettings();
+  const updateSettingsMutation = useUpdateBusinessSettings();
+  const uploadMutation = useUpload();
+
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (businessSettings) {
+      if (businessSettings.name) setValue("name", businessSettings.name);
+      if (businessSettings.phone) setValue("phone", businessSettings.phone);
+      if (businessSettings.address) setValue("address", businessSettings.address);
+      if (businessSettings.city) setValue("city", businessSettings.city);
+      if (businessSettings.state) setValue("state", businessSettings.state);
+      if (businessSettings.country) setValue("country", businessSettings.country);
+      if (businessSettings.currency) setValue("currency", businessSettings.currency);
+      if (businessSettings.logoUrl) setLogoPreview(businessSettings.logoUrl);
+    }
+  }, [businessSettings, setValue]);
 
   // Submit handler for account tab
   const onAccountSubmit = async (data: Input) => {
@@ -69,15 +85,8 @@ export default function AdminSettingsPage() {
       let avatarUrl = null;
 
       if (data.avatar && data.avatar[0]) {
-        const formData = new FormData();
-        formData.append("file", data.avatar[0]);
-        formData.append("upload_preset", "your_upload_preset");
-
-        const res = await axios.post(
-          "https://api.cloudinary.com/v1_1/dbugzzv0v/image/upload",
-          formData
-        );
-        avatarUrl = res.data.secure_url;
+        const uploadRes = await uploadMutation.mutateAsync(data.avatar[0]);
+        avatarUrl = uploadRes?.secure_url || uploadRes?.url || null;
       }
 
       const res = await authClient.changePassword({
@@ -106,37 +115,23 @@ export default function AdminSettingsPage() {
   // Submit handler for business settings
   const onBusinessSubmit = async (data: Input) => {
     try {
-      let logoUrl = null;
+      let logoUrl = businessSettings?.logoUrl || null;
 
       if (data.logo && data.logo[0]) {
-        const formData = new FormData();
-        formData.append("file", data.logo[0]);
-        formData.append("upload_preset", "your_upload_preset");
-
-        const res = await axios.post(
-          "https://api.cloudinary.com/v1_1/dbugzzv0v/image/upload",
-          formData
-        );
-        logoUrl = res.data.secure_url;
+        const uploadRes = await uploadMutation.mutateAsync(data.logo[0]);
+        logoUrl = uploadRes?.secure_url || uploadRes?.url || null;
       }
 
-      const backendUrl = getBackendUrl();
-      const res = await fetch(`${backendUrl}/api/business`, {
-        method: "PUT",
-        headers: authHeaders({ "Content-Type": "application/json" }),
-        body: JSON.stringify({
-          name: data.name,
-          phone: data.phone,
-          address: data.address,
-          city: data.city,
-          state: data.state,
-          country: data.country,
-          currency: data.currency,
-          logoUrl,
-        }),
+      await updateSettingsMutation.mutateAsync({
+        name: data.name || "",
+        phone: data.phone || "",
+        address: data.address || "",
+        city: data.city || "",
+        state: data.state || "",
+        country: data.country || "",
+        currency: data.currency || "GHS",
+        logoUrl,
       });
-
-      if (!res.ok) throw new Error("Failed to save settings");
 
       trackFormSubmit("admin_business_settings", true);
       toast.success("Business settings saved successfully!");
@@ -320,8 +315,8 @@ export default function AdminSettingsPage() {
                   </div>
                 </div>
 
-                <Button type="submit" disabled={isSubmitting}>
-                  Apply Appearance
+                <Button type="submit" disabled={isSubmitting || updateSettingsMutation.isPending}>
+                  {updateSettingsMutation.isPending ? "Saving..." : "Apply Appearance"}
                 </Button>
               </form>
             </CardContent>

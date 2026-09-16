@@ -12,6 +12,8 @@ export const queryKeys = {
     details: () => [...queryKeys.products.all, "detail"] as const,
     detail: (slug: string) =>
       [...queryKeys.products.details(), slug] as const,
+    lowStock: (threshold?: number) =>
+      [...queryKeys.products.all, "low-stock", threshold] as const,
   },
   analytics: {
     all: ["analytics"] as const,
@@ -39,5 +41,26 @@ export const queryKeys = {
       [...queryKeys.orders.details(), id] as const,
     status: (id: string) =>
       [...queryKeys.orders.all, "status", id] as const,
+    track: (identifier: string) =>
+      [...queryKeys.orders.all, "track", identifier] as const,
+  },
+  coupons: {
+    all: ["coupons"] as const,
+    active: () => [...queryKeys.coupons.all, "active"] as const,
+    validation: (code: string, subtotal: number) =>
+      [...queryKeys.coupons.all, "validation", code, subtotal] as const,
+  },
+  reviews: {
+    all: ["reviews"] as const,
+    byProduct: (slug: string) => [...queryKeys.reviews.all, "product", slug] as const,
+  },
+  settings: {
+    all: ["settings"] as const,
+    business: () => [...queryKeys.settings.all, "business"] as const,
+  },
+  payments: {
+    all: ["payments"] as const,
+    status: (ref: string) => [...queryKeys.payments.all, "status", ref] as const,
+    verify: (ref: string) => [...queryKeys.payments.all, "verify", ref] as const,
   },
 } as const;

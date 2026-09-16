@@ -3,8 +3,7 @@
 import { Suspense, useEffect, useState, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import axios from "axios";
-import { getBackendUrl } from "@/lib/backend-url";
+import { usePaymentStatusMutation, useVerifyPaymentMutation } from "@/hooks/use-payments";
 import { useCartStore } from "@/lib/store/cartStore";
 import {
   CheckCircle2,
@@ -70,6 +69,9 @@ function SuccessInner() {
   const [copied, setCopied] = useState(false);
   const fetchedRef = useRef<string | null>(null);
 
+  const statusMutation = usePaymentStatusMutation();
+  const verifyMutation = useVerifyPaymentMutation();
+
   const fetchReceipt = useCallback(async () => {
     if (!reference) {
       setIsLoading(false);
@@ -77,24 +79,17 @@ function SuccessInner() {
     }
 
     try {
-      const backendUrl = getBackendUrl();
       // First try status/receipt endpoint which includes order
-      const res = await axios.get<PaymentInfo>(
-        `${backendUrl}/api/payments/${encodeURIComponent(reference)}/status`
-      );
-
-      const info = res.data;
+      const info = (await statusMutation.mutateAsync(reference)) as PaymentInfo;
       setPaymentData(info);
 
       if (info.status === "SUCCESS") {
         clearCart();
       } else if (info.status === "INITIATED" || info.status === "PROCESSING") {
         // Attempt verification if not yet confirmed
-        const verifyRes = await axios.get<PaymentInfo>(
-          `${backendUrl}/api/payments/${encodeURIComponent(reference)}/verify`
-        );
-        setPaymentData(verifyRes.data);
-        if (verifyRes.data.status === "SUCCESS") {
+        const verifyData = (await verifyMutation.mutateAsync(reference)) as PaymentInfo;
+        setPaymentData(verifyData);
+        if (verifyData.status === "SUCCESS") {
           clearCart();
         }
       }
@@ -103,7 +98,7 @@ function SuccessInner() {
     } finally {
       setIsLoading(false);
     }
-  }, [reference, clearCart]);
+  }, [reference, clearCart, statusMutation, verifyMutation]);
 
   useEffect(() => {
     if (!reference) {

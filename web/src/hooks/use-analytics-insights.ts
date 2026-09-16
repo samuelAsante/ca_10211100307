@@ -1,11 +1,17 @@
+"use client";
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { analyticsApi, api } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
 import {
   Insight,
   InsightsPagination,
   InsightsQueryParams,
   InsightsResponse,
+  MetricsData,
+  AnalyticsBatch,
+  AnalyticsJob,
+  DeadLetterJob,
 } from "@/types";
 
 const defaultPagination: InsightsPagination = {
@@ -54,11 +60,61 @@ export function useTriggerBatchAnalysis() {
 
   return useMutation({
     mutationFn: async (batchId: string) => {
-      const res = await api.post(`/api/admin/batches/${encodeURIComponent(batchId)}/analyze`);
+      const res = await analyticsApi.triggerBatchAnalysis(batchId);
       return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.analytics.all });
     },
+  });
+}
+
+/**
+ * Hook to fetch admin analytics metrics
+ */
+export function useAdminMetrics(options?: { refetchInterval?: number | false }) {
+  return useQuery<MetricsData, Error>({
+    queryKey: queryKeys.analytics.metrics(),
+    queryFn: async () => {
+      const res = await analyticsApi.getMetrics<MetricsData>();
+      return res.data;
+    },
+    refetchInterval: options?.refetchInterval ?? 10000,
+    staleTime: 10 * 1000,
+  });
+}
+
+/**
+ * Hook to fetch admin telemetry batches
+ */
+export function useAdminBatches() {
+  return useQuery<AnalyticsBatch[], Error>({
+    queryKey: queryKeys.analytics.batches(),
+    queryFn: async () => {
+      const res = await analyticsApi.getBatches<{ batches?: AnalyticsBatch[] }>();
+      return res.data?.batches || [];
+    },
+    staleTime: 15 * 1000,
+  });
+}
+
+/**
+ * Hook to fetch admin analysis jobs & dead-letter queue
+ */
+export function useAdminJobs(options?: { refetchInterval?: number | false }) {
+  return useQuery<{ jobs: AnalyticsJob[]; deadLetterJobs: DeadLetterJob[] }, Error>({
+    queryKey: queryKeys.analytics.jobs(),
+    queryFn: async () => {
+      const [jobsRes, dlqRes] = await Promise.all([
+        analyticsApi.getJobs<{ jobs?: AnalyticsJob[] }>(),
+        analyticsApi.getDeadLetterQueue<{ jobs?: DeadLetterJob[] }>(),
+      ]);
+      return {
+        jobs: jobsRes.data?.jobs || [],
+        deadLetterJobs: dlqRes.data?.jobs || [],
+      };
+    },
+    refetchInterval: options?.refetchInterval ?? 10000,
+    staleTime: 10 * 1000,
   });
 }

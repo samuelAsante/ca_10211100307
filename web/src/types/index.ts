@@ -164,6 +164,73 @@ export interface AdminMetrics {
   }[];
 }
 
+export interface MetricsData {
+  jobs: {
+    pending: number;
+    running: number;
+    success_last_hour: number;
+    failed_last_hour: number;
+    oldest_pending_age_seconds: number | null;
+  };
+  batches: {
+    open: number;
+    sealed: number;
+    analyzed: number;
+    oldest_open_age_seconds: number | null;
+  };
+  performance: {
+    avg_analysis_time_ms: number | null;
+    p95_analysis_time_ms: number | null;
+    avg_batch_size: number | null;
+  };
+  circuit_breaker: {
+    state: "CLOSED" | "OPEN" | "HALF_OPEN";
+    failure_count: number;
+    last_state_change: string | null;
+  };
+  dead_letter_queue: {
+    total: number;
+    last_24_hours: number;
+  };
+}
+
+export interface AnalyticsBatch {
+  batch_id: string;
+  status: string;
+  event_count: number;
+  created_at: string;
+  sealed_at: string | null;
+  analysis_job?: {
+    job_id: string;
+    status: string;
+    attempt_count: number;
+    last_error: string | null;
+  };
+}
+
+export interface AnalyticsJob {
+  job_id: string;
+  batch_id: string;
+  status: string;
+  attempt_count: number;
+  created_at: string;
+  updated_at: string;
+  last_error: string | null;
+  error_context: any;
+  analysis_time_ms: number | null;
+}
+
+export interface DeadLetterJob {
+  dlq_id: string;
+  job_id: string;
+  batch_id: string;
+  attempt_count: number;
+  last_error: string;
+  error_context: any;
+  failed_at: string;
+}
+
+
 // ============================================================================
 // 4. Diagnostics & Service Health Contracts
 // ============================================================================
@@ -273,3 +340,219 @@ export interface OrderQueryParams {
   status?: string;
   search?: string;
 }
+
+// ============================================================================
+// 6. Coupons & Promotions Contracts
+// ============================================================================
+
+export interface ValidateCouponPayload {
+  code: string;
+  subtotal: number;
+}
+
+export interface ValidateCouponResponse {
+  valid: boolean;
+  code: string;
+  description: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  discountAmount: number;
+  originalSubtotal: number;
+  newTotal: number;
+  message?: string;
+}
+
+export interface ActiveCoupon {
+  id?: string;
+  code: string;
+  description: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  minSubtotal: number;
+  maxDiscount?: number | null;
+  expiresAt?: string | null;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  description: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  minSubtotal: number;
+  maxDiscount?: number | null;
+  maxUses?: number | null;
+  usedCount: number;
+  expiresAt?: string | null;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateCouponInput {
+  code: string;
+  description: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  minSubtotal?: number;
+  maxDiscount?: number | null;
+  maxUses?: number | null;
+  expiresAt?: string | null;
+  isActive?: boolean;
+}
+
+export interface UpdateCouponInput extends Partial<CreateCouponInput> {
+  id?: string;
+}
+
+// ============================================================================
+// 7. Order Tracking Contracts
+// ============================================================================
+
+export interface TrackingTimelineStep {
+  step: "ORDER_PLACED" | "PAYMENT_CONFIRMED" | "PROCESSING" | "FULFILLED";
+  title: string;
+  description: string;
+  timestamp: string | null;
+  completed: boolean;
+  current: boolean;
+}
+
+export interface TrackOrderResponse {
+  id: string;
+  customerName: string;
+  maskedPhone: string;
+  maskedEmail: string;
+  address: string;
+  status: OrderStatus;
+  totalAmount: number;
+  items: any[];
+  paymentRef?: string | null;
+  paymentProvider?: string | null;
+  paidAt?: string | null;
+  createdAt: string;
+  timeline: TrackingTimelineStep[];
+}
+
+// ============================================================================
+// 8. Low Stock & Inventory Contracts
+// ============================================================================
+
+export interface LowStockResponse {
+  threshold: number;
+  count: number;
+  products: Product[];
+}
+
+// ============================================================================
+// 9. Business Settings Contracts
+// ============================================================================
+
+export interface BusinessSettings {
+  id?: string;
+  name: string;
+  logoUrl?: string | null;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  currency: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type UpdateBusinessSettingsInput = Partial<Omit<BusinessSettings, "id" | "createdAt" | "updatedAt">>;
+
+// ============================================================================
+// 10. Reviews Contracts
+// ============================================================================
+
+export interface Review {
+  id: string;
+  name: string;
+  text: string;
+  rating: number;
+  productSlug: string;
+  createdAt: string;
+}
+
+export interface CreateReviewInput {
+  customerName: string;
+  review: string;
+  rating: number;
+  productSlug: string;
+}
+
+// ============================================================================
+// 11. Checkout & Payment Contracts
+// ============================================================================
+
+export interface ShippingFormData {
+  fullName: string;
+  email: string;
+  phone: string;
+  address: string;
+}
+
+export interface PaymentState {
+  paymentRef: string;
+  orderId: string;
+  status: "INITIATED" | "PROCESSING" | "SUCCESS" | "FAILED";
+  failureReason?: string;
+}
+
+export interface CheckoutPayload {
+  items?: Array<{
+    id: string;
+    productId?: string;
+    name: string;
+    price: number;
+    quantity: number;
+    image?: string;
+  }>;
+  cartItems?: Array<{
+    id: string;
+    productId?: string;
+    name: string;
+    price: number;
+    quantity: number;
+    image?: string;
+  }>;
+  shipping?: ShippingFormData;
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  totalAmount?: number;
+  total?: number;
+  callbackUrl?: string;
+  couponCode?: string;
+}
+
+export interface CheckoutResponse {
+  orderId: string;
+  paymentRef: string;
+  authorizationUrl?: string;
+  accessCode?: string;
+  amount: number;
+  currency: string;
+}
+
+export interface PaymentStatusResponse {
+  status: "INITIATED" | "PROCESSING" | "SUCCESS" | "FAILED";
+  orderId: string;
+  paymentRef: string;
+  failureReason?: string;
+  order?: any;
+  amount?: number;
+  currency?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  shippingAddress?: string;
+  paidAt?: string | null;
+  createdAt?: string;
+}
+
+

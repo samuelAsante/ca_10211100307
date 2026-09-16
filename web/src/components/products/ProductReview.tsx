@@ -1,32 +1,37 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Loader2, Star } from "lucide-react";
 import clsx from 'clsx';
 import { toast } from 'react-hot-toast';
+import { Review } from '@/types';
 
-type Inputs = {
+export type ReviewFormInputs = {
   customerName: string;
   review: string;
   rating: number;
 };
 
-type Review = {
-  id: string;
-  name: string;
-  text: string;
-  rating: number;
-  createdAt: string;
-};
+export interface ProductReviewsProps {
+  productSlug?: string;
+  reviews?: Review[];
+  isLoading?: boolean;
+  onSubmitReview?: (data: ReviewFormInputs) => Promise<void>;
+  isSubmitting?: boolean;
+}
 
-export function ProductReviews({ productSlug }: { productSlug: string }) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export function ProductReviews({
+  reviews = [],
+  isLoading = false,
+  onSubmitReview,
+  isSubmitting: isExternalSubmitting = false,
+}: ProductReviewsProps) {
+  const [internalSubmitting, setInternalSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [selectedRating, setSelectedRating] = useState<number>(0);
+
+  const isSubmitting = isExternalSubmitting || internalSubmitting;
 
   const {
     register,
@@ -34,202 +39,140 @@ export function ProductReviews({ productSlug }: { productSlug: string }) {
     reset,
     setValue,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<ReviewFormInputs>();
 
-  const fetchReviews = useCallback(async () => {
-    try {
-      const backendUrl = getBackendUrl();
-      const res = await fetch(`${backendUrl}/api/reviews/${productSlug}`);
-      if (!res.ok) {
-        setReviews([]);
-        return;
-      }
-      const data = await res.json();
-      setReviews(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Failed to load reviews", err);
-    } finally {
-      setIsLoading(false);
+  const onSubmit: SubmitHandler<ReviewFormInputs> = async (data) => {
+    if (!selectedRating) {
+      toast.error("Please select a star rating");
+      return;
     }
-  }, [productSlug]);
 
-  useEffect(() => {
-    fetchReviews();
-  }, [fetchReviews]);
-
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    setIsSubmitting(true);
-    try {
-      const backendUrl = getBackendUrl();
-      const res = await fetch(`${backendUrl}/api/reviews`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customerName: data.customerName,
-          review: data.review,
-          rating: selectedRating,
-          productSlug: productSlug,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Failed to submit review");
-
-      fetchReviews();
-      reset();
-      setSelectedRating(0);
-      setShowForm(false);
-      toast.success("Review submitted!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
-    } finally {
-      setIsSubmitting(false);
+    if (onSubmitReview) {
+      try {
+        setInternalSubmitting(true);
+        await onSubmitReview({ ...data, rating: selectedRating });
+        reset();
+        setSelectedRating(0);
+        setShowForm(false);
+        toast.success("Review submitted!");
+      } catch (err) {
+        toast.error("Failed to submit review");
+      } finally {
+        setInternalSubmitting(false);
+      }
     }
   };
 
   const renderStars = (count: number) =>
     Array.from({ length: 5 }, (_, i) => (
-      <Star key={i} className={clsx("w-4 h-4 inline", {
-        "text-yellow-500 fill-yellow-500": i < count,
-        "text-gray-300": i >= count,
-      })} />
+      <Star
+        key={i}
+        className={clsx(
+          "w-4 h-4",
+          i < count ? "text-yellow-400 fill-yellow-400" : "text-gray-300 dark:text-neutral-700"
+        )}
+      />
     ));
 
   return (
-    <div className="max-w-4xl mx-auto py-4">
-      {/* Rating Summary (static for now) */}
-      <div className="flex flex-col-reverse gap-6 mb-8">
-        <div>
-          <div className="mt-4">
-            <p className="text-md font-medium">Share your thoughts</p>
-            <p className="text-md text-muted-foreground mb-2">If you&apos;ve used this product, share your thoughts with other customers</p>
-            <button
-              onClick={() => setShowForm(true)}
-              className="px-4 py-2 border rounded hover:bg-gray-100 text-md"
-            >
-              Write a review
-            </button>
-          </div>
-        </div>
-
-        {/* Reviews */}
-        <div className="md:col-span-2 space-y-6 ">
-          {isLoading ? (
-            <div className="space-y-6">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="border-b pb-4 flex flex-col lg:flex-row justify-between items-start lg:items-center animate-pulse gap-4">
-                <div className="flex flex-col space-y-1 mb-2 w-full">
-                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                </div>
-                <div className="w-full">
-                  <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                </div>
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, j) => (
-                    <div key={j} className="h-4 w-4 rounded-full bg-gray-200"></div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-          ) : reviews.length === 0 ? (
-            <p>No reviews yet.</p>
-          ) : (
-            reviews.map((review) => (
-              <div key={review.id} className="border-b pb-4 flex flex-col lg:flex-row justify-between items-start gap-4 ">
-                <div className="flex flex-col space-y-1 mb-2">
-                  <span className="font-semibold">{review.name}</span>
-                  <span className="text-xs text-gray-500">{new Date(review.createdAt).toLocaleString()}</span>
-                </div>
-                <p className="text-sm text-gray-700 dark:text-gray-200 lg:max-w-[300px] lg:text-start">{review.text}</p>
-                <div>{renderStars(review.rating)}</div>
-              </div>
-            ))
-          )}
-        </div>
+    <div className="mt-12">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">Customer Reviews</h2>
+        {onSubmitReview && (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="text-sm bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 px-4 py-2 rounded-md hover:opacity-90 transition"
+          >
+            {showForm ? "Cancel" : "Write a Review"}
+          </button>
+        )}
       </div>
 
-      {/* Review Form */}
       {showForm && (
-        <form onSubmit={handleSubmit(onSubmit)} className="border-t pt-6 space-y-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="mb-8 p-4 border dark:border-neutral-800 rounded-lg space-y-4 max-w-xl"
+        >
           <div>
-            <label htmlFor="review-name" className="block text-md font-medium mb-1">Your Name</label>
+            <label className="block text-sm font-medium mb-1">Your Name</label>
             <input
-              id="review-name"
-              type="text"
-              autoComplete="name"
-              disabled={isSubmitting}
-              placeholder="Full Name"
-              aria-invalid={errors.customerName ? "true" : "false"}
-              className="w-full border p-2 rounded"
-              {...register("customerName", {
-                required: "Enter your full name",
-              })}
+              {...register("customerName", { required: "Name is required" })}
+              className="w-full border dark:border-neutral-700 rounded p-2 text-sm bg-transparent"
+              placeholder="e.g. Ama Mensah"
             />
-            {errors.customerName && <p className="text-sm text-red-500">{errors.customerName.message}</p>}
+            {errors.customerName && (
+              <p className="text-red-500 text-xs mt-1">{errors.customerName.message}</p>
+            )}
           </div>
 
           <div>
-            <label htmlFor="review-text" className="block text-md font-medium mb-1">Your Review</label>
-            <textarea
-              id="review-text"
-              placeholder="Write your review..."
-              disabled={isSubmitting}
-              aria-invalid={errors.review ? "true" : "false"}
-              className="w-full border p-2 rounded"
-              {...register("review", {
-                required: "Type a review",
-                minLength: {
-                  value: 8,
-                  message: "Review must be at least 8 characters",
-                },
-              })}
-            />
-            {errors.review && <p className="text-sm text-red-500">{errors.review.message}</p>}
-          </div>
-
-          <div className='flex justify-between'>
-            <span id="rating-label" className="block text-md font-medium mb-1">Rating</span>
-            <div className="flex space-x-1" role="group" aria-labelledby="rating-label">
-              {Array.from({ length: 5 }, (_, i) => (
+            <label className="block text-sm font-medium mb-1">Rating</label>
+            <div className="flex space-x-1">
+              {[1, 2, 3, 4, 5].map((star) => (
                 <button
-                  key={i}
                   type="button"
-                  aria-label={`Rate ${i + 1} star${i + 1 > 1 ? "s" : ""}`}
-                  aria-pressed={selectedRating === i + 1}
+                  key={star}
                   onClick={() => {
-                    setSelectedRating(i + 1);
-                    setValue("rating", i + 1); // update react-hook-form value
+                    setSelectedRating(star);
+                    setValue("rating", star);
                   }}
-                  className="rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   <Star
-                    aria-hidden="true"
-                    className={clsx("w-6 h-6", {
-                      "text-yellow-500 fill-yellow-500": i < selectedRating,
-                      "text-gray-300": i >= selectedRating,
-                    })}
+                    className={clsx(
+                      "w-6 h-6 cursor-pointer transition",
+                      star <= selectedRating
+                        ? "text-yellow-400 fill-yellow-400"
+                        : "text-gray-300 dark:text-neutral-700"
+                    )}
                   />
                 </button>
               ))}
             </div>
-            
           </div>
-          {selectedRating === 0 && (
-              <p className="text-sm text-red-500">Please select a rating</p>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Review</label>
+            <textarea
+              {...register("review", { required: "Review text is required" })}
+              className="w-full border dark:border-neutral-700 rounded p-2 text-sm bg-transparent"
+              rows={3}
+              placeholder="What did you like or dislike about this product?"
+            />
+            {errors.review && (
+              <p className="text-red-500 text-xs mt-1">{errors.review.message}</p>
             )}
+          </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            className="flex items-center justify-center space-x-2 bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700 transition disabled:opacity-50"
           >
-            {isSubmitting && <Loader2 className="animate-spin h-5 w-5 inline mr-2" />}
-            {isSubmitting ? "Submitting" : "Submit Review"}
+            {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+            <span>{isSubmitting ? "Submitting..." : "Submit Review"}</span>
           </button>
         </form>
+      )}
+
+      {isLoading ? (
+        <p className="text-gray-400 text-sm">Loading reviews...</p>
+      ) : reviews.length === 0 ? (
+        <p className="text-gray-400 text-sm">No reviews yet. Be the first to review this product!</p>
+      ) : (
+        <div className="space-y-4">
+          {reviews.map((r) => (
+            <div key={r.id} className="border-b dark:border-neutral-800 pb-4">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-semibold text-sm">{r.name}</span>
+                <span className="text-xs text-gray-400">
+                  {new Date(r.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex mb-2">{renderStars(r.rating)}</div>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{r.text}</p>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

@@ -20,6 +20,24 @@ else
   echo "Products already exist in database. Skipping product seeding."
 fi
 
+# Only seed initial coupons if no coupons exist in DB
+HAS_COUPONS="$(node -e "
+  const { PrismaClient } = require('@prisma/client');
+  const prisma = new PrismaClient();
+  prisma.coupon.count()
+    .then((c) => process.stdout.write(c > 0 ? 'yes' : 'no'))
+    .catch(() => process.stdout.write('no'))
+    .finally(() => prisma.\$disconnect());
+")"
+
+if [ "$HAS_COUPONS" = "no" ]; then
+  echo "Seeding initial promotional coupons..."
+  npx ts-node --transpile-only prisma/seed-coupons.ts
+else
+  echo "Coupons already exist in database. Skipping coupon seeding."
+fi
+
+
 # Only seed admin if admin user does not exist yet
 HAS_ADMIN="$(node -e "
   const { PrismaClient } = require('@prisma/client');
