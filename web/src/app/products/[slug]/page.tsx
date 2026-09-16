@@ -1,6 +1,5 @@
 //@ts-nocheck
 import { fetchBackend } from "@/lib/fetch-backend";
-import { products as mockProducts } from "@/data/data";
 
 import { Metadata } from "next";
 
@@ -34,20 +33,6 @@ async function getProduct(slug: string) {
         console.error("Error fetching product:", error);
     }
 
-    // Resilient fallback to mock catalog if backend is unreachable or product missing
-    const fallback = mockProducts.find((p: any) => p.slug === slug);
-    if (fallback) {
-        return {
-            ...fallback,
-            name: fallback.title || fallback.name || "Product",
-            price: Number(fallback.price) || 0,
-            discount: Number(fallback.discount) || 0,
-            ratingFromManufacturer: fallback.rating ?? fallback.ratingFromManufacturer ?? 0,
-            images: Array.isArray(fallback.images) && fallback.images.length > 0 ? fallback.images : ["/a.jpg"],
-            colors: Array.isArray(fallback.colors) ? fallback.colors : [],
-        };
-    }
-
     return null;
 }
 
@@ -69,11 +54,7 @@ async function getAllProducts() {
     } catch (error) {
         console.error("Error fetching products:", error);
     }
-    return mockProducts.map((p: any) => ({
-        ...p,
-        name: p.title || p.name,
-        images: Array.isArray(p.images) && p.images.length > 0 ? p.images : ["/a.jpg"],
-    }));
+    return [];
 }
 
 import { ProductCount } from "@/components/products/productCount";
