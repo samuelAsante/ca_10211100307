@@ -24,6 +24,8 @@ export interface InitiatePaymentArgs {
   metadata?: Record<string, any>;
   /** Where Paystack should redirect the customer after payment. */
   callbackUrl?: string;
+  /** Unique client or request idempotency key. */
+  idempotencyKey?: string;
 }
 
 export interface InitiatePaymentResult {
@@ -92,8 +94,19 @@ export function runPaymentSimulation(paymentRef: string): void {
 // Idempotent finalisation (shared by simulation, Paystack verify, and webhook)
 // ---------------------------------------------------------------------------
 
+export interface GatewaySuccessDetails {
+  channel?: string;
+  authorization?: Record<string, any>;
+  fees?: number;
+  paidAt?: string | Date;
+  gatewayResponse?: string;
+}
+
 /** Mark a payment (and its order) as successful. Safe to call more than once. */
-export async function markPaymentSuccess(paymentRef: string): Promise<void> {
+export async function markPaymentSuccess(
+  paymentRef: string,
+  gatewayDetails?: GatewaySuccessDetails
+): Promise<void> {
   const payment = await prisma.payment.findUnique({ where: { paymentRef } });
   if (!payment) {
     console.warn(`[Payment] markPaymentSuccess: payment ${paymentRef} not found`);
@@ -101,22 +114,93 @@ export async function markPaymentSuccess(paymentRef: string): Promise<void> {
   }
   if (payment.status === "SUCCESS") return; // already finalised
 
-  await prisma.$transaction([
-    prisma.payment.update({
-      where: { paymentRef },
-      data: { status: "SUCCESS", processedAt: new Date(), failureReason: null },
-    }),
-    prisma.order.update({
-      where: { id: payment.orderId },
-      data: { status: "PAID", paidAt: new Date() },
-    }),
-  ]);
+  const mergedMetadata = {
+    ...((payment.metadata as Record<string, any>) || {}),
+    ...(gatewayDetails || {}),
+  };
+
+  // Atomic conditional update to eliminate race conditions between webhooks and callback redirects.
+  // Exactly one execution will see status: { not: "SUCCESS" } and succeed with count: 1.
+  const paymentUpdate = await prisma.payment.updateMany({
+    where: {
+      paymentRef,
+      status: { not: "SUCCESS" },
+    },
+    data: {
+      status: "SUCCESS",
+      processedAt: new Date(),
+      failureReason: null,
+      metadata: mergedMetadata,
+    },
+  });
+
+  if (paymentUpdate.count === 0) {
+    // Another concurrent thread or webhook already finalized this payment.
+    return;
+  }
+
+  // Update order status to PAID atomically
+  await prisma.order.updateMany({
+    where: {
+      id: payment.orderId,
+      status: { not: "PAID" },
+    },
+    data: {
+      status: "PAID",
+      paidAt: new Date(),
+    },
+  });
+
+  // Decrement inventory for items purchased in this order
+  try {
+    const order = await prisma.order.findUnique({ where: { id: payment.orderId } });
+    if (order && Array.isArray(order.items)) {
+      for (const item of order.items as any[]) {
+        const qty = Number(item?.quantity) || 0;
+        const productId = item?.id;
+        if (productId && qty > 0) {
+          await prisma.product
+            .update({
+              where: { id: productId },
+              data: { stock: { decrement: qty } },
+            })
+            .then(async (updatedProduct) => {
+              await trackSystemEvent({
+                eventType: "INVENTORY_UPDATED",
+                userId: payment.customerEmail,
+                sessionId: "system",
+                metadata: {
+                  productId: updatedProduct.id,
+                  slug: updatedProduct.slug,
+                  orderId: payment.orderId,
+                  newStock: updatedProduct.stock,
+                  deducted: qty,
+                },
+              });
+            })
+            .catch((stockErr) => {
+              console.warn(
+                `[Payment] Could not decrement stock for product ${productId}:`,
+                stockErr?.message || stockErr
+              );
+            });
+        }
+      }
+    }
+  } catch (stockProcessErr) {
+    console.error("[Payment] Stock reconciliation error:", stockProcessErr);
+  }
 
   await trackSystemEvent({
     eventType: "PAYMENT_SUCCESS",
     userId: payment.customerEmail,
     sessionId: "payment",
-    metadata: { paymentRef, orderId: payment.orderId, amount: payment.amount },
+    metadata: {
+      paymentRef,
+      orderId: payment.orderId,
+      amount: payment.amount,
+      channel: gatewayDetails?.channel || "card",
+    },
   });
   await trackSystemEvent({
     eventType: "ORDER_CONFIRMED",
@@ -133,6 +217,7 @@ export async function markPaymentSuccess(paymentRef: string): Promise<void> {
       const emailHtml = orderConfirmationTemplate({
         name: order.customerName,
         orderId: order.id,
+        paymentRef: payment.paymentRef,
         total: order.totalAmount,
         items: items.map((item: any) => ({
           name: item.name,
@@ -161,16 +246,22 @@ export async function markPaymentFailed(
     console.warn(`[Payment] markPaymentFailed: payment ${paymentRef} not found`);
     return;
   }
-  if (payment.status === "SUCCESS") return; // don't overwrite a success
-
-  await prisma.payment.update({
-    where: { paymentRef },
+  const paymentUpdate = await prisma.payment.updateMany({
+    where: {
+      paymentRef,
+      status: { notIn: ["SUCCESS", "FAILED"] },
+    },
     data: {
       status: "FAILED",
       failureReason: reason || "Payment failed",
       processedAt: new Date(),
     },
   });
+
+  if (paymentUpdate.count === 0) {
+    // Either not found or already finalized as SUCCESS or FAILED
+    return;
+  }
 
   await trackSystemEvent({
     eventType: "PAYMENT_FAILED",
@@ -193,8 +284,56 @@ export async function initiatePayment(
 ): Promise<InitiatePaymentResult> {
   const { orderId, amount, email, customerName } = args;
   const currency = args.currency || "GHS";
-  const paymentRef = generatePaymentRef();
+
+  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  if (!order) {
+    throw new Error("Order not found");
+  }
+  if (order.status === "PAID") {
+    throw new Error("Order is already paid");
+  }
+
   const provider: Provider = PaystackService.isConfigured() ? "PAYSTACK" : "SIMULATION";
+
+  // Check if this explicit idempotency key has already been processed
+  if (args.idempotencyKey) {
+    const existingByIdempotency = await prisma.payment.findUnique({
+      where: { idempotencyKey: args.idempotencyKey },
+    });
+    if (existingByIdempotency) {
+      const meta = existingByIdempotency.metadata as Record<string, any> | null;
+      return {
+        paymentRef: existingByIdempotency.paymentRef,
+        provider: existingByIdempotency.provider as Provider,
+        status: existingByIdempotency.status as any,
+        authorizationUrl: meta?.authorizationUrl,
+      };
+    }
+  }
+
+  // Idempotent reuse: if an active payment session already exists for this order, reuse it
+  const existingActivePayment = await prisma.payment.findFirst({
+    where: {
+      orderId,
+      status: { in: ["INITIATED", "PROCESSING"] },
+      provider,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (existingActivePayment) {
+    const meta = existingActivePayment.metadata as Record<string, any> | null;
+    if (provider === "PAYSTACK" && meta?.authorizationUrl) {
+      return {
+        paymentRef: existingActivePayment.paymentRef,
+        provider: "PAYSTACK",
+        status: "INITIATED",
+        authorizationUrl: meta.authorizationUrl,
+      };
+    }
+  }
+
+  const paymentRef = generatePaymentRef();
 
   if (provider === "PAYSTACK") {
     // Initialise with Paystack first so a failure doesn't leave a dangling record.
@@ -204,20 +343,25 @@ export async function initiatePayment(
       reference: paymentRef,
       currency,
       callbackUrl: args.callbackUrl,
-      metadata: { ...(args.metadata || {}), orderId, paymentRef },
+      metadata: { ...(args.metadata || {}), orderId, paymentRef, idempotencyKey: args.idempotencyKey },
     });
 
     await prisma.payment.create({
       data: {
         paymentRef,
         orderId,
+        idempotencyKey: args.idempotencyKey,
         amount: Number(amount),
         currency,
         provider: "PAYSTACK",
         status: "INITIATED",
         customerEmail: email,
         customerName,
-        metadata: { ...(args.metadata || {}), accessCode: init.access_code },
+        metadata: {
+          ...(args.metadata || {}),
+          accessCode: init.access_code,
+          authorizationUrl: init.authorization_url,
+        },
       },
     });
 
@@ -241,15 +385,16 @@ export async function initiatePayment(
     data: {
       paymentRef,
       orderId,
+      idempotencyKey: args.idempotencyKey,
       amount: Number(amount),
       currency,
       provider: "SIMULATION",
       status: "INITIATED",
-        customerEmail: email,
-        customerName,
-        metadata: { ...(args.metadata || {}) },
-      },
-    });
+      customerEmail: email,
+      customerName,
+      metadata: { ...(args.metadata || {}) },
+    },
+  });
 
     await prisma.order.update({
       where: { id: orderId },
@@ -269,35 +414,55 @@ export async function initiatePayment(
 }
 
 /**
- * Reconcile a Paystack payment against the gateway's verify endpoint and
- * finalise it (idempotently). Returns the resulting status.
+ * Reconcile a Paystack payment against the gateway's verify endpoint or verified webhook data
+ * and finalise it (idempotently). Returns the resulting status.
  */
 export async function reconcilePaystackPayment(
-  paymentRef: string
+  paymentRef: string,
+  webhookPayload?: any
 ): Promise<"SUCCESS" | "FAILED" | "PENDING"> {
   const payment = await prisma.payment.findUnique({ where: { paymentRef } });
   if (!payment) throw new Error("Payment not found");
 
-  const data = await PaystackService.verifyTransaction(paymentRef);
+  // Idempotent early-return: if already succeeded, avoid redundant work
+  if (payment.status === "SUCCESS") {
+    return "SUCCESS";
+  }
+
+  // Use webhook data if already verified by signature, otherwise query Paystack API
+  const data = webhookPayload?.status
+    ? webhookPayload
+    : await PaystackService.verifyTransaction(paymentRef);
 
   if (data.status === "success") {
-    // Guard against amount tampering.
+    // Guard against amount tampering (comparing minor units).
     const expected = PaystackService.toMinorUnit(payment.amount);
     if (typeof data.amount === "number" && data.amount !== expected) {
       await markPaymentFailed(
         paymentRef,
-        `Amount mismatch (expected ${expected}, got ${data.amount})`
+        `Amount mismatch (expected ${expected} pesewas, got ${data.amount} pesewas)`
       );
       return "FAILED";
     }
-    await markPaymentSuccess(paymentRef);
+
+    await markPaymentSuccess(paymentRef, {
+      channel: data.channel,
+      authorization: (data.authorization as any) || undefined,
+      fees: typeof data.fees === "number" ? data.fees : undefined,
+      paidAt: data.paid_at,
+      gatewayResponse: data.gateway_response,
+    });
     return "SUCCESS";
   }
 
   if (data.status === "failed" || data.status === "abandoned") {
-    await markPaymentFailed(paymentRef, data.gateway_response || "Payment not completed");
+    await markPaymentFailed(
+      paymentRef,
+      data.gateway_response || (data.status === "abandoned" ? "Payment was cancelled/abandoned by customer" : "Payment failed")
+    );
     return "FAILED";
   }
 
   return "PENDING";
 }
+
