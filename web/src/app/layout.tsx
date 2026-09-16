@@ -9,6 +9,7 @@ import { SocketProvider } from "@/components/analytics/socket-provider";
 import { GlobalPageTracker } from "@/components/analytics/global-page-tracker";
 import { CookieConsent } from "@/components/consent/CookieConsent";
 import { business } from "@/data/business";
+import { Providers } from "@/components/common/providers";
 
 const lato = Lato({
   variable: "--font-lato",
@@ -165,14 +166,16 @@ export default function RootLayout({
           >
             Skip to main content
           </a>
-          <SocketProvider>
-            <GlobalPageTracker />
-            <LayoutWrapper>
-              <Toaster position="top-center" reverseOrder={false} />
-              {children}
-            </LayoutWrapper>
-            <CookieConsent />
-          </SocketProvider>
+          <Providers>
+            <SocketProvider>
+              <GlobalPageTracker />
+              <LayoutWrapper>
+                <Toaster position="top-center" reverseOrder={false} />
+                {children}
+              </LayoutWrapper>
+              <CookieConsent />
+            </SocketProvider>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
