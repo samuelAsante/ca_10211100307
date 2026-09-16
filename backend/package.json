@@ -10,7 +10,8 @@
     "worker": "npx prisma migrate deploy && ts-node src/index.ts",
     "build": "npx prisma generate && tsc",
     "db:seed:products": "npx ts-node --transpile-only prisma/seed-products.ts",
-    "db:seed:admin": "npx ts-node --transpile-only prisma/seed-admin.ts"
+    "db:seed:admin": "npx ts-node --transpile-only prisma/seed-admin.ts",
+    "db:seed:coupons": "npx ts-node --transpile-only prisma/seed-coupons.ts"
   },
   "keywords": [],
   "author": "",
