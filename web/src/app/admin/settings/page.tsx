@@ -28,6 +28,7 @@ import { ModeToggle } from "@/components/layout/toogleMode";
 import { useForm } from "react-hook-form";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useState } from "react";
@@ -217,7 +218,14 @@ export default function AdminSettingsPage() {
                   />
                   {avatarPreview && (
                     <div className="pt-1">
-                      <img src={avatarPreview} alt="Avatar Preview" className="h-16 w-16 rounded-full object-cover border" />
+                      <Image
+                        src={avatarPreview}
+                        alt="Avatar Preview"
+                        width={64}
+                        height={64}
+                        unoptimized
+                        className="h-16 w-16 rounded-full object-cover border"
+                      />
                     </div>
                   )}
                 </div>
@@ -253,7 +261,14 @@ export default function AdminSettingsPage() {
                   />
                   {logoPreview && (
                     <div className="pt-1">
-                      <img src={logoPreview} alt="Logo Preview" className="h-16 w-auto max-w-[200px] object-contain rounded border p-1" />
+                      <Image
+                        src={logoPreview}
+                        alt="Logo Preview"
+                        width={200}
+                        height={64}
+                        unoptimized
+                        className="h-16 w-auto max-w-[200px] object-contain rounded border p-1"
+                      />
                     </div>
                   )}
                 </div>
