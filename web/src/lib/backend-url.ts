@@ -1,5 +1,7 @@
 export function getBackendUrl(): string {
-  const fallback = "http://localhost:4001";
+  const prodBackend = "https://js-ashanti-api.onrender.com";
+  const devBackend = "http://localhost:4001";
+  const fallback = process.env.NODE_ENV === "production" ? prodBackend : devBackend;
 
   if (typeof window === "undefined") {
     return (
