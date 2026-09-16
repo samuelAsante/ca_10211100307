@@ -35,7 +35,7 @@ const legalLinks = [
 
 export function Footer(){
     const year = new Date().getFullYear();
-    const copyright = `© ${year} J's Ashanti. All rights reserved.`;
+    const copyright = `© ${year} ${business.name}. All rights reserved.`;
 
     return(
         <footer className="bottom-0 left-0 w-full z-50 font-medium justify-baseline border-t-1 " >
@@ -43,7 +43,7 @@ export function Footer(){
 
                 <div className="grid grid-cols-2 lg:grid-cols-3 items-start mt-6 gap-10">
                     <div className="items-start">
-                        <h1 className="text-lg md:text-xl font-semibold logo">J&apos;s Ashanti&apos;s</h1>
+                        <h1 className="text-lg md:text-xl font-semibold logo">{business.name}</h1>
                         <p className="text-sm md:text-[18px] text-gray-500 font-normal w-48 xl:w-96">Your trusted partner for premium home and kitchen appliances with expert service and competitive prices.</p>
                         <ul className="flex items-center space-x-6 text-muted-foreground mt-4">
                         {socialLinks.map((social, idx) => (
