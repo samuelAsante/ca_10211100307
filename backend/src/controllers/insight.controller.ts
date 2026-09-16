@@ -14,30 +14,37 @@ export class InsightController {
                 return res.status(403).json({ error: "Forbidden - Admin access required" });
             }
 
-            const page = parseInt(req.query.page as string || "1");
-            const limit = parseInt(req.query.limit as string || "50");
-            const offset = parseInt(req.query.offset as string || "0");
+            const page = Math.max(1, parseInt((req.query.page as string) || "1", 10));
+            const limit = Math.max(1, Math.min(100, parseInt((req.query.limit as string) || "10", 10)));
+            const offset = req.query.offset ? parseInt(req.query.offset as string, 10) : undefined;
             
             // Allow offset override or calculate from page
-            const skip = offset > 0 ? offset : (page - 1) * limit;
+            const skip = offset !== undefined ? Math.max(0, offset) : (page - 1) * limit;
 
-            const insights = await prisma.insight.findMany({
-                orderBy: {
-                    createdAt: "desc",
-                },
-                take: limit,
-                skip: skip,
-            });
+            const [insights, total] = await Promise.all([
+                prisma.insight.findMany({
+                    orderBy: {
+                        createdAt: "desc",
+                    },
+                    take: limit,
+                    skip: skip,
+                }),
+                prisma.insight.count(),
+            ]);
 
-            const total = await prisma.insight.count();
+            const totalPages = Math.max(1, Math.ceil(total / limit));
+            const currentPage = offset !== undefined ? Math.floor(skip / limit) + 1 : page;
 
             return res.json({
                 insights,
                 pagination: {
                     total,
+                    page: currentPage,
                     limit,
+                    totalPages,
                     offset: skip,
                     hasMore: skip + limit < total,
+                    hasPrev: currentPage > 1,
                 },
             });
 
