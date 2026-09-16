@@ -55,6 +55,21 @@ export interface Insight {
   createdAt: string;
 }
 
+export interface InsightsPagination {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  offset: number;
+  hasMore: boolean;
+  hasPrev: boolean;
+}
+
+export interface InsightsResponse {
+  insights: Insight[];
+  pagination: InsightsPagination;
+}
+
 /**
  * Batch of events sent to AI
  */
