@@ -225,18 +225,13 @@ export default function ServicesDiagnosticsPage() {
   const isConfigured = (cond: boolean) => (cond ? "Configured" : "Missing Keys");
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 p-6">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">Service Diagnostics</h1>
-            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-              Admin Suite
-            </Badge>
-          </div>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Live integration verification, API roundtrip latency, and connectivity testing for all core services.
+          <h1 className="text-3xl font-bold">Service Diagnostics</h1>
+          <p className="text-muted-foreground mt-1">
+            Live integration verification, API roundtrip latency, and connectivity testing for all core services
           </p>
         </div>
 
@@ -496,13 +491,15 @@ export default function ServicesDiagnosticsPage() {
                   </Badge>
                 )}
               </div>
-              <CardDescription>LLaMA 3.3 70B behavioral analytics & insights</CardDescription>
+              <CardDescription>
+                {overview?.services.ai.model || "Behavioral analytics"} model inference & insights
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
               <div className="bg-muted/50 p-3 rounded-lg space-y-1.5 font-mono">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Model:</span>
-                  <span>llama-3.3-70b-versatile</span>
+                  <span className="font-semibold">{overview?.services.ai.model || "openai/gpt-oss-20b"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Circuit Breaker:</span>
