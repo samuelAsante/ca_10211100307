@@ -127,9 +127,12 @@ export default function CheckoutPage() {
         headers["Idempotency-Key"] = idempotencyKeyRef.current;
       }
 
+      const clientOrigin = typeof window !== "undefined" ? window.location.origin : "";
+      const callbackUrl = clientOrigin ? `${clientOrigin}/checkout/callback` : undefined;
+
       const response = await axios.post(
         `${backendUrl}/api/orders/checkout`,
-        { ...data, cartItems: safeItems, total: finalTotal },
+        { ...data, cartItems: safeItems, total: finalTotal, callbackUrl },
         { withCredentials: true, headers }
       );
 
