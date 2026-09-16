@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import axios from "axios";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 type Product = {
   id: string;
@@ -30,6 +31,7 @@ type Order = {
 };
 
 export function AdminDashboard() {
+  const { trackAdminAction } = useAnalytics();
   const [user, setUser] = useState<any>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -211,7 +213,12 @@ export function AdminDashboard() {
             )}
             <div className="pt-2">
               <Button asChild size="sm">
-                <Link href="/admin/orders">Open Orders</Link>
+                <Link
+                  href="/admin/orders"
+                  onClick={() => trackAdminAction("dashboard_navigate", undefined, { destination: "/admin/orders" })}
+                >
+                  Open Orders
+                </Link>
               </Button>
             </div>
           </CardContent>
@@ -238,17 +245,58 @@ export function AdminDashboard() {
               ))}
             </div>
             <Button asChild variant="outline" size="sm">
-              <Link href="/admin/products">Manage Inventory</Link>
+              <Link
+                href="/admin/products"
+                onClick={() => trackAdminAction("dashboard_navigate", undefined, { destination: "/admin/products" })}
+              >
+                Manage Inventory
+              </Link>
             </Button>
           </CardContent>
         </Card>
       </section>
 
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-1">
-        <Button asChild variant="outline"><Link href="/admin/products/addProducts">Add Product</Link></Button>
-        <Button asChild variant="outline"><Link href="/admin/products/discounts">Manage Discounts</Link></Button>
-        <Button asChild variant="outline"><Link href="/admin/orders">Track Orders</Link></Button>
-        <Button asChild variant="outline"><Link href="/admin/analytics">Open Analytics</Link></Button>
+      <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-1">
+        <Button asChild variant="outline">
+          <Link
+            href="/admin/products/addProducts"
+            onClick={() => trackAdminAction("dashboard_quick_action", undefined, { action: "add_product", destination: "/admin/products/addProducts" })}
+          >
+            Add Product
+          </Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link
+            href="/admin/products/discounts"
+            onClick={() => trackAdminAction("dashboard_quick_action", undefined, { action: "manage_discounts", destination: "/admin/products/discounts" })}
+          >
+            Manage Discounts
+          </Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link
+            href="/admin/orders"
+            onClick={() => trackAdminAction("dashboard_quick_action", undefined, { action: "track_orders", destination: "/admin/orders" })}
+          >
+            Track Orders
+          </Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link
+            href="/admin/analytics"
+            onClick={() => trackAdminAction("dashboard_quick_action", undefined, { action: "open_analytics", destination: "/admin/analytics" })}
+          >
+            Open Analytics
+          </Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link
+            href="/admin/services"
+            onClick={() => trackAdminAction("dashboard_quick_action", undefined, { action: "open_services", destination: "/admin/services" })}
+          >
+            Service Health
+          </Link>
+        </Button>
       </section>
 
       <section className="flex flex-col md:flex-row gap-6 mt-10 px-4">
