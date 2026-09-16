@@ -1,4 +1,4 @@
-import { getBackendUrl } from "@/lib/backend-url";
+import { fetchBackend } from "@/lib/fetch-backend";
 import { Suspense } from "react";
 import { ProductsList } from "./ProductsList";
 import { ProductCardSkeleton } from "./ProductCardSkeleton";
@@ -7,15 +7,12 @@ import { pickFeaturedProducts } from "@/lib/utils";
 export default async function Products() {
   let products: any[] = [];
   try {
-    const res = await fetch(
-      `${getBackendUrl()}/api/products`,
-      {
-        next: { revalidate: 60 },
-        signal: AbortSignal.timeout(8000),
-      },
-    );
+    const res = await fetchBackend("/api/products", {
+      next: { revalidate: 60 },
+      signal: AbortSignal.timeout(8000),
+    });
 
-    if (res.ok) {
+    if (res && res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         products = pickFeaturedProducts(data, 16);
