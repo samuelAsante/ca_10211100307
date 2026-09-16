@@ -106,7 +106,7 @@ export function Header() {
                 type="button"
                 onClick={() => setOpenSearch(true)}
                 aria-label="Search products"
-                className="hidden md:block landscape:block cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="hidden md:block landscape:block cursor-pointer rounded focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 <CiSearch className="text-2xl" aria-hidden="true" />
               </button>
