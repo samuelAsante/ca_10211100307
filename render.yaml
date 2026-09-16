@@ -30,7 +30,7 @@ services:
       - key: BETTER_AUTH_URL
         value: https://js-ashanti-api.onrender.com
       - key: FRONTEND_URL
-        value: https://js-ashanti-web.onrender.com
+        value: https://www.ashantiskitchenware.com
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
@@ -58,8 +58,8 @@ services:
       - key: NEXT_PUBLIC_ENABLE_GOOGLE_LOGIN
         value: "true"
       - key: NEXT_PUBLIC_BASE_URL
-        value: https://js-ashanti-web.onrender.com
+        value: https://www.ashantiskitchenware.com
       - key: BACKEND_INTERNAL_URL
-        value: http://js-ashanti-api:10000
+        value: https://js-ashanti-api.onrender.com
       - key: BETTER_AUTH_URL
         value: https://js-ashanti-api.onrender.com
