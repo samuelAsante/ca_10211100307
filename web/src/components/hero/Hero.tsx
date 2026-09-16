@@ -44,16 +44,17 @@ export function Hero({ products = [], loading = false }: HeroProps) {
   }
 
   return (
-    <div className="relative w-full max-w-7xl mx-auto md:px-4 mb-4 md:mb-12">
+    <div className="relative w-full mb-4 md:mb-12">
       <Carousel
+        opts={{ align: "start" }}
         plugins={[autoplayPlugin.current]}
         className="w-full"
         onMouseEnter={autoplayPlugin.current.stop}
         onMouseLeave={autoplayPlugin.current.reset}
       >
-        <CarouselContent>
+        <CarouselContent className="ml-0">
           {displayProducts.map((product) => (
-            <CarouselItem key={product.id || product.slug}>
+            <CarouselItem key={product.id || product.slug} className="pl-0 basis-full">
               <HeroCard
                 id={product.id}
                 title={product.title || product.name || ""}

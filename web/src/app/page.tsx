@@ -21,9 +21,9 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-0 pb-20 gap-16 font-[family-name:var(--font-lato)] mx-auto">
+    <div className="min-h-screen w-full pb-20 font-[family-name:var(--font-lato)]">
       {/* Main Content */}
-      <main className="mx-auto">
+      <main className="w-full">
         <Hero products={heroProducts} />
         <Products />
       </main>
