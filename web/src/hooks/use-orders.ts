@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ordersApi } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
-import { Order, OrderQueryParams } from "@/types";
+import { Order, OrderQueryParams, TrackOrderResponse } from "@/types";
 
 /**
  * Hook to fetch admin orders list
@@ -64,3 +64,22 @@ export function useCancelOrder() {
     },
   });
 }
+
+/**
+ * Hook to publicly track an order by Order ID or customer phone number
+ */
+export function useTrackOrder(identifier: string) {
+  const cleanId = identifier?.trim() || "";
+
+  return useQuery<TrackOrderResponse, Error>({
+    queryKey: queryKeys.orders.track(cleanId),
+    queryFn: async () => {
+      const res = await ordersApi.track<TrackOrderResponse>(cleanId);
+      return res.data;
+    },
+    enabled: cleanId.length > 0,
+    retry: 1,
+    staleTime: 15 * 1000,
+  });
+}
+

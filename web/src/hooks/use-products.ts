@@ -10,10 +10,30 @@ export function useProducts(params?: ProductQueryParams) {
   return useQuery({
     queryKey: queryKeys.products.list(params),
     queryFn: async (): Promise<Product[]> => {
-      const res = await productsApi.getAll<Product[]>(params);
-      return Array.isArray(res.data) ? res.data : [];
+      const res = await productsApi.getAll<any>(params);
+      if (Array.isArray(res.data)) return res.data;
+      if (Array.isArray(res.data?.data)) return res.data.data;
+      return [];
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
+  });
+}
+
+/**
+ * Hook to fetch low-stock products for admin restock alerts
+ */
+export function useLowStockProducts(threshold = 5) {
+  return useQuery({
+    queryKey: queryKeys.products.lowStock(threshold),
+    queryFn: async () => {
+      const res = await productsApi.getLowStock<{
+        threshold: number;
+        count: number;
+        products: Product[];
+      }>(threshold);
+      return res.data;
+    },
+    staleTime: 30 * 1000,
   });
 }
 

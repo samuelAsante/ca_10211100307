@@ -1,51 +1,31 @@
+"use client";
+
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api, paymentsApi } from "@/lib/api";
+import { queryKeys } from "@/lib/query-keys";
+import type {
+  CheckoutPayload,
+  CheckoutResponse,
+  PaymentStatusResponse,
+} from "@/types";
 
-export interface CheckoutPayload {
-  items: Array<{
-    id: string;
-    productId?: string;
-    name: string;
-    price: number;
-    quantity: number;
-    image?: string;
-  }>;
-  shipping: {
-    fullName: string;
-    email: string;
-    phone: string;
-    address: string;
-  };
-  totalAmount: number;
-}
-
-export interface CheckoutResponse {
-  orderId: string;
-  paymentRef: string;
-  authorizationUrl?: string;
-  accessCode?: string;
-  amount: number;
-  currency: string;
-}
-
-export interface PaymentStatusResponse {
-  status: "INITIATED" | "PROCESSING" | "SUCCESS" | "FAILED";
-  orderId: string;
-  paymentRef: string;
-  failureReason?: string;
-}
+export type {
+  CheckoutPayload,
+  CheckoutResponse,
+  PaymentStatusResponse,
+};
 
 /**
- * Hook to poll payment status
+ * Hook to poll or fetch payment status
  */
 export function usePaymentStatus(
   ref?: string | null,
   options?: { enabled?: boolean; refetchInterval?: number | false }
 ) {
-  return useQuery({
-    queryKey: ["payments", "status", ref],
-    queryFn: async (): Promise<PaymentStatusResponse> => {
-      const res = await api.get<PaymentStatusResponse>(`/api/payments/${encodeURIComponent(ref || "")}/status`);
+  return useQuery<PaymentStatusResponse, Error>({
+    queryKey: queryKeys.payments.status(ref || ""),
+    queryFn: async () => {
+      const res = await paymentsApi.getStatus<PaymentStatusResponse>(ref || "");
       return res.data;
     },
     enabled: Boolean(ref) && (options?.enabled ?? true),
@@ -54,12 +34,54 @@ export function usePaymentStatus(
 }
 
 /**
+ * Hook to verify payment status
+ */
+export function useVerifyPayment(
+  ref?: string | null,
+  options?: { enabled?: boolean }
+) {
+  return useQuery<PaymentStatusResponse, Error>({
+    queryKey: queryKeys.payments.verify(ref || ""),
+    queryFn: async () => {
+      const res = await paymentsApi.verify<PaymentStatusResponse>(ref || "");
+      return res.data;
+    },
+    enabled: Boolean(ref) && (options?.enabled ?? true),
+    retry: 1,
+  });
+}
+
+/**
+ * Mutation to explicitly verify payment
+ */
+export function useVerifyPaymentMutation() {
+  return useMutation<PaymentStatusResponse, Error, string>({
+    mutationFn: async (ref: string) => {
+      const res = await paymentsApi.verify<PaymentStatusResponse>(ref);
+      return res.data;
+    },
+  });
+}
+
+/**
+ * Mutation to fetch current payment status
+ */
+export function usePaymentStatusMutation() {
+  return useMutation<PaymentStatusResponse, Error, string>({
+    mutationFn: async (ref: string) => {
+      const res = await paymentsApi.getStatus<PaymentStatusResponse>(ref);
+      return res.data;
+    },
+  });
+}
+
+/**
  * Hook to initiate order checkout
  */
 export function useCheckoutMutation() {
-  return useMutation<CheckoutResponse, Error, CheckoutPayload>({
-    mutationFn: async (payload) => {
-      const res = await api.post<CheckoutResponse>("/api/orders/checkout", payload);
+  return useMutation<CheckoutResponse, Error, { payload: CheckoutPayload; headers?: Record<string, string> }>({
+    mutationFn: async ({ payload, headers }) => {
+      const res = await paymentsApi.checkout<CheckoutResponse>(payload, headers);
       return res.data;
     },
   });
@@ -69,11 +91,9 @@ export function useCheckoutMutation() {
  * Hook to retry failed payment
  */
 export function useRetryPaymentMutation() {
-  return useMutation<{ authorizationUrl: string }, Error, string>({
-    mutationFn: async (paymentRef) => {
-      const res = await api.post<{ authorizationUrl: string }>(
-        `/api/payments/${encodeURIComponent(paymentRef)}/retry`
-      );
+  return useMutation<{ authorizationUrl: string; paymentRef: string; orderId?: string }, Error, string>({
+    mutationFn: async (paymentRef: string) => {
+      const res = await paymentsApi.retry<{ authorizationUrl: string; paymentRef: string; orderId?: string }>(paymentRef);
       return res.data;
     },
   });

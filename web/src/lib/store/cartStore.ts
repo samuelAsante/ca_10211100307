@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { ValidateCouponResponse } from "@/types";
 
 export interface CartItem {
   id: string;
@@ -12,11 +13,14 @@ export interface CartItem {
 
 interface CartState {
   items: CartItem[];
+  coupon: ValidateCouponResponse | null;
   addItem: (item: CartItem) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
   increaseQuantity: (id: string) => void;
   decreaseQuantity: (id: string) => void;
+  applyCoupon: (coupon: ValidateCouponResponse) => void;
+  removeCoupon: () => void;
   getTotalPrice: () => number;
   getItemCount: () => number;
   getSubtotal: () => number;
@@ -27,6 +31,7 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      coupon: null,
 
       addItem: (item) => {
         const items = get().items;
@@ -46,7 +51,7 @@ export const useCartStore = create<CartState>()(
         set({ items: get().items.filter((item) => item.id !== id) });
       },
 
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], coupon: null }),
 
       increaseQuantity: (id) => {
         set({
@@ -66,20 +71,31 @@ export const useCartStore = create<CartState>()(
         });
       },
 
+      applyCoupon: (coupon) => {
+        set({ coupon });
+      },
+
+      removeCoupon: () => {
+        set({ coupon: null });
+      },
+
       getTotalPrice: () => {
         const subtotal = get().items.reduce(
           (acc, item) => acc + item.price * item.quantity,
           0
         );
-        const discount = subtotal > 300 ? 0.1 * subtotal : 0;
-        return subtotal - discount;
+        const coupon = get().coupon;
+        if (coupon && coupon.valid) {
+          return Math.max(0, Math.round((subtotal - coupon.discountAmount) * 100) / 100);
+        }
+        const bulkDiscount = subtotal > 300 ? 0.1 * subtotal : 0;
+        return Math.max(0, Math.round((subtotal - bulkDiscount) * 100) / 100);
       },
 
       getSubtotal: () => {
-        return get().items.reduce(
-          (acc, item) => acc + item.price * item.quantity,
-          0
-        );
+        return Math.round(
+          get().items.reduce((acc, item) => acc + item.price * item.quantity, 0) * 100
+        ) / 100;
       },
 
       getDiscount: () => {
@@ -87,7 +103,11 @@ export const useCartStore = create<CartState>()(
           (acc, item) => acc + item.price * item.quantity,
           0
         );
-        return subtotal > 300 ? 0.1 * subtotal : 0;
+        const coupon = get().coupon;
+        if (coupon && coupon.valid) {
+          return coupon.discountAmount;
+        }
+        return subtotal > 300 ? Math.round(0.1 * subtotal * 100) / 100 : 0;
       },
 
       getItemCount: () => {
@@ -95,7 +115,7 @@ export const useCartStore = create<CartState>()(
       },
     }),
     {
-      name: "cart-storage", // localStorage key
+      name: "cart-storage",
     }
   )
 );
