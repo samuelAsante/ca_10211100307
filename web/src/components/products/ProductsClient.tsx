@@ -20,21 +20,44 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { MotionEffect } from '@/components/animate-ui/effects/motion-effect';
-import { ProductCardSkeleton } from './ProductCardSkeleton'
+import { ProductCardSkeleton } from './ProductCardSkeleton';
+import { getBackendUrl } from "@/lib/backend-url";
+import { prioritizeDiscountedProducts } from "@/lib/utils";
 
 const headerInfo = {
   name: "Store.",
   description: "The best way to buy the products you love.",
 };
 
-export function ProductsClient({ products, searchParams }: { products: any[]; searchParams: { [key: string]: string | undefined } }) {
+const categoryMap: Record<string, string> = {
+  "kitchen-appliances": "KITCHEN APPLIANCES",
+  "cooking-ware": "COOKING WARES & SETS",
+  "insulations": "STORAGE & INSULATIONS",
+  "home-essentials": "HOME ESSENTIALS",
+};
+
+export function ProductsClient({ products: initialProducts, searchParams }: { products: any[]; searchParams: { [key: string]: string | undefined } }) {
+  const [products, setProducts] = useState(initialProducts || []);
   const [selectedTab, setSelectedTab] = useState("all-Products");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!initialProducts?.length);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 100);
-    return () => clearTimeout(timer);
-  }, []);
+    if (initialProducts && initialProducts.length > 0) {
+      setProducts(initialProducts);
+      setIsLoading(false);
+    } else {
+      const backendUrl = getBackendUrl();
+      fetch(`${backendUrl}/api/products`)
+        .then((res) => (res.ok ? res.json() : []))
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setProducts(prioritizeDiscountedProducts(data));
+          }
+        })
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
+    }
+  }, [initialProducts]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -59,13 +82,6 @@ export function ProductsClient({ products, searchParams }: { products: any[]; se
     (product) => (Number(product.discount) || 0) > 0
   );
   const paginatedDiscountedProducts = discountedProducts.slice(startIndex, endIndex);
-
-  const categoryMap: Record<string, string> = {
-    "kitchen-appliances": "KITCHEN APPLIANCES",
-    "cooking-ware": "COOKING WARES & SETS",
-    "insulations": "STORAGE & INSULATIONS",
-    "home-essentials": "HOME ESSENTIALS",
-  };
 
   function getProductsByCategory(products: any[], tabKey: string, start: number, end: number) {
     const categoryName = categoryMap[tabKey];
