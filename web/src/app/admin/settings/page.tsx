@@ -32,6 +32,7 @@ import Image from "next/image";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useState } from "react";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 type Input = {
   email: string;
@@ -49,6 +50,7 @@ type Input = {
 };
 
 export default function AdminSettingsPage() {
+  const { trackTabView, trackFormSubmit } = useAnalytics();
   const {
     register,
     handleSubmit,
@@ -85,14 +87,17 @@ export default function AdminSettingsPage() {
       });
 
       if (res.error) {
+        trackFormSubmit("admin_change_password", false, { error: res.error.message });
         toast.error(res.error.message || "Failed to update password.");
         return;
       }
 
+      trackFormSubmit("admin_change_password", true);
       toast.success("Password updated successfully!");
       reset();
       router.refresh();
     } catch (error) {
+      trackFormSubmit("admin_change_password", false);
       console.error(error);
       toast.error("Something went wrong.");
     }
@@ -114,25 +119,29 @@ export default function AdminSettingsPage() {
         );
         logoUrl = res.data.secure_url;
       }
+
       const backendUrl = getBackendUrl();
-      await axios.post(
-        `${backendUrl}/api/business-settings`,
-        {
+      const res = await fetch(`${backendUrl}/api/business`, {
+        method: "PUT",
+        headers: authHeaders({ "Content-Type": "application/json" }),
+        body: JSON.stringify({
           name: data.name,
           phone: data.phone,
           address: data.address,
           city: data.city,
           state: data.state,
           country: data.country,
-          currency: data.currency || "GHS",
+          currency: data.currency,
           logoUrl,
-        },
-        { headers: authHeaders() }
-      );
+        }),
+      });
 
-      toast.success("Business settings updated!");
-      reset();
+      if (!res.ok) throw new Error("Failed to save settings");
+
+      trackFormSubmit("admin_business_settings", true);
+      toast.success("Business settings saved successfully!");
     } catch (error) {
+      trackFormSubmit("admin_business_settings", false);
       console.error(error);
       toast.error("Failed to save business settings.");
     }
@@ -140,7 +149,11 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="max-w-7xl px-4 py-10">
-      <Tabs defaultValue="account" className="w-full">
+      <Tabs
+        defaultValue="account"
+        className="w-full"
+        onValueChange={(tab) => trackTabView(tab, { parentPage: "/admin/settings", domain: "admin" })}
+      >
         {/* Mobile Tab Select */}
         <Select defaultValue="account">
           <SelectTrigger className="flex w-fit md:hidden landscape:hidden">
