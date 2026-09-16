@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { getBackendUrl } from "@/lib/backend-url";
+import { fetchBackend } from "@/lib/fetch-backend";
 
 import { Metadata } from "next";
 
@@ -9,34 +9,52 @@ import { notFound } from "next/navigation";
 import { CustomerRatings } from "@/components/products/customerRating";
 import { ProductDisplayCarousel } from "@/components/products/displayCarousel";
 import { ColorPlatte } from "@/components/products/colorPlatte";
-// import {prisma} from "@/lib/prisma"; // Removed Prisma
-
-const BACKEND_URL = getBackendUrl();
 
 async function getProduct(slug: string) {
     try {
-        const res = await fetch(`${BACKEND_URL}/api/products/${slug}`, {
-            next: { revalidate: 3600 }
+        const res = await fetchBackend(`/api/products/${slug}`, {
+            next: { revalidate: 60 }
         });
-        if (!res.ok) return null;
-        return res.json();
+        if (res && res.ok) {
+            const data = await res.json();
+            if (data && (data.name || data.title)) {
+                return {
+                    ...data,
+                    name: data.name || data.title,
+                    price: Number(data.price) || 0,
+                    discount: Number(data.discount) || 0,
+                    ratingFromManufacturer: data.ratingFromManufacturer ?? data.rating ?? 0,
+                    images: Array.isArray(data.images) && data.images.length > 0 ? data.images : ["/a.jpg"],
+                    colors: Array.isArray(data.colors) ? data.colors : [],
+                };
+            }
+        }
     } catch (error) {
         console.error("Error fetching product:", error);
-        return null;
     }
+
+    return null;
 }
 
 async function getAllProducts() {
     try {
-        const res = await fetch(`${BACKEND_URL}/api/products`, {
-            next: { revalidate: 3600 }
+        const res = await fetchBackend("/api/products", {
+            next: { revalidate: 60 }
         });
-        if (!res.ok) return [];
-        return res.json();
+        if (res && res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data.length > 0) {
+                return data.map((p: any) => ({
+                    ...p,
+                    name: p.name || p.title,
+                    images: Array.isArray(p.images) && p.images.length > 0 ? p.images : ["/a.jpg"],
+                }));
+            }
+        }
     } catch (error) {
         console.error("Error fetching products:", error);
-        return [];
     }
+    return [];
 }
 
 import { ProductCount } from "@/components/products/productCount";
@@ -143,12 +161,14 @@ export default async function ProductDetailPage({ params }: Params) {
           )}
           <p className="text-gray-600 mb-6 text-justify">{product.description}</p>
          
-          <div className="items-center gap-2 mb-6">
-              <h5 className="text-neutral-600 dark:text-neutral-300 text-md md:text-xl mb-2">Colors</h5>
-              <div className="flex gap-2">
-                <ColorPlatte colors={product.colors} />
-              </div>
-          </div>
+          {Array.isArray(product.colors) && product.colors.length > 0 && (
+            <div className="items-center gap-2 mb-6">
+                <h5 className="text-neutral-600 dark:text-neutral-300 text-md md:text-xl mb-2">Colors</h5>
+                <div className="flex gap-2">
+                  <ColorPlatte colors={product.colors} />
+                </div>
+            </div>
+          )}
 
           {/* Cart Button */}
           <div className="flex justify-between items-center">

@@ -5,40 +5,33 @@ import { ProductCardSkeleton } from "./ProductCardSkeleton";
 import { pickFeaturedProducts } from "@/lib/utils";
 
 export default async function Products() {
+  let products: any[] = [];
   try {
     const res = await fetch(
       `${getBackendUrl()}/api/products`,
       {
-        next: { revalidate: 3600 }, // Cache for 1 hour
-        cache: "force-cache",
+        next: { revalidate: 60 },
         signal: AbortSignal.timeout(8000),
       },
     );
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch products");
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        products = pickFeaturedProducts(data, 16);
+      }
     }
-
-    const data = await res.json();
-    const limitedProducts = pickFeaturedProducts(data, 16);
-
-    return (
-      <div className="max-w-7xl mx-auto md:px-4 py-10 mb-8 md:mb-24">
-        <Suspense fallback={<SkeletonGrid />}>
-          <ProductsList products={limitedProducts} />
-        </Suspense>
-      </div>
-    );
   } catch (error) {
     console.error("Error fetching products:", error);
-    return (
-      <div className="max-w-7xl mx-auto md:px-4 py-10 mb-8 md:mb-24">
-        <Suspense fallback={<SkeletonGrid />}>
-          <SkeletonGrid />
-        </Suspense>
-      </div>
-    );
   }
+
+  return (
+    <div className="max-w-7xl mx-auto md:px-4 py-10 mb-8 md:mb-24">
+      <Suspense fallback={<SkeletonGrid />}>
+        <ProductsList products={products} />
+      </Suspense>
+    </div>
+  );
 }
 
 function SkeletonGrid() {

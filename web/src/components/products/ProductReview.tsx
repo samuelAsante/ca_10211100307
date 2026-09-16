@@ -1,7 +1,7 @@
 "use client";
 
 import { getBackendUrl } from "@/lib/backend-url";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Loader2, Star } from "lucide-react";
 import clsx from 'clsx';
@@ -36,22 +36,26 @@ export function ProductReviews({ productSlug }: { productSlug: string }) {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       const backendUrl = getBackendUrl();
       const res = await fetch(`${backendUrl}/api/reviews/${productSlug}`);
+      if (!res.ok) {
+        setReviews([]);
+        return;
+      }
       const data = await res.json();
-      setReviews(data);
+      setReviews(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Failed to load reviews", err);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [productSlug]);
 
   useEffect(() => {
     fetchReviews();
-  }, [productSlug]);
+  }, [fetchReviews]);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setIsSubmitting(true);
@@ -199,7 +203,7 @@ export function ProductReviews({ productSlug }: { productSlug: string }) {
                     setSelectedRating(i + 1);
                     setValue("rating", i + 1); // update react-hook-form value
                   }}
-                  className="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  className="rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   <Star
                     aria-hidden="true"
