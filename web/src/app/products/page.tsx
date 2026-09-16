@@ -1,13 +1,11 @@
-//@ts-nocheck
 import { fetchBackend } from "@/lib/fetch-backend";
-import type { Metadata } from "next"
+import type { Metadata } from "next";
 import { ProductsClient } from "@/components/products/ProductsClient";
-import { products as mockProducts } from "@/data/data";
 import { prioritizeDiscountedProducts } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "J's Ashanti's Store Online - Products",
-}
+};
 
 interface ProductsProps {
   searchParams: Promise<{ [key: string]: string | undefined }>;
@@ -20,7 +18,7 @@ export default async function Products({ searchParams: searchParamsPromise }: Pr
     next: { revalidate: 60 },
   });
 
-  let products = mockProducts;
+  let products: any[] = [];
   if (res?.ok) {
     const data = await res.json();
     if (Array.isArray(data) && data.length > 0) {
@@ -28,7 +26,7 @@ export default async function Products({ searchParams: searchParamsPromise }: Pr
     }
   }
 
-  if (Array.isArray(products)) {
+  if (Array.isArray(products) && products.length > 0) {
     products = prioritizeDiscountedProducts(products);
   }
 
