@@ -1,10 +1,11 @@
 "use client";
 
-import { getBackendUrl } from "@/lib/backend-url";
-import { authHeaders } from "@/lib/auth-token";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { LiveEventFeed } from "@/components/analytics/live-event-feed";
 import { InsightsTimeline } from "@/components/analytics/insights-timeline";
+import { useInsightsTimeline } from "@/hooks/use-analytics-insights";
+import { useProducts } from "@/hooks/use-products";
+import { useOrders } from "@/hooks/use-orders";
 import { MetricsDashboard } from "@/components/admin/analytics/MetricsDashboard";
 import { BatchList } from "@/components/admin/analytics/BatchList";
 import { JobMonitor } from "@/components/admin/analytics/JobMonitor";
@@ -29,47 +30,28 @@ type Order = {
 
 export default function AnalyticsDashboard() {
   const { trackTabView } = useAnalytics();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loadingCommerce, setLoadingCommerce] = useState(true);
-  const [commerceError, setCommerceError] = useState<string | null>(null);
 
-  const backendUrl = getBackendUrl();
+  // TanStack Query for AI Insights in the page
+  const [insightsPage, setInsightsPage] = useState<number>(1);
+  const [insightsLimit, setInsightsLimit] = useState<number>(10);
 
-  useEffect(() => {
-    const fetchCommerceSnapshot = async () => {
-      try {
-        setLoadingCommerce(true);
-        const [productsRes, ordersRes] = await Promise.all([
-          fetch(`${backendUrl}/api/products`, { credentials: "include", headers: authHeaders() }),
-          fetch(`${backendUrl}/api/orders`, { credentials: "include", headers: authHeaders() }),
-        ]);
+  const {
+    data: insightsData,
+    isLoading: isInsightsLoading,
+    isFetching: isInsightsFetching,
+    error: insightsError,
+    refetch: refetchInsights,
+  } = useInsightsTimeline({ page: insightsPage, limit: insightsLimit });
 
-        if (!productsRes.ok || !ordersRes.ok) {
-          throw new Error("Failed to load commerce analytics snapshot");
-        }
+  const { data: products = [], isLoading: loadingProducts, error: productsError } = useProducts();
+  const { data: orders = [], isLoading: loadingOrders, error: ordersError } = useOrders();
 
-        const [productsData, ordersData] = await Promise.all([
-          productsRes.json(),
-          ordersRes.json(),
-        ]);
-
-        setProducts(Array.isArray(productsData) ? productsData : []);
-        setOrders(Array.isArray(ordersData) ? ordersData : []);
-        setCommerceError(null);
-      } catch (error) {
-        setCommerceError(
-          error instanceof Error ? error.message : "Failed to load analytics snapshot"
-        );
-      } finally {
-        setLoadingCommerce(false);
-      }
-    };
-
-    fetchCommerceSnapshot();
-    const interval = setInterval(fetchCommerceSnapshot, 30000);
-    return () => clearInterval(interval);
-  }, [backendUrl]);
+  const loadingCommerce = loadingProducts || loadingOrders;
+  const commerceError = productsError
+    ? (productsError as Error).message
+    : ordersError
+    ? (ordersError as Error).message
+    : null;
 
   const commerce = useMemo(() => {
     const discountProducts = products.filter((product) => (Number(product.discount) || 0) > 0);
@@ -183,7 +165,21 @@ export default function AnalyticsDashboard() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <LiveEventFeed />
-            <InsightsTimeline />
+            <InsightsTimeline
+              insights={insightsData?.insights}
+              pagination={insightsData?.pagination}
+              isLoading={isInsightsLoading}
+              isRefreshing={isInsightsFetching}
+              error={insightsError ? (insightsError as Error).message : null}
+              page={insightsPage}
+              limit={insightsLimit}
+              onPageChange={setInsightsPage}
+              onLimitChange={(newLimit) => {
+                setInsightsLimit(newLimit);
+                setInsightsPage(1);
+              }}
+              onRefresh={() => refetchInsights()}
+            />
           </div>
         </TabsContent>
 
@@ -199,7 +195,21 @@ export default function AnalyticsDashboard() {
 
         {/* Insights Tab */}
         <TabsContent value="insights" className="space-y-6">
-          <InsightsTimeline />
+          <InsightsTimeline
+            insights={insightsData?.insights}
+            pagination={insightsData?.pagination}
+            isLoading={isInsightsLoading}
+            isRefreshing={isInsightsFetching}
+            error={insightsError ? (insightsError as Error).message : null}
+            page={insightsPage}
+            limit={insightsLimit}
+            onPageChange={setInsightsPage}
+            onLimitChange={(newLimit) => {
+              setInsightsLimit(newLimit);
+              setInsightsPage(1);
+            }}
+            onRefresh={() => refetchInsights()}
+          />
         </TabsContent>
       </Tabs>
 
