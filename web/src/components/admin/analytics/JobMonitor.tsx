@@ -26,6 +26,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { AlertCircle, ChevronDown, ChevronRight, Loader2 } from "lucide-react";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 interface Job {
   job_id: string;
@@ -78,11 +79,18 @@ function getJobStatusBadge(status: string) {
 
 function ErrorContextViewer({ context }: { context: any }) {
   const [isOpen, setIsOpen] = useState(false);
+  const { trackUIInteraction } = useAnalytics();
 
   if (!context) return null;
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        trackUIInteraction("job_error_details", open ? "expand" : "collapse");
+      }}
+    >
       <CollapsibleTrigger className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         {isOpen ? (
           <ChevronDown className="h-4 w-4" />
@@ -101,6 +109,7 @@ function ErrorContextViewer({ context }: { context: any }) {
 }
 
 export function JobMonitor() {
+  const { trackFilter } = useAnalytics();
   const [activeJobs, setActiveJobs] = useState<Job[]>([]);
   const [deadLetterJobs, setDeadLetterJobs] = useState<DeadLetterJob[]>([]);
   const [loading, setLoading] = useState(true);
@@ -179,7 +188,10 @@ export function JobMonitor() {
                   key={status}
                   variant={filter === status ? "default" : "outline"}
                   className="cursor-pointer"
-                  onClick={() => setFilter(status)}
+                  onClick={() => {
+                    trackFilter("job_status", status);
+                    setFilter(status);
+                  }}
                 >
                   {status}
                 </Badge>
