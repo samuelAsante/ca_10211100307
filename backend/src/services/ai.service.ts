@@ -75,6 +75,7 @@ async function performAnalysis(
   const eventSummary = events.map((e) => ({
     type: e.eventType,
     page: e.page,
+    subView: e.subView,
     timestamp: e.timestamp,
     metadata: e.metadata,
   }));
