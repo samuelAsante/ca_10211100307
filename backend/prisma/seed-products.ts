@@ -241,7 +241,16 @@ const mockProducts = [
 ];
 
 async function main() {
-    console.log('Seeding products...');
+    const force = process.env.FORCE_SEED === "true" || process.argv.includes("--force");
+    const existingCount = await prisma.product.count();
+
+    if (existingCount > 0 && !force) {
+        console.log(`[Seed Products] Database already contains ${existingCount} product(s). Skipping seeding.`);
+        console.log(`[Seed Products] Pass --force or set FORCE_SEED=true to force re-seeding.`);
+        return;
+    }
+
+    console.log(`Seeding products (${mockProducts.length} items)...`);
 
     for (let i = 0; i < mockProducts.length; i++) {
         const product = mockProducts[i];
