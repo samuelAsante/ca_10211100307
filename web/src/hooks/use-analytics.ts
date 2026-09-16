@@ -4,6 +4,7 @@ import { useRef, useCallback } from "react";
 import { useSocket } from "@/components/analytics/socket-provider";
 import { EventType } from "@/interface/analytics";
 import { usePathname } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 
 /**
  * Manual event helpers. Page views are owned by GlobalPageTracker so
@@ -12,6 +13,7 @@ import { usePathname } from "next/navigation";
 export function useAnalytics() {
   const { emitEvent } = useSocket();
   const pathname = usePathname();
+  const { data: session } = useSession();
   const lastEventAtRef = useRef<Map<string, number>>(new Map());
 
   const toStableString = useCallback((value: unknown): string => {
@@ -37,14 +39,26 @@ export function useAnalytics() {
     return false;
   }, []);
 
+  const currentUserId = session?.user?.id || getUserId();
+  const userRole = (session?.user as any)?.role || "guest";
+  const defaultDomain: "storefront" | "admin" = pathname?.startsWith("/admin") ? "admin" : "storefront";
+
   const trackEvent = useCallback((
     eventType: string,
     metadata?: Record<any, any>,
-    options?: { throttleMs?: number; dedupeKey?: string }
+    options?: {
+      throttleMs?: number;
+      dedupeKey?: string;
+      subView?: string;
+      domain?: "storefront" | "admin" | "checkout";
+      page?: string;
+    }
   ) => {
+    const activePage = options?.page || pathname || undefined;
+    const activeDomain = options?.domain || (activePage?.startsWith("/admin") ? "admin" : defaultDomain);
     const eventKey =
       options?.dedupeKey ||
-      `${eventType}|${pathname || ""}|${toStableString(metadata || {})}`;
+      `${eventType}|${activePage || ""}|${options?.subView || ""}|${toStableString(metadata || {})}`;
     const throttleMs = options?.throttleMs ?? 0;
     if (shouldThrottle(eventKey, throttleMs)) {
       return;
@@ -52,18 +66,23 @@ export function useAnalytics() {
 
     emitEvent({
       eventType,
-      userId: getUserId(),
+      userId: currentUserId,
       sessionId: getSessionId(),
-      page: pathname || undefined,
-      metadata,
+      page: activePage,
+      subView: options?.subView,
+      domain: activeDomain,
+      metadata: {
+        ...metadata,
+        userRole,
+      },
     });
-  }, [emitEvent, pathname, shouldThrottle, toStableString]);
+  }, [emitEvent, pathname, currentUserId, userRole, defaultDomain, shouldThrottle, toStableString]);
 
   const trackProductView = useCallback((productId: string, productName: string) => {
     trackEvent(
       EventType.PRODUCT_VIEW,
       { productId, productName },
-      { throttleMs: 1500, dedupeKey: `${EventType.PRODUCT_VIEW}:${productId}` }
+      { throttleMs: 1500, dedupeKey: `${EventType.PRODUCT_VIEW}:${productId}`, domain: "storefront" }
     );
   }, [trackEvent]);
 
@@ -71,7 +90,7 @@ export function useAnalytics() {
     trackEvent(
       EventType.ADD_TO_CART,
       { productId, quantity },
-      { throttleMs: 1000, dedupeKey: `${EventType.ADD_TO_CART}:${productId}` }
+      { throttleMs: 1000, dedupeKey: `${EventType.ADD_TO_CART}:${productId}`, domain: "storefront" }
     );
   }, [trackEvent]);
 
@@ -79,7 +98,7 @@ export function useAnalytics() {
     trackEvent(
       EventType.REMOVE_FROM_CART,
       { productId },
-      { throttleMs: 1000, dedupeKey: `${EventType.REMOVE_FROM_CART}:${productId}` }
+      { throttleMs: 1000, dedupeKey: `${EventType.REMOVE_FROM_CART}:${productId}`, domain: "storefront" }
     );
   }, [trackEvent]);
 
@@ -87,12 +106,71 @@ export function useAnalytics() {
     trackEvent(
       step === "start" ? EventType.CHECKOUT_START : EventType.CHECKOUT_COMPLETE,
       { orderValue },
-      { throttleMs: 2000, dedupeKey: `checkout:${step}` }
+      { throttleMs: 2000, dedupeKey: `checkout:${step}`, domain: "checkout" }
     );
   }, [trackEvent]);
 
   const trackSearch = useCallback((query: string, resultsCount: number) => {
-    trackEvent(EventType.SEARCH, { query, resultsCount });
+    trackEvent(EventType.SEARCH, { query, resultsCount }, { domain: "storefront" });
+  }, [trackEvent]);
+
+  // In-page non-URL event tracking helpers
+
+  const trackTabView = useCallback((tabName: string, options?: { parentPage?: string; domain?: "admin" | "storefront" }) => {
+    const domain = options?.domain || (pathname?.startsWith("/admin") ? "admin" : "storefront");
+    const eventType = domain === "admin" ? EventType.ADMIN_TAB_VIEW : EventType.TAB_VIEW;
+    trackEvent(
+      eventType,
+      { tab: tabName },
+      {
+        subView: tabName,
+        page: options?.parentPage || pathname || undefined,
+        domain,
+        throttleMs: 300,
+        dedupeKey: `tab:${pathname}:${tabName}`,
+      }
+    );
+  }, [trackEvent, pathname]);
+
+  const trackModal = useCallback((modalName: string, action: "open" | "close", metadata?: Record<string, any>) => {
+    const eventType = action === "open" ? EventType.MODAL_OPEN : EventType.MODAL_CLOSE;
+    trackEvent(
+      eventType,
+      { modalName, action, ...metadata },
+      { throttleMs: 300, dedupeKey: `modal:${modalName}:${action}` }
+    );
+  }, [trackEvent]);
+
+  const trackAdminAction = useCallback((action: string, targetId?: string, metadata?: Record<string, any>) => {
+    trackEvent(
+      EventType.ADMIN_ACTION,
+      { action, targetId, ...metadata },
+      { domain: "admin", throttleMs: 200 }
+    );
+  }, [trackEvent]);
+
+  const trackFilter = useCallback((filterType: string, filterValue: any, metadata?: Record<string, any>) => {
+    trackEvent(
+      EventType.FILTER_APPLIED,
+      { filterType, filterValue, ...metadata },
+      { throttleMs: 500 }
+    );
+  }, [trackEvent]);
+
+  const trackFormSubmit = useCallback((formName: string, success: boolean, metadata?: Record<string, any>) => {
+    trackEvent(
+      EventType.FORM_SUBMIT,
+      { formName, success, ...metadata },
+      { throttleMs: 500 }
+    );
+  }, [trackEvent]);
+
+  const trackUIInteraction = useCallback((element: string, action: string, metadata?: Record<string, any>) => {
+    trackEvent(
+      EventType.UI_INTERACTION,
+      { element, action, ...metadata },
+      { throttleMs: 300 }
+    );
   }, [trackEvent]);
 
   return {
@@ -102,6 +180,12 @@ export function useAnalytics() {
     trackRemoveFromCart,
     trackCheckout,
     trackSearch,
+    trackTabView,
+    trackModal,
+    trackAdminAction,
+    trackFilter,
+    trackFormSubmit,
+    trackUIInteraction,
   };
 }
 
